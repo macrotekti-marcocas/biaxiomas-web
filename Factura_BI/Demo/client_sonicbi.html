@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Empresa (Facturación) - SONIC BI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #0891b2 0%, #155e75 100%);
+        }
+        .micro-pop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(8, 145, 178, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen text-slate-900 pb-12">
+
+    <!-- DEV NAV BAR (Switch de Roles) -->
+    <div class="bg-slate-900 text-slate-100 py-2.5 px-4 sticky top-0 z-50 border-b border-indigo-900 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex h-3 w-3 rounded-full bg-cyan-500 animate-ping"></span>
+                <span class="font-outfit font-bold tracking-wider text-cyan-400">SONIC BI &middot; DEMO MULTITENANT</span>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center text-xs">
+                <span class="text-slate-400 font-semibold uppercase mr-1">Switch de Roles:</span>
+                <a href="../../Admin_tenant/admin_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [1] SuperAdmin Global
+                </a>
+                <a href="factura_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [2] Tenedor (Osunar Contadores)
+                </a>
+                <a href="#" class="bg-cyan-600 text-white font-semibold px-3 py-1.5 rounded shadow-sm border border-cyan-500">
+                    [3] Cliente (Marisquería El Timón)
+                </a>
+                <a href="endclient_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [4] Cliente Final (Consumidor)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        <!-- HEADER -->
+        <header class="gradient-bg rounded-3xl p-8 md:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-cyan-500 rounded-full blur-3xl opacity-20"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="bg-cyan-500/25 text-cyan-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3 border border-cyan-400/20">
+                        Marisquería El Timón S.A. de C.V.
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-outfit font-extrabold tracking-tight">Emisión & Control de Comprobantes</h1>
+                    <p class="text-cyan-100 mt-1 max-w-xl font-light">Emite facturas manualmente, gestiona tu historial y habilita el portal de autofacturación para tus consumidores.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-right">
+                    <span class="text-xs text-cyan-200 block uppercase font-semibold">Bolsa de Timbres Disponibles</span>
+                    <span class="text-2xl font-bold font-outfit" id="totalTimbresEmpresa">4,550</span>
+                    <span class="text-xs text-cyan-300 block mt-1">CSD: Vigente hasta 2029</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- GRID SYSTEM -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- FORMULARIO DE EMISIÓN (LEFT/CENTER - 2 cols) -->
+            <div class="lg:col-span-2 space-y-8">
+                
+                <!-- EMISION MANUAL -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-outfit font-bold text-slate-900 mb-4 flex items-center gap-2">
+                        <span class="text-cyan-600">✍</span> Emisión de CFDI 4.0 Directa
+                    </h2>
+                    
+                    <form id="formFactura" onsubmit="timbrarFactura(event)" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">RFC Receptor</label>
+                                <input type="text" id="facRfc" required placeholder="Ej. XAXX010101000" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 uppercase">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Razón Social</label>
+                                <input type="text" id="facNombre" required placeholder="Nombre o Razón Social de tu Cliente" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Uso de CFDI</label>
+                                <select class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
+                                    <option value="G03">G03 - Gastos en general</option>
+                                    <option value="D01">D01 - Honorarios médicos</option>
+                                    <option value="S01">S01 - Sin efectos fiscales</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Método de Pago</label>
+                                <select class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
+                                    <option value="PUE">PUE - Pago en una sola exhibición</option>
+                                    <option value="PPD">PPD - Pago en parcialidades o diferido</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Forma de Pago</label>
+                                <select class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-cyan-500 bg-white">
+                                    <option value="01">01 - Efectivo</option>
+                                    <option value="03">03 - Transferencia electrónica</option>
+                                    <option value="04">04 - Tarjeta de crédito</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- CONCEPTOS -->
+                        <div class="border-t border-slate-100 pt-4 mt-6">
+                            <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Conceptos Facturados</h3>
+                            <div class="grid grid-cols-12 gap-3 items-end">
+                                <div class="col-span-6">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Descripción del Servicio/Producto</label>
+                                    <input type="text" id="concDesc" value="Consumo de Alimentos y Bebidas" required class="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Clave SAT</label>
+                                    <input type="text" value="90101501" required class="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500 text-center">
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-[11px] font-semibold text-slate-500 mb-1">Importe</label>
+                                    <input type="number" id="concMonto" required value="482.00" oninput="calcularImpuestos()" class="w-full border border-slate-200 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500 text-right">
+                                </div>
+                                <div class="col-span-2 text-right">
+                                    <span class="text-xs font-semibold text-slate-400 block mb-1">IVA (16%)</span>
+                                    <span class="text-xs font-bold text-slate-700 block py-1.5" id="ivaDisplay">$77.12</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TOTALS BAR -->
+                        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4 flex justify-between items-center mt-6">
+                            <div>
+                                <span class="text-xs text-slate-500 block">Total a Facturar (IVA Incluido)</span>
+                                <span class="text-xl font-bold font-outfit text-cyan-950" id="totalDisplay">$559.12</span>
+                            </div>
+                            <button type="submit" id="btnTimbrar" class="bg-cyan-600 hover:bg-cyan-700 text-white font-semibold text-sm px-6 py-2.5 rounded-xl transition-all shadow-md shadow-cyan-600/10 flex items-center gap-2">
+                                <span id="spinner" class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full hidden"></span>
+                                Timbrar Factura
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- HISTORIAL DE TIMBRADO -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <h2 class="text-lg font-outfit font-bold text-slate-900 mb-4">Historial de CFDIs Emitidos</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-100 text-xs text-slate-400 font-semibold uppercase">
+                                    <th class="py-3">Folio Fiscal (UUID)</th>
+                                    <th class="py-3">Receptor / RFC</th>
+                                    <th class="py-3 text-right">Monto</th>
+                                    <th class="py-3">Estatus</th>
+                                    <th class="py-3 text-center">Descargas</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm divide-y divide-slate-100" id="tablaHistorial">
+                                <tr>
+                                    <td class="py-4">
+                                        <div class="font-mono text-xs text-slate-600">83E4FA9D-B128...</div>
+                                        <div class="text-[10px] text-slate-400">Hoy, 10:45 AM</div>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="font-semibold text-slate-900">Juan Pérez Maldonado</div>
+                                        <div class="text-xs text-slate-400">PEMJ890101TR9</div>
+                                    </td>
+                                    <td class="py-4 font-semibold text-slate-700 text-right">$850.00</td>
+                                    <td class="py-4">
+                                        <span class="inline-flex text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">Timbrada</span>
+                                    </td>
+                                    <td class="py-4 text-center">
+                                        <div class="inline-flex gap-1.5 justify-center">
+                                            <button onclick="descargarMock('XML')" class="hover:bg-slate-100 p-1.5 rounded text-xs text-slate-500 font-bold">XML</button>
+                                            <button onclick="descargarMock('PDF')" class="hover:bg-slate-100 p-1.5 rounded text-xs text-red-500 font-bold">PDF</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="py-4">
+                                        <div class="font-mono text-xs text-slate-600">1A84FE5A-9D45...</div>
+                                        <div class="text-[10px] text-slate-400">Ayer, 03:15 PM</div>
+                                    </td>
+                                    <td class="py-4">
+                                        <div class="font-semibold text-slate-900">Alimentos de México S.A.</div>
+                                        <div class="text-xs text-slate-400">AME980715LL9</div>
+                                    </td>
+                                    <td class="py-4 font-semibold text-slate-700 text-right">$2,410.00</td>
+                                    <td class="py-4">
+                                        <span class="inline-flex text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">Timbrada</span>
+                                    </td>
+                                    <td class="py-4 text-center">
+                                        <div class="inline-flex gap-1.5 justify-center">
+                                            <button onclick="descargarMock('XML')" class="hover:bg-slate-100 p-1.5 rounded text-xs text-slate-500 font-bold">XML</button>
+                                            <button onclick="descargarMock('PDF')" class="hover:bg-slate-100 p-1.5 rounded text-xs text-red-500 font-bold">PDF</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- AUTOFACTURACIÓN PORTAL CONFIG (RIGHT - 1 col) -->
+            <div class="space-y-6">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-outfit font-bold text-slate-900 uppercase tracking-wider">Portal Autofactura</h3>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="portalToggle" class="sr-only peer" checked onchange="togglePortal()">
+                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-cyan-600"></div>
+                        </label>
+                    </div>
+
+                    <p class="text-xs text-slate-500 mb-4">Permite que tus clientes emitan sus facturas desde el sitio web con su ticket de consumo.</p>
+
+                    <div class="space-y-4 border-t border-slate-100 pt-4" id="portalConfigSection">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Texto Leyenda en Ticket</label>
+                            <textarea id="leyendaTicket" rows="3" oninput="previewTicket()" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500">Factura tu ticket ingresando a: sonicbi.mx/el-timon con tu código de ticket.</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1">Días límite para facturar</label>
+                            <input type="number" value="15" class="w-full border border-slate-200 rounded-xl px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-cyan-500">
+                        </div>
+
+                        <!-- MINI TICKET PREVIEW -->
+                        <div class="bg-amber-50/60 border border-amber-200/50 rounded-xl p-4 font-mono text-[10px] text-slate-600 relative overflow-hidden">
+                            <div class="text-center font-bold border-b border-dashed border-slate-300 pb-2 mb-2 uppercase">
+                                Marisquería El Timón
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Ticket: #4091</span>
+                                <span>Mesa: 14</span>
+                            </div>
+                            <div>Fecha: 18/07/2026 11:15 AM</div>
+                            <div class="border-b border-dashed border-slate-300 pb-2 mb-2"></div>
+                            <div class="flex justify-between">
+                                <span>1x Ceviche Especial</span>
+                                <span>$350.00</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span>1x Michelada Real</span>
+                                <span>$132.00</span>
+                            </div>
+                            <div class="flex justify-between font-bold border-t border-dashed border-slate-300 pt-2 mb-2 text-xs">
+                                <span>TOTAL:</span>
+                                <span>$482.00</span>
+                            </div>
+                            <div class="text-center text-[9px] text-slate-400 mt-2 italic whitespace-pre-wrap" id="ticketPreviewText">
+                                Factura tu ticket ingresando a: sonicbi.mx/el-timon con tu código de ticket.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-cyan-950 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-cyan-800 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+        <span class="text-cyan-400 bg-cyan-400/10 p-1.5 rounded-lg text-xs">✓</span>
+        <span class="text-sm font-semibold" id="toastMessage">Operación realizada con éxito</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function calcularImpuestos() {
+            const val = parseFloat(document.getElementById('concMonto').value) || 0;
+            const iva = val * 0.16;
+            const total = val + iva;
+            document.getElementById('ivaDisplay').textContent = `$${iva.toFixed(2)}`;
+            document.getElementById('totalDisplay').textContent = `$${total.toFixed(2)}`;
+        }
+
+        function previewTicket() {
+            const txt = document.getElementById('leyendaTicket').value;
+            document.getElementById('ticketPreviewText').textContent = txt;
+        }
+
+        function togglePortal() {
+            const checked = document.getElementById('portalToggle').checked;
+            const config = document.getElementById('portalConfigSection');
+            if (checked) {
+                config.style.opacity = '1';
+                config.style.pointerEvents = 'auto';
+                showToast('Portal de Autofacturación habilitado para clientes.');
+            } else {
+                config.style.opacity = '0.4';
+                config.style.pointerEvents = 'none';
+                showToast('Portal de Autofacturación deshabilitado temporalmente.');
+            }
+        }
+
+        function timbrarFactura(e) {
+            e.preventDefault();
+            const rfc = document.getElementById('facRfc').value;
+            const name = document.getElementById('facNombre').value;
+            const subtotal = parseFloat(document.getElementById('concMonto').value);
+            const total = (subtotal * 1.16).toFixed(2);
+
+            const btn = document.getElementById('btnTimbrar');
+            const spinner = document.getElementById('spinner');
+
+            btn.disabled = true;
+            spinner.classList.remove('hidden');
+
+            setTimeout(() => {
+                // Generar UUID mock
+                const uuid = Array.from({length: 4}, () => Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1).toUpperCase()).join('-');
+                
+                const tbody = document.getElementById('tablaHistorial');
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/50 transition-colors animate-pulse';
+                tr.innerHTML = `
+                    <td class="py-4">
+                        <div class="font-mono text-xs text-slate-600">${uuid}...</div>
+                        <div class="text-[10px] text-slate-400">Hace unos momentos</div>
+                    </td>
+                    <td class="py-4">
+                        <div class="font-semibold text-slate-900">${name}</div>
+                        <div class="text-xs text-slate-400">${rfc.toUpperCase()}</div>
+                    </td>
+                    <td class="py-4 font-semibold text-slate-700 text-right">$${total}</td>
+                    <td class="py-4">
+                        <span class="inline-flex text-[10px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100">Timbrada</span>
+                    </td>
+                    <td class="py-4 text-center">
+                        <div class="inline-flex gap-1.5 justify-center">
+                            <button onclick="descargarMock('XML')" class="hover:bg-slate-100 p-1.5 rounded text-xs text-slate-500 font-bold">XML</button>
+                            <button onclick="descargarMock('PDF')" class="hover:bg-slate-100 p-1.5 rounded text-xs text-red-500 font-bold">PDF</button>
+                        </div>
+                    </td>
+                `;
+                tbody.insertBefore(tr, tbody.firstChild);
+
+                // Disminuir timbres
+                const currentTimbres = parseInt(document.getElementById('totalTimbresEmpresa').textContent.replace(/,/g, ''));
+                document.getElementById('totalTimbresEmpresa').textContent = (currentTimbres - 1).toLocaleString();
+
+                btn.disabled = false;
+                spinner.classList.add('hidden');
+
+                // Clear inputs
+                document.getElementById('facRfc').value = '';
+                document.getElementById('facNombre').value = '';
+                
+                showToast('Comprobante Timbrado y firmado digitalmente por el SAT.');
+            }, 1500);
+        }
+
+        function descargarMock(tipo) {
+            showToast(`Descargando archivo ficticio ${tipo} del comprobante...`);
+        }
+    </script>
+</body>
+</html>

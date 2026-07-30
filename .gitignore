@@ -1,15 +1,18 @@
-# Ignorar subdirectorios de módulos que tienen o tendrán sus propios repositorios independientes
-/Admin_tenant/
-/Checador_BI/
-/Contable_BI/
-/Factura_BI/
-/Manager_BI/
-/Xml_BI/
+# Ignorar carpetas de desarrollo pesado y bases de datos locales
+**/node_modules/
+**/.venv/
+**/db/
+**/*.db
+**/*.sqlite
+**/*.log
+
+# Ignorar las carpetas de desarrollo local (Dev) y pruebas temporales (Demo)
+/Factura_BI/Dev/
+/Manager_BI/Dev/
 /Demo/
 
-# Ignorar archivos locales del sistema y de editores
+# Ignorar archivos del sistema
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
-*.log

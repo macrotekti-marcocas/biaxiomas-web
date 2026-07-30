@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperAdmin - SONIC BI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .gradient-bg {
+            background: radial-gradient(circle at 10% 20%, rgb(91, 56, 222) 0%, rgb(42, 28, 102) 90.2%);
+        }
+        .micro-pop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen text-slate-900 pb-12">
+
+    <!-- DEV NAV BAR (Switch de Roles) -->
+    <div class="bg-slate-900 text-slate-100 py-2.5 px-4 sticky top-0 z-50 border-b border-indigo-900 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex h-3 w-3 rounded-full bg-indigo-500 animate-ping"></span>
+                <span class="font-outfit font-bold tracking-wider text-indigo-400">SONIC BI &middot; DEMO MULTITENANT</span>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center text-xs">
+                <span class="text-slate-400 font-semibold uppercase mr-1">Switch de Roles:</span>
+                <a href="#" class="bg-indigo-600 text-white font-semibold px-3 py-1.5 rounded shadow-sm border border-indigo-500">
+                    [1] SuperAdmin Global
+                </a>
+                <a href="../Factura_BI/Demo/factura_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [2] Tenedor (Osunar Contadores)
+                </a>
+                <a href="../Factura_BI/Demo/client_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [3] Cliente (Marisquería El Timón)
+                </a>
+                <a href="../Factura_BI/Demo/endclient_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [4] Cliente Final (Consumidor)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        <!-- HEADER -->
+        <header class="gradient-bg rounded-3xl p-8 md:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500 rounded-full blur-3xl opacity-35"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="bg-indigo-500/30 text-indigo-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3 border border-indigo-400/20">
+                        Consola SaaS Global
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-outfit font-extrabold tracking-tight">Panel SuperAdmin</h1>
+                    <p class="text-indigo-200 mt-1 max-w-xl font-light">Supervisión general del SaaS multitenant, control de licenciamiento modular y cobro de comisiones.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-right">
+                    <span class="text-xs text-indigo-300 block uppercase font-semibold">Suscripción SaaS</span>
+                    <span class="text-2xl font-bold font-outfit">$48,250.00 MXN</span>
+                    <span class="text-xs text-emerald-400 block mt-1">▲ 14.5% este mes</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPI GRID -->
+        <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Tenedores Activos</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-indigo-950" id="totalTenants">3</span>
+                    </div>
+                    <div class="bg-indigo-50 text-indigo-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-emerald-600 font-medium">
+                    <span>+1 nuevo este mes</span>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Clientes Totales</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-indigo-950">36</span>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-emerald-600 font-medium">
+                    <span>94.3% de retención</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Timbres Consumidos</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-indigo-950">142,500</span>
+                    </div>
+                    <div class="bg-cyan-50 text-cyan-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-blue-600 font-medium">
+                    <span>Promedio: 2.1k timbres/día</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Comisión Total (1.5%)</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-indigo-950" id="comisionTotal">$5,320.00</span>
+                    </div>
+                    <div class="bg-amber-50 text-amber-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-slate-500 font-medium">
+                    <span>Ingresos por transacciones</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- TWO COLUMN LAYOUT -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- TENANTS TABLE (LEFT - 2 cols) -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 lg:col-span-2">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-lg font-outfit font-bold text-indigo-950">Tenedores Registrados (Despachos)</h2>
+                        <p class="text-xs text-slate-500">Activa o desactiva módulos del ecosistema en tiempo real.</p>
+                    </div>
+                    <button onclick="mostrarModalNuevoTenedor()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Nuevo Tenedor
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-100 text-xs text-slate-400 font-semibold uppercase">
+                                <th class="py-3">Tenedor / Razón Social</th>
+                                <th class="py-3">Clientes</th>
+                                <th class="py-3">Módulos Contratados</th>
+                                <th class="py-3">Comisiones Acum.</th>
+                                <th class="py-3 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm divide-y divide-slate-100" id="tablaTenedores">
+                            <!-- Osunar Contadores -->
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="py-4">
+                                    <div class="font-semibold text-slate-900">Osunar Contadores</div>
+                                    <div class="text-xs text-slate-400">RFC: OCO180412AA1</div>
+                                </td>
+                                <td class="py-4 font-semibold text-slate-700">18</td>
+                                <td class="py-4">
+                                    <div class="flex flex-wrap gap-1" id="modules-osunar">
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Facturación</span>
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">Contabilidad</span>
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-cyan-50 text-cyan-700 border border-cyan-100">XMLs</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 font-bold text-slate-800">$2,450.00</td>
+                                <td class="py-4 text-right">
+                                    <button onclick="editarModulos('Osunar Contadores', ['Facturación', 'Contabilidad', 'XMLs'], 'modules-osunar')" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
+                                        Gestionar Licencia
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Mendoza & Asociados -->
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="py-4">
+                                    <div class="font-semibold text-slate-900">Mendoza & Asociados</div>
+                                    <div class="text-xs text-slate-400">RFC: MAS150930BB2</div>
+                                </td>
+                                <td class="py-4 font-semibold text-slate-700">12</td>
+                                <td class="py-4">
+                                    <div class="flex flex-wrap gap-1" id="modules-mendoza">
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Facturación</span>
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-orange-50 text-orange-700 border border-orange-100">Checador</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 font-bold text-slate-800">$1,890.00</td>
+                                <td class="py-4 text-right">
+                                    <button onclick="editarModulos('Mendoza & Asociados', ['Facturación', 'Checador'], 'modules-mendoza')" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
+                                        Gestionar Licencia
+                                    </button>
+                                </td>
+                            </tr>
+                            <!-- Gaxiola Despacho -->
+                            <tr class="hover:bg-slate-50/50 transition-colors">
+                                <td class="py-4">
+                                    <div class="font-semibold text-slate-900">Gaxiola Consultores</div>
+                                    <div class="text-xs text-slate-400">RFC: GCO120220CC3</div>
+                                </td>
+                                <td class="py-4 font-semibold text-slate-700">6</td>
+                                <td class="py-4">
+                                    <div class="flex flex-wrap gap-1" id="modules-gaxiola">
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Facturación</span>
+                                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-purple-50 text-purple-700 border border-purple-100">Leads</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 font-bold text-slate-800">$980.00</td>
+                                <td class="py-4 text-right">
+                                    <button onclick="editarModulos('Gaxiola Consultores', ['Facturación', 'Leads'], 'modules-gaxiola')" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
+                                        Gestionar Licencia
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SYSTEM MODULES & COMISIONES (RIGHT - 1 col) -->
+            <div class="space-y-6">
+                <!-- ANALYTICS MINI CHART -->
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                    <h3 class="text-sm font-outfit font-bold text-indigo-950 mb-3 uppercase tracking-wider">Uso Global de Módulos</h3>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-600 font-semibold">Facturación Electrónica</span>
+                                <span class="text-slate-900 font-bold">92%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-600 font-semibold">Descargas XML</span>
+                                <span class="text-slate-900 font-bold">64%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-cyan-500 h-full rounded-full" style="width: 64%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-600 font-semibold">Contabilidad Inteligente</span>
+                                <span class="text-slate-900 font-bold">55%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-indigo-500 h-full rounded-full" style="width: 55%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="text-slate-600 font-semibold">Checador / RRHH</span>
+                                <span class="text-slate-900 font-bold">30%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-orange-500 h-full rounded-full" style="width: 30%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMMISSIONS PANEL -->
+                <div class="bg-gradient-to-br from-indigo-900 to-indigo-950 text-white rounded-2xl p-6 shadow-lg">
+                    <h3 class="text-sm font-outfit font-bold uppercase tracking-wider text-indigo-300 mb-4">Configuración de Comisiones</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs text-indigo-200 mb-1">Tasa de Comisión sobre Timbrado</label>
+                            <div class="flex gap-2">
+                                <input type="number" step="0.1" value="1.5" class="bg-white/10 border border-white/20 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 text-white w-full" id="tasaComision">
+                                <button onclick="actualizarTasa()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-semibold transition-all">
+                                    Aplicar
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-indigo-200">
+                            <p>Esta tasa aplica a todas las transacciones de timbrado y compra de folios de todos los Tenedores vigentes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL GESTION LICENCIA -->
+    <div id="modalLicencia" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl mx-4 transform transition-all">
+            <h3 class="text-xl font-outfit font-bold text-slate-900" id="modalTitle">Gestionar Licencia</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Habilita los módulos que este Tenedor puede revender a sus empresas.</p>
+            
+            <input type="hidden" id="targetTenedorId">
+            
+            <div class="space-y-3 mb-6" id="checkboxesModulos">
+                <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                    <input type="checkbox" value="Facturación" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <div>
+                        <span class="text-sm font-semibold text-slate-800 block">Facturación Electrónica</span>
+                        <span class="text-[11px] text-slate-400">Timbrado CFDI, Autofacturación y catálogos.</span>
+                    </div>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                    <input type="checkbox" value="Contabilidad" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <div>
+                        <span class="text-sm font-semibold text-slate-800 block">Contabilidad Inteligente</span>
+                        <span class="text-[11px] text-slate-400">Pólizas automáticas, conciliación bancaria.</span>
+                    </div>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                    <input type="checkbox" value="XMLs" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <div>
+                        <span class="text-sm font-semibold text-slate-800 block">Descarga Masiva XML</span>
+                        <span class="text-[11px] text-slate-400">Descarga directa del portal del SAT en lote.</span>
+                    </div>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                    <input type="checkbox" value="Checador" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <div>
+                        <span class="text-sm font-semibold text-slate-800 block">Checador / Reloj Checador</span>
+                        <span class="text-[11px] text-slate-400">Control de asistencia y geolocalización.</span>
+                    </div>
+                </label>
+                <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 border border-slate-100 cursor-pointer">
+                    <input type="checkbox" value="Leads" class="w-4 h-4 text-indigo-600 rounded border-slate-300 focus:ring-indigo-500">
+                    <div>
+                        <span class="text-sm font-semibold text-slate-800 block">Gestión de Leads / CRM</span>
+                        <span class="text-[11px] text-slate-400">Módulo modular de prospección comercial.</span>
+                    </div>
+                </label>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalLicencia()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="guardarLicencia()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm shadow-indigo-600/10">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL NUEVO TENEDOR -->
+    <div id="modalNuevoTenedor" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl mx-4">
+            <h3 class="text-xl font-outfit font-bold text-slate-900">Agregar Nuevo Tenedor</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Ingresa la información fiscal del Despacho Contable / Distribuidor.</p>
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Nombre Comercial</label>
+                    <input type="text" id="nuevoNombre" placeholder="Ej. Soluciones Fiscales del Norte" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">RFC</label>
+                    <input type="text" id="nuevoRFC" placeholder="Ej. SFN191024XYZ" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalNuevoTenedor()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="crearTenedor()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                    Crear Tenedor
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-indigo-950 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-indigo-800 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+        <span class="text-emerald-400 bg-emerald-400/10 p-1.5 rounded-lg text-xs">✓</span>
+        <span class="text-sm font-semibold" id="toastMessage">Operación realizada con éxito</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let currentTargetContainerId = '';
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function editarModulos(tenedorName, modulosActivos, containerId) {
+            document.getElementById('modalTitle').textContent = `Gestionar Licencia - ${tenedorName}`;
+            document.getElementById('targetTenedorId').value = containerId;
+            currentTargetContainerId = containerId;
+
+            // Desmarcar todos primero
+            const checkboxes = document.querySelectorAll('#checkboxesModulos input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+
+            // Marcar los activos
+            modulosActivos.forEach(mod => {
+                checkboxes.forEach(cb => {
+                    if (cb.value === mod) cb.checked = true;
+                });
+            });
+
+            document.getElementById('modalLicencia').classList.remove('hidden');
+        }
+
+        function cerrarModalLicencia() {
+            document.getElementById('modalLicencia').classList.add('hidden');
+        }
+
+        function guardarLicencia() {
+            const checkboxes = document.querySelectorAll('#checkboxesModulos input[type="checkbox"]');
+            const modulosNuevos = [];
+            checkboxes.forEach(cb => {
+                if (cb.checked) modulosNuevos.push(cb.value);
+            });
+
+            const container = document.getElementById(currentTargetContainerId);
+            container.innerHTML = '';
+            
+            modulosNuevos.forEach(mod => {
+                let badgeClass = 'bg-slate-50 text-slate-700 border-slate-100';
+                if (mod === 'Facturación') badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                if (mod === 'Contabilidad') badgeClass = 'bg-indigo-50 text-indigo-700 border-indigo-100';
+                if (mod === 'XMLs') badgeClass = 'bg-cyan-50 text-cyan-700 border-cyan-100';
+                if (mod === 'Checador') badgeClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                if (mod === 'Leads') badgeClass = 'bg-purple-50 text-purple-700 border-purple-100';
+
+                const span = document.createElement('span');
+                span.className = `badge text-[10px] px-2 py-0.5 rounded-full font-semibold border ${badgeClass}`;
+                span.textContent = mod;
+                container.appendChild(span);
+            });
+
+            cerrarModalLicencia();
+            showToast('Suscripción modular actualizada correctamente.');
+        }
+
+        function mostrarModalNuevoTenedor() {
+            document.getElementById('modalNuevoTenedor').classList.remove('hidden');
+        }
+
+        function cerrarModalNuevoTenedor() {
+            document.getElementById('modalNuevoTenedor').classList.add('hidden');
+        }
+
+        function crearTenedor() {
+            const name = document.getElementById('nuevoNombre').value;
+            const rfc = document.getElementById('nuevoRFC').value;
+
+            if (!name || !rfc) {
+                alert('Por favor rellene todos los campos.');
+                return;
+            }
+
+            const tbody = document.getElementById('tablaTenedores');
+            const randId = 'modules-' + Math.floor(Math.random() * 1000);
+
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50/50 transition-colors';
+            tr.innerHTML = `
+                <td class="py-4">
+                    <div class="font-semibold text-slate-900">${name}</div>
+                    <div class="text-xs text-slate-400">RFC: ${rfc.toUpperCase()}</div>
+                </td>
+                <td class="py-4 font-semibold text-slate-700">0</td>
+                <td class="py-4">
+                    <div class="flex flex-wrap gap-1" id="${randId}">
+                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Facturación</span>
+                    </div>
+                </td>
+                <td class="py-4 font-bold text-slate-800">$0.00</td>
+                <td class="py-4 text-right">
+                    <button onclick="editarModulos('${name}', ['Facturación'], '${randId}')" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
+                        Gestionar Licencia
+                    </button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Increment Total Tenants count
+            const currentTotal = parseInt(document.getElementById('totalTenants').textContent);
+            document.getElementById('totalTenants').textContent = currentTotal + 1;
+
+            cerrarModalNuevoTenedor();
+            showToast(`Tenedor "${name}" registrado exitosamente.`);
+            document.getElementById('nuevoNombre').value = '';
+            document.getElementById('nuevoRFC').value = '';
+        }
+
+        function actualizarTasa() {
+            const tasa = document.getElementById('tasaComision').value;
+            showToast(`Tasa de comisión global ajustada a ${tasa}%`);
+            // Dynamic commission calculation change
+            const baseCommission = 5320.00;
+            const adjusted = (baseCommission * (tasa / 1.5)).toFixed(2);
+            document.getElementById('comisionTotal').textContent = `$${parseFloat(adjusted).toLocaleString('es-MX')}`;
+        }
+    </script>
+</body>
+</html>

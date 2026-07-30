@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Facturación (Tenedor) - SONIC BI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+        }
+        .micro-pop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen text-slate-900 pb-12">
+
+    <!-- DEV NAV BAR (Switch de Roles) -->
+    <div class="bg-slate-900 text-slate-100 py-2.5 px-4 sticky top-0 z-50 border-b border-indigo-900 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+                <span class="inline-flex h-3 w-3 rounded-full bg-emerald-500 animate-ping"></span>
+                <span class="font-outfit font-bold tracking-wider text-emerald-400 font-bold">SONIC BI &middot; DEMO MULTITENANT</span>
+            </div>
+            <div class="flex flex-wrap gap-2 items-center text-xs">
+                <span class="text-slate-400 font-semibold uppercase mr-1">Switch de Roles:</span>
+                <a href="../../Admin_tenant/admin_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [1] SuperAdmin Global
+                </a>
+                <a href="#" class="bg-emerald-600 text-white font-semibold px-3 py-1.5 rounded shadow-sm border border-emerald-500">
+                    [2] Tenedor (Osunar Contadores)
+                </a>
+                <a href="client_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [3] Cliente (Marisquería El Timón)
+                </a>
+                <a href="endclient_sonicbi.html" class="bg-slate-800 text-slate-300 hover:bg-slate-700 font-semibold px-3 py-1.5 rounded transition-all">
+                    [4] Cliente Final (Consumidor)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        <!-- HEADER -->
+        <header class="gradient-bg rounded-3xl p-8 md:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-emerald-500 rounded-full blur-3xl opacity-20"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <div class="bg-emerald-500/25 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3 border border-emerald-400/20">
+                        Portal del Tenedor / Despacho Contable
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-outfit font-extrabold tracking-tight">Osunar Contadores</h1>
+                    <p class="text-emerald-100 mt-1 max-w-xl font-light">Distribución de timbres, control de folios de autofacturación y administración de CSD para tus empresas afiliadas.</p>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-right">
+                    <span class="text-xs text-emerald-300 block uppercase font-semibold">Timbres Totales Disponibles</span>
+                    <span class="text-2xl font-bold font-outfit">24,500</span>
+                    <span class="text-xs text-emerald-400 block mt-1">Suscripción: Activa</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- KPI GRID -->
+        <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Empresas Asignadas</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-slate-900" id="totalEmpresas">4</span>
+                    </div>
+                    <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Timbres Asignados</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-slate-900" id="timbresAsignados">18,000</span>
+                    </div>
+                    <div class="bg-blue-50 text-blue-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 micro-pop transition-all duration-300">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Timbres por Asignar</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-slate-900" id="timbresLibres">6,500</span>
+                    </div>
+                    <div class="bg-amber-50 text-amber-600 p-2.5 rounded-xl">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- EMPRESAS TABLE -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 mb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <h2 class="text-lg font-outfit font-bold text-slate-900">Empresas e Integraciones de Autofacturación</h2>
+                    <p class="text-xs text-slate-500">Asigna folios y verifica la vigencia del Certificado de Sello Digital (CSD) para facturar.</p>
+                </div>
+                <button onclick="mostrarModalEmpresa()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-xs px-4 py-2 rounded-xl transition-all shadow-sm flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Nueva Empresa
+                </button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-xs text-slate-400 font-semibold uppercase">
+                            <th class="py-3">Razón Social / RFC</th>
+                            <th class="py-3">Timbres Asignados</th>
+                            <th class="py-3">Timbres Usados</th>
+                            <th class="py-3">Estatus CSD</th>
+                            <th class="py-3 text-right">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y divide-slate-100" id="tablaEmpresas">
+                        <!-- Marisqueria El Timón -->
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="py-4">
+                                <div class="font-semibold text-slate-900">Marisquería El Timón S.A. de C.V.</div>
+                                <div class="text-xs text-slate-400">RFC: MTI160618JK2</div>
+                            </td>
+                            <td class="py-4 font-semibold text-slate-700" id="timbres-marisqueria">8,000</td>
+                            <td class="py-4 text-slate-500">3,450</td>
+                            <td class="py-4">
+                                <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100" id="csd-marisqueria">
+                                    Vigente hasta 2029
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button onclick="asignarTimbres('Marisquería El Timón', 'timbres-marisqueria')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
+                                        Asignar Timbres
+                                    </button>
+                                    <button onclick="cargarCSD('Marisquería El Timón', 'csd-marisqueria')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border border-emerald-200">
+                                        Cargar CSD
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Zapatería Luna -->
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="py-4">
+                                <div class="font-semibold text-slate-900">Zapatería Luna de Hermosillo</div>
+                                <div class="text-xs text-slate-400">RFC: ZLU140228LM3</div>
+                            </td>
+                            <td class="py-4 font-semibold text-slate-700" id="timbres-zapateria">5,000</td>
+                            <td class="py-4 text-slate-500">4,910</td>
+                            <td class="py-4">
+                                <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-red-50 text-red-700 px-2 py-0.5 rounded-full border border-red-100" id="csd-zapateria">
+                                    Vencido / Por Renovar
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button onclick="asignarTimbres('Zapatería Luna', 'timbres-zapateria')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
+                                        Asignar Timbres
+                                    </button>
+                                    <button onclick="cargarCSD('Zapatería Luna', 'csd-zapateria')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border border-emerald-200">
+                                        Cargar CSD
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <!-- Clínica del Dr. Flores -->
+                        <tr class="hover:bg-slate-50/50 transition-colors">
+                            <td class="py-4">
+                                <div class="font-semibold text-slate-900">Servicios Médicos Flores</div>
+                                <div class="text-xs text-slate-400">RFC: SMF190515OP4</div>
+                            </td>
+                            <td class="py-4 font-semibold text-slate-700" id="timbres-clinica">5,000</td>
+                            <td class="py-4 text-slate-500">120</td>
+                            <td class="py-4">
+                                <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100" id="csd-clinica">
+                                    Sin cargar CSD
+                                </span>
+                            </td>
+                            <td class="py-4 text-right">
+                                <div class="flex justify-end gap-2">
+                                    <button onclick="asignarTimbres('Servicios Médicos Flores', 'timbres-clinica')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
+                                        Asignar Timbres
+                                    </button>
+                                    <button onclick="cargarCSD('Servicios Médicos Flores', 'csd-clinica')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border border-emerald-200">
+                                        Cargar CSD
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL REGISTRO EMPRESA -->
+    <div id="modalEmpresa" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl mx-4">
+            <h3 class="text-xl font-outfit font-bold text-slate-900">Agregar Nueva Empresa</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Registra un nuevo cliente bajo tu administración.</p>
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Razón Social</label>
+                    <input type="text" id="empresaNombre" placeholder="Ej. Comercializadora del Oeste" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">RFC</label>
+                    <input type="text" id="empresaRFC" placeholder="Ej. COE181010QWE" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 uppercase">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Timbres Iniciales</label>
+                    <input type="number" id="empresaTimbres" placeholder="Ej. 1000" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalEmpresa()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="crearEmpresa()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                    Crear Empresa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ASIGNAR TIMBRES -->
+    <div id="modalTimbres" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-sm shadow-2xl mx-4">
+            <h3 class="text-xl font-outfit font-bold text-slate-900">Asignar Timbres</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4" id="timbresModalLabel">Asignar folios adicionales a la empresa.</p>
+            
+            <input type="hidden" id="targetEmpresaTimbresId">
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Cantidad de Timbres</label>
+                    <input type="number" id="cantidadAsignar" value="1000" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalTimbres()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="guardarTimbres()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                    Confirmar
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CARGAR CSD (DRAG AND DROP) -->
+    <div id="modalCSD" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl mx-4">
+            <h3 class="text-xl font-outfit font-bold text-slate-900">Cargar Certificados Digitales (CSD)</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4" id="csdModalLabel">Carga de archivos .key y .cer oficiales.</p>
+            
+            <input type="hidden" id="targetEmpresaCsdId">
+
+            <div class="space-y-4 mb-6">
+                <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer" onclick="simularArchivo('key')">
+                    <div class="text-emerald-500 text-2xl mb-1">🔑</div>
+                    <span class="text-xs font-semibold text-slate-700 block" id="keyLabel">Arrastra o haz clic para subir archivo .key</span>
+                </div>
+                <div class="border-2 border-dashed border-slate-200 rounded-2xl p-6 text-center hover:border-emerald-500 transition-colors cursor-pointer" onclick="simularArchivo('cer')">
+                    <div class="text-emerald-500 text-2xl mb-1">📜</div>
+                    <span class="text-xs font-semibold text-slate-700 block" id="cerLabel">Arrastra o haz clic para subir archivo .cer</span>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña de Clave Privada</label>
+                    <input type="password" id="csdPassword" placeholder="Contraseña de sellos" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalCSD()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="guardarCSD()" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                    Guardar Sellos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-emerald-950 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-emerald-800 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+        <span class="text-emerald-400 bg-emerald-400/10 p-1.5 rounded-lg text-xs">✓</span>
+        <span class="text-sm font-semibold" id="toastMessage">Operación exitosa</span>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        let currentTargetId = '';
+        let fileKeyCargado = false;
+        let fileCerCargado = false;
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, 3000);
+        }
+
+        function mostrarModalEmpresa() {
+            document.getElementById('modalEmpresa').classList.remove('hidden');
+        }
+
+        function cerrarModalEmpresa() {
+            document.getElementById('modalEmpresa').classList.add('hidden');
+        }
+
+        function crearEmpresa() {
+            const name = document.getElementById('empresaNombre').value;
+            const rfc = document.getElementById('empresaRFC').value;
+            const timbres = parseInt(document.getElementById('empresaTimbres').value) || 0;
+            const libres = parseInt(document.getElementById('timbresLibres').textContent);
+
+            if (!name || !rfc) {
+                alert('Ingrese nombre y RFC.');
+                return;
+            }
+
+            if (timbres > libres) {
+                alert('No cuenta con timbres suficientes en su bolsa.');
+                return;
+            }
+
+            const tbody = document.getElementById('tablaEmpresas');
+            const randId = 'timbres-' + Math.floor(Math.random() * 1000);
+            const csdId = 'csd-' + Math.floor(Math.random() * 1000);
+
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50/50 transition-colors';
+            tr.innerHTML = `
+                <td class="py-4">
+                    <div class="font-semibold text-slate-900">${name}</div>
+                    <div class="text-xs text-slate-400">RFC: ${rfc.toUpperCase()}</div>
+                </td>
+                <td class="py-4 font-semibold text-slate-700" id="${randId}">${timbres.toLocaleString()}</td>
+                <td class="py-4 text-slate-500">0</td>
+                <td class="py-4">
+                    <span class="inline-flex items-center gap-1 text-[11px] font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full border border-amber-100" id="${csdId}">
+                        Sin cargar CSD
+                    </span>
+                </td>
+                <td class="py-4 text-right">
+                    <div class="flex justify-end gap-2">
+                        <button onclick="asignarTimbres('${name}', '${randId}')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors">
+                            Asignar Timbres
+                        </button>
+                        <button onclick="cargarCSD('${name}', '${csdId}')" class="bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors border border-emerald-200">
+                            Cargar CSD
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(tr);
+
+            // Update KPIs
+            document.getElementById('totalEmpresas').textContent = parseInt(document.getElementById('totalEmpresas').textContent) + 1;
+            document.getElementById('timbresAsignados').textContent = (parseInt(document.getElementById('timbresAsignados').textContent.replace(/,/g, '')) + timbres).toLocaleString();
+            document.getElementById('timbresLibres').textContent = (libres - timbres).toLocaleString();
+
+            cerrarModalEmpresa();
+            showToast(`Empresa "${name}" dada de alta en SONIC BI.`);
+            
+            document.getElementById('empresaNombre').value = '';
+            document.getElementById('empresaRFC').value = '';
+            document.getElementById('empresaTimbres').value = '';
+        }
+
+        function asignarTimbres(empresaName, timbresCellId) {
+            document.getElementById('timbresModalLabel').textContent = `Asignar timbres a: ${empresaName}`;
+            document.getElementById('targetEmpresaTimbresId').value = timbresCellId;
+            document.getElementById('modalTimbres').classList.remove('hidden');
+        }
+
+        function cerrarModalTimbres() {
+            document.getElementById('modalTimbres').classList.add('hidden');
+        }
+
+        function guardarTimbres() {
+            const cellId = document.getElementById('targetEmpresaTimbresId').value;
+            const qty = parseInt(document.getElementById('cantidadAsignar').value) || 0;
+            const libres = parseInt(document.getElementById('timbresLibres').textContent.replace(/,/g, ''));
+
+            if (qty > libres) {
+                alert('No posees suficientes timbres en tu bolsa.');
+                return;
+            }
+
+            const cell = document.getElementById(cellId);
+            const currentVal = parseInt(cell.textContent.replace(/,/g, '')) || 0;
+            cell.textContent = (currentVal + qty).toLocaleString();
+
+            document.getElementById('timbresAsignados').textContent = (parseInt(document.getElementById('timbresAsignados').textContent.replace(/,/g, '')) + qty).toLocaleString();
+            document.getElementById('timbresLibres').textContent = (libres - qty).toLocaleString();
+
+            cerrarModalTimbres();
+            showToast('Timbres asignados con éxito.');
+        }
+
+        function cargarCSD(empresaName, csdCellId) {
+            document.getElementById('csdModalLabel').textContent = `Cargar sellos digitales para: ${empresaName}`;
+            document.getElementById('targetEmpresaCsdId').value = csdCellId;
+            document.getElementById('modalCSD').classList.remove('hidden');
+            fileKeyCargado = false;
+            fileCerCargado = false;
+            document.getElementById('keyLabel').textContent = "Arrastra o haz clic para subir archivo .key";
+            document.getElementById('cerLabel').textContent = "Arrastra o haz clic para subir archivo .cer";
+            document.getElementById('csdPassword').value = '';
+        }
+
+        function cerrarModalCSD() {
+            document.getElementById('modalCSD').classList.add('hidden');
+        }
+
+        function simularArchivo(tipo) {
+            if (tipo === 'key') {
+                fileKeyCargado = true;
+                document.getElementById('keyLabel').textContent = "✓ Certificado de Clave Privada cargado (CSD.key)";
+            } else {
+                fileCerCargado = true;
+                document.getElementById('cerLabel').textContent = "✓ Certificado Digital cargado (CSD.cer)";
+            }
+        }
+
+        function guardarCSD() {
+            const cellId = document.getElementById('targetEmpresaCsdId').value;
+            const pwd = document.getElementById('csdPassword').value;
+
+            if (!fileKeyCargado || !fileCerCargado || !pwd) {
+                alert('Por favor suba ambos archivos y capture su contraseña.');
+                return;
+            }
+
+            const cell = document.getElementById(cellId);
+            cell.className = "inline-flex items-center gap-1 text-[11px] font-semibold bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full border border-emerald-100";
+            cell.textContent = "Vigente hasta 2030";
+
+            cerrarModalCSD();
+            showToast('Certificados CSD cargados y validados correctamente ante el SAT.');
+        }
+    </script>
+</body>
+</html>

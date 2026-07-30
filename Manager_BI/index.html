@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AXIOMAS Manager BI | CRM, BPM & Control Operativo para Empresas de Servicios</title>
+    <meta name="description" content="AXIOMAS Manager BI - Plataforma especializada en gestión de procesos, CRM de ventas, control técnico en campo y firma digital por Biaxiomas.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        axiomas: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            900: '#1e1b4b',
+                            950: '#0b0f19',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-header {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .hero-glow {
+            background: radial-gradient(circle at 50% 30%, rgba(99, 102, 241, 0.25) 0%, rgba(16, 185, 129, 0.1) 40%, rgba(11, 15, 25, 0) 70%);
+        }
+        .gradient-text {
+            background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .pop-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .pop-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 32px -10px rgba(99, 102, 241, 0.25);
+        }
+    </style>
+</head>
+<body class="bg-axiomas-950 text-slate-100 font-sans antialiased selection:bg-axiomas-500 selection:text-white min-h-screen flex flex-col">
+
+    <!-- GLOBAL NAVBAR -->
+    <header class="glass-header fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Logo & Brand -->
+            <a href="../index.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-axiomas-600 via-indigo-500 to-emerald-400 p-0.5 shadow-lg shadow-axiomas-500/20 group-hover:scale-105 transition-transform">
+                    <div class="w-full h-full bg-axiomas-950 rounded-[10px] flex items-center justify-center">
+                        <span class="font-outfit font-black text-xl text-indigo-400">M</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-outfit font-extrabold text-xl tracking-tight text-white">Manager <span class="text-indigo-400">BI</span></span>
+                        <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">AXIOMAS BI</span>
+                    </div>
+                    <span class="text-xs text-slate-400 font-medium block">biaxiomas.com/Managerbi</span>
+                </div>
+            </a>
+
+            <!-- Nav Links -->
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#caracteristicas" class="hover:text-indigo-400 transition-colors">Características</a>
+                <a href="#planes" class="hover:text-indigo-400 transition-colors">Planes ($ USD)</a>
+                <a href="#demo" class="hover:text-indigo-400 transition-colors">Demo en Vivo</a>
+            </nav>
+
+            <!-- Actions CTA -->
+            <div class="flex items-center gap-3">
+                <a href="../index.html" class="text-xs text-slate-400 hover:text-white transition-colors hidden sm:flex items-center gap-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Volver al Inicio
+                </a>
+                <a href="https://mantest.biaxiomas.com/index3.html" class="bg-gradient-to-r from-axiomas-600 to-emerald-500 hover:from-axiomas-500 hover:to-emerald-400 text-white font-semibold text-sm px-5 py-2.5 rounded-xl shadow-lg shadow-axiomas-600/30 transition-all hover:scale-[1.02] flex items-center gap-2">
+                    <span>Probar Demo en Vivo</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-28 pb-16 md:pt-36 md:pb-20 overflow-hidden hero-glow">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center max-w-4xl mx-auto">
+                
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 bg-indigo-950/80 border border-indigo-500/30 rounded-full px-4 py-1.5 mb-6 shadow-inner">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    <span class="text-xs font-semibold text-indigo-200">Plataforma de Gestión Operativa & CRM</span>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="text-3xl sm:text-5xl md:text-6xl font-outfit font-black tracking-tight text-white leading-[1.15] mb-5">
+                    Gestión Integral de Procesos y <span class="gradient-text">Empresas de Servicios</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-base sm:text-lg text-slate-300 font-light max-w-3xl mx-auto leading-relaxed mb-8">
+                    <strong class="text-white font-semibold">AXIOMAS Manager BI</strong> integra control de flujo de tareas, seguimiento de prospectos, app móvil para técnicos en campo y firmas digitales de conformidad.
+                </p>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
+                    <a href="https://mantest.biaxiomas.com/index3.html" class="w-full sm:w-auto bg-gradient-to-r from-axiomas-600 via-indigo-600 to-emerald-500 hover:from-axiomas-500 hover:to-emerald-400 text-white font-bold text-sm px-8 py-3.5 rounded-2xl shadow-xl transition-all hover:scale-105 flex items-center justify-center gap-2.5">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        Probar Demo en Vivo (mantest)
+                    </a>
+                    <a href="#planes" class="w-full sm:w-auto bg-slate-900/90 hover:bg-slate-800 text-slate-200 border border-slate-700 font-semibold text-sm px-8 py-3.5 rounded-2xl backdrop-blur-md transition-all flex items-center justify-center gap-2">
+                        Ver Planes y Precios ($ USD)
+                    </a>
+                </div>
+
+                <!-- Metrics Summary -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left">
+                    <div class="glass-card rounded-2xl p-4 border border-white/10">
+                        <div class="text-xs text-indigo-300 font-semibold uppercase tracking-wider">Flujos BPM</div>
+                        <div class="text-xl sm:text-2xl font-bold font-outfit text-white mt-1">Control Total</div>
+                        <div class="text-[11px] text-emerald-400 mt-0.5">Estatus de Etapas en Vivo</div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-4 border border-white/10">
+                        <div class="text-xs text-emerald-300 font-semibold uppercase tracking-wider">App Móvil</div>
+                        <div class="text-xl sm:text-2xl font-bold font-outfit text-white mt-1">Firma Digital</div>
+                        <div class="text-[11px] text-emerald-400 mt-0.5">Conformidad en Campo</div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-4 border border-white/10">
+                        <div class="text-xs text-cyan-300 font-semibold uppercase tracking-wider">Recurrencia</div>
+                        <div class="text-xl sm:text-2xl font-bold font-outfit text-white mt-1">Automatizada</div>
+                        <div class="text-[11px] text-cyan-400 mt-0.5">Programación de Tareas</div>
+                    </div>
+                    <div class="glass-card rounded-2xl p-4 border border-white/10">
+                        <div class="text-xs text-amber-300 font-semibold uppercase tracking-wider">Comunicación</div>
+                        <div class="text-xl sm:text-2xl font-bold font-outfit text-white mt-1">Chatter Live</div>
+                        <div class="text-[11px] text-amber-400 mt-0.5">WebSockets & Bitácora</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CARACTERÍSTICAS CLAVE -->
+    <section id="caracteristicas" class="py-14 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <div class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2">
+                    Funcionalidades Destacadas
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-outfit font-extrabold text-white tracking-tight mb-2">
+                    Todo lo que necesita tu empresa para operar
+                </h2>
+                <p class="text-slate-400 text-sm sm:text-base">
+                    Diseñado específicamente para resolver los retos operativos de firmas de consultoría, despachos y empresas de servicios.
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Feature 1 -->
+                <div class="glass-card rounded-3xl p-7 pop-card border-t-4 border-t-indigo-500">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-outfit font-bold text-white mb-2">Chatter & Bitácora Automatizada</h3>
+                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                        Registro cronológico de eventos por servicio. Notificaciones en tiempo real cuando se asigna, inicia o concluye una tarea operativa.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="glass-card rounded-3xl p-7 pop-card border-t-4 border-t-emerald-500">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-outfit font-bold text-white mb-2">Aplicación Móvil & Firma Digital</h3>
+                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                        Aplicación móvil para técnicos en campo con captura de firma manuscrita digital de recepción y reporte de incidencias en sitio.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="glass-card rounded-3xl p-7 pop-card border-t-4 border-t-cyan-500">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-5">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-outfit font-bold text-white mb-2">Motor de Recurrencia de Tareas</h3>
+                    <p class="text-slate-400 text-xs sm:text-sm leading-relaxed">
+                        Programación automatizada periódica (diaria, semanal, mensual) para contratos de mantenimiento o proyectos de servicio continuo.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN DE PLANES DE VENTA EN DÓLARES ($ USD) -->
+    <section id="planes" class="py-14 bg-slate-900/40 border-t border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <div class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2">
+                    Planes Transparentes y Flexibles
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-outfit font-extrabold text-white tracking-tight mb-2">
+                    Planes de Suscripción en Dólares ($ USD)
+                </h2>
+                <p class="text-slate-400 text-sm sm:text-base">
+                    Capacidad para hasta 20 usuarios en ambos planes. Íconos uniformes en todas las características.
+                </p>
+            </div>
+
+            <!-- Pricing Grid: 2 Planes en USD con íconos Check/Cross consistentes -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                
+                <!-- PLAN 1: PLAN STARTER ($250 USD) -->
+                <div class="glass-card rounded-3xl p-8 pop-card flex flex-col justify-between border-t-4 border-t-indigo-500 relative">
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs text-indigo-300 font-bold uppercase tracking-wider bg-indigo-500/20 px-3 py-1 rounded-full border border-indigo-500/30">Plan Starter</span>
+                            <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">10 Procesos Mensuales</span>
+                        </div>
+
+                        <h3 class="text-2xl font-outfit font-extrabold text-white mb-2">Manager BI Starter</h3>
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+                            Para empresas que gestionan hasta 10 procesos de servicio al mes con su equipo de trabajo.
+                        </p>
+
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-4xl font-black font-outfit text-white">$250.00</span>
+                                <span class="text-xs text-slate-400 font-semibold">USD / mes</span>
+                            </div>
+                            <span class="text-[11px] text-indigo-300 mt-1 block font-medium">Hasta 20 usuarios incluidos &middot; Sin permanencia</span>
+                        </div>
+
+                        <ul class="text-xs text-slate-300 space-y-3.5 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Hasta <strong>10 procesos mensuales</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Hasta <strong>20 usuarios máximo</strong> incluidos</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>Incluye Aplicación Móvil</strong> en campo</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>Incluye Módulo CRM de Ventas</strong> y prospectos</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Adjunto de evidencia: <strong>1 foto por proceso</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5 text-slate-500">
+                                <svg class="w-4 h-4 text-slate-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>Sin Dashboard de Analítica de Eficiencia</span>
+                            </li>
+                            <li class="flex items-center gap-2.5 text-slate-500">
+                                <svg class="w-4 h-4 text-slate-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                <span>Sin Portal del Cliente ni Chatbot de Soporte</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button onclick="openPlanModal('Plan Starter ($250 USD/mes - 10 Procesos)')" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs py-3.5 px-4 rounded-xl border border-slate-700 transition-all flex items-center justify-center gap-2">
+                            <span>Solicitar Plan Starter ($250 USD)</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- PLAN 2: PLAN PRO ($299 USD) -->
+                <div class="glass-card rounded-3xl p-8 pop-card flex flex-col justify-between border-t-4 border-t-emerald-500 relative bg-slate-900/50">
+                    <div class="absolute -top-3 right-6 bg-gradient-to-r from-emerald-500 to-indigo-500 text-white text-[10px] font-black uppercase px-3 py-1 rounded-full shadow-md">
+                        Recomendado
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-xs text-emerald-300 font-bold uppercase tracking-wider bg-emerald-500/20 px-3 py-1 rounded-full border border-emerald-500/30">Plan Pro</span>
+                            <span class="text-xs text-emerald-400 font-semibold bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/30">100 Procesos Mensuales</span>
+                        </div>
+
+                        <h3 class="text-2xl font-outfit font-extrabold text-white mb-2">Manager BI Pro</h3>
+                        <p class="text-slate-400 text-xs sm:text-sm leading-relaxed mb-6">
+                            Para empresas que requieren alto volumen de procesos, analítica avanzada, portal para clientes y chatbot de atención.
+                        </p>
+
+                        <div class="mb-6">
+                            <div class="flex items-baseline gap-1">
+                                <span class="text-4xl font-black font-outfit text-white">$299.00</span>
+                                <span class="text-xs text-slate-400 font-semibold">USD / mes</span>
+                            </div>
+                            <span class="text-[11px] text-emerald-400 mt-1 block font-medium">Hasta 20 usuarios incluidos &middot; Full Features</span>
+                        </div>
+
+                        <ul class="text-xs text-slate-300 space-y-3.5 mb-8">
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Hasta <strong>100 procesos mensuales</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Hasta <strong>20 usuarios máximo</strong> incluidos</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>Incluye Aplicación Móvil</strong> + <strong>Módulo CRM</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span>Adjunto de evidencia: <strong>hasta 5 fotos por proceso</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>Dashboard de Analítica de Eficiencia de Empresa</strong></span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>Portal del Cliente</strong> (alta y seguimiento directo de tickets)</span>
+                            </li>
+                            <li class="flex items-center gap-2.5">
+                                <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                <span><strong>Chatbot de Soporte al Cliente</strong> en tiempo real</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <button onclick="openPlanModal('Plan Pro ($299 USD/mes - 100 Procesos)')" class="w-full bg-gradient-to-r from-axiomas-600 via-indigo-600 to-emerald-500 hover:from-axiomas-500 hover:to-emerald-400 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                            <span>Solicitar Plan Pro ($299 USD)</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- BANNER DE DEMO EN VIVO -->
+    <section id="demo" class="py-14 relative">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-card rounded-3xl p-8 sm:p-10 border border-indigo-500/30 text-center relative overflow-hidden">
+                <div class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3">
+                    Sistema Totalmente Operativo
+                </div>
+
+                <h2 class="text-3xl sm:text-4xl font-outfit font-extrabold text-white tracking-tight mb-3">
+                    Prueba el Sistema Manager BI en Tiempo Real
+                </h2>
+                <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto mb-6 font-light">
+                    Explora el tablero Kanban, la firma digital y la app en nuestro entorno activo.
+                </p>
+
+                <div class="flex justify-center">
+                    <a href="https://mantest.biaxiomas.com/index3.html" class="bg-gradient-to-r from-axiomas-600 via-indigo-600 to-emerald-500 hover:from-axiomas-500 hover:to-emerald-400 text-white font-bold text-sm px-8 py-4 rounded-2xl shadow-xl shadow-indigo-500/20 transition-all hover:scale-105 flex items-center gap-2">
+                        <span>Ingresar a mantest.biaxiomas.com</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 text-slate-400 text-xs py-8 text-center mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div>
+                &copy; 2026 Biaxiomas. Todos los derechos reservados. AXIOMAS Manager BI.
+            </div>
+            <div>
+                Contacto Directo: <a href="mailto:bi@biaxiomas.com" class="text-indigo-300 underline font-mono">bi@biaxiomas.com</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL SOLICITAR PLAN / DEMO -->
+    <div id="planModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/80 backdrop-blur-md p-4 transition-all">
+        <div class="glass-card rounded-3xl p-6 sm:p-8 max-w-lg w-full border border-indigo-500/30 shadow-2xl relative">
+            <button onclick="closePlanModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white p-2 rounded-xl hover:bg-white/10 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+
+            <div class="mb-5">
+                <div class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-2">Manager BI &middot; Contratación</div>
+                <h3 class="text-2xl font-outfit font-extrabold text-white" id="modalPlanTitle">Solicitar Plan</h3>
+                <p class="text-xs text-slate-300 mt-1">Completa tus datos para brindarte atención y alta inmediata (<strong class="text-indigo-300 font-mono">bi@biaxiomas.com</strong>).</p>
+            </div>
+
+            <form onsubmit="handlePlanSubmit(event)" class="space-y-3.5">
+                <input type="hidden" id="selectedPlanTarget" value="Plan Starter ($250 USD)">
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Nombre Completo</label>
+                    <input type="text" id="planName" required placeholder="Ej. Lic. Carlos Mendoza" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Empresa</label>
+                    <input type="text" id="planCompany" required placeholder="Ej. Mendoza & Asociados" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Correo Electrónico</label>
+                    <input type="email" id="planEmail" required placeholder="carlos@empresa.com" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1">Teléfono de Contacto</label>
+                    <input type="tel" id="planPhone" placeholder="(+52) 667 123 4567" class="w-full bg-slate-900 border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <button type="submit" class="w-full bg-gradient-to-r from-axiomas-600 via-indigo-600 to-emerald-500 hover:from-axiomas-500 hover:to-emerald-400 text-white font-bold text-sm py-3 px-4 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 mt-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                    <span>Enviar Correo a bi@biaxiomas.com</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openPlanModal(planName) {
+            document.getElementById('selectedPlanTarget').value = planName;
+            document.getElementById('modalPlanTitle').innerText = `Solicitar - ${planName}`;
+            document.getElementById('planModal').classList.remove('hidden');
+        }
+
+        function closePlanModal() {
+            document.getElementById('planModal').classList.add('hidden');
+        }
+
+        function handlePlanSubmit(e) {
+            e.preventDefault();
+            const plan = document.getElementById('selectedPlanTarget').value;
+            const name = document.getElementById('planName').value;
+            const company = document.getElementById('planCompany').value;
+            const email = document.getElementById('planEmail').value;
+            const phone = document.getElementById('planPhone').value;
+
+            const subject = encodeURIComponent(`Solicitud Manager BI [${plan}] - ${company}`);
+            const body = encodeURIComponent(`Nombre: ${name}\nEmpresa: ${company}\nCorreo: ${email}\nTeléfono: ${phone}\nPlan de Interés: ${plan}`);
+
+            window.location.href = `mailto:bi@biaxiomas.com?subject=${subject}&body=${body}`;
+            alert('Se abrirá tu cliente de correo para enviar la solicitud a bi@biaxiomas.com');
+            closePlanModal();
+        }
+    </script>
+</body>
+</html>
