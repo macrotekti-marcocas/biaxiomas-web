@@ -1,0 +1,15 @@
+# Ignorar subdirectorios de módulos que tienen o tendrán sus propios repositorios independientes
+/Admin_tenant/
+/Checador_BI/
+/Contable_BI/
+/Factura_BI/
+/Manager_BI/
+/Xml_BI/
+/Demo/
+
+# Ignorar archivos locales del sistema y de editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
