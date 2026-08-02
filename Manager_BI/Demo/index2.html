@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Clientes - SONIC BI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        outfit: ['Outfit', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+        .gradient-bg {
+            background: radial-gradient(circle at 10% 20%, rgb(91, 56, 222) 0%, rgb(42, 28, 102) 90.2%);
+        }
+        .micro-pop:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.2);
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans min-h-screen text-slate-900 pb-12">
+
+
+
+    <!-- MAIN CONTAINER -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+        
+        <!-- HEADER -->
+        <header class="gradient-bg rounded-3xl p-8 md:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
+            <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500 rounded-full blur-3xl opacity-35"></div>
+            <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 bg-white/10 rounded-2xl flex items-center justify-center border border-white/10 shadow-md">
+                        <i data-lucide="zap" class="text-white w-8 h-8"></i>
+                    </div>
+                    <div>
+                        <div class="bg-indigo-500/30 text-indigo-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-1.5 border border-indigo-400/20">
+                            Corporativo Tiendas Norte
+                        </div>
+                        <h1 class="text-3xl font-outfit font-extrabold tracking-tight">Portal de Soporte & Facturación</h1>
+                        <p class="text-indigo-200 mt-1 max-w-xl font-light text-sm">Gestiona reportes técnicos y facturas emitidas por tu cliente intermedio al instante.</p>
+                    </div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10 text-right">
+                    <span class="text-xs text-indigo-300 block uppercase font-semibold">ID Cliente</span>
+                    <span class="text-2xl font-bold font-outfit">CTN-8809</span>
+                    <span class="text-xs text-emerald-400 block mt-1">Cuenta: Activa</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN LAYOUT -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- LEFT COLUMN (70%) -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- REPORT ISSUE FORM -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 relative overflow-hidden micro-pop transition-all duration-300">
+                    <div class="relative z-10">
+                        <h2 class="text-lg font-outfit font-bold text-slate-900 mb-1 flex items-center gap-2">
+                            <i data-lucide="edit-3" class="w-5 h-5 text-indigo-600"></i>
+                            Reportar Nueva Falla
+                        </h2>
+                        <p class="text-xs text-slate-500 mb-4">¿Tienes un problema con tu servicio o equipo? Repórtalo y enviaremos a un técnico de inmediato.</p>
+                        
+                        <form id="ticket-form" class="flex flex-col gap-4">
+                            <input type="text" id="ticket-input" placeholder="Ej: Falla en cámara de Sucursal 3" required
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                            
+                            <div class="flex flex-col gap-2">
+                                <label class="text-xs font-semibold text-slate-600">Clasificación de Urgencia:</label>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                                    <label class="relative flex items-center cursor-pointer rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:border-indigo-500 hover:bg-indigo-50/50 transition-colors">
+                                        <input type="radio" name="urgencia" value="Urgente Inmediato" class="mr-2 mt-0.5 accent-indigo-600" required>
+                                        <span class="text-xs font-medium text-slate-700">Urgente Inmediato</span>
+                                    </label>
+                                    <label class="relative flex items-center cursor-pointer rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:border-indigo-500 hover:bg-indigo-50/50 transition-colors">
+                                        <input type="radio" name="urgencia" value="Urgente Hoy" class="mr-2 mt-0.5 accent-indigo-600" required>
+                                        <span class="text-xs font-medium text-slate-700">Urgente Hoy</span>
+                                    </label>
+                                    <label class="relative flex items-center cursor-pointer rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:border-indigo-500 hover:bg-indigo-50/50 transition-colors">
+                                        <input type="radio" name="urgencia" value="Durante el día" class="mr-2 mt-0.5 accent-indigo-600" required>
+                                        <span class="text-xs font-medium text-slate-700">Durante el día</span>
+                                    </label>
+                                    <label class="relative flex items-center cursor-pointer rounded-xl border border-slate-200 bg-white p-3 shadow-sm hover:border-indigo-500 hover:bg-indigo-50/50 transition-colors">
+                                        <input type="radio" name="urgencia" value="Durante la semana" class="mr-2 mt-0.5 accent-indigo-600" required>
+                                        <span class="text-xs font-medium text-slate-700">Durante la semana</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-2.5 rounded-xl transition-all flex items-center justify-center whitespace-nowrap shadow-sm shadow-indigo-600/10 mt-2 w-full sm:w-auto self-end text-xs">
+                                <i data-lucide="send" class="w-4 h-4 mr-2"></i> Enviar Reporte
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- ACTIVE TICKETS -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                        <h2 class="text-sm font-outfit font-bold text-indigo-950 flex items-center">
+                            <i data-lucide="activity" class="w-5 h-5 mr-2 text-indigo-600"></i>
+                            Tickets y Solicitudes Activas
+                        </h2>
+                        <span class="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-100">SLA 4 Horas</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-400 uppercase bg-white border-b border-slate-100">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">Ticket / Asunto</th>
+                                    <th class="px-6 py-3 font-semibold">Fecha Reporte</th>
+                                    <th class="px-6 py-3 font-semibold text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tickets-tbody" class="divide-y divide-slate-100 text-slate-700">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- BILLING & INVOICES -->
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden"
+                         data-demo-guide="Pasarela de pagos en línea integrada con el ERP central.">
+                    <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                        <h2 class="text-sm font-outfit font-bold text-indigo-950 flex items-center">
+                            <i data-lucide="file-text" class="w-5 h-5 mr-2 text-indigo-600"></i>
+                            Historial de Facturación y Estado de Cuenta
+                        </h2>
+                    </div>
+                    <div class="p-6">
+                        <div id="invoices-container" class="space-y-3">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- RIGHT COLUMN (30%) - AI CHATBOT -->
+            <div class="space-y-6"
+                 data-demo-guide="Asistente Virtual con NLP.">
+                
+                <section class="bg-white rounded-2xl shadow-sm border border-slate-100 flex flex-col h-[600px] overflow-hidden">
+                    
+                    <!-- Chat Header -->
+                    <div class="bg-gradient-to-r from-indigo-900 to-indigo-950 px-6 py-4 text-white">
+                        <div class="flex items-center justify-between mb-1">
+                            <h2 class="text-sm font-outfit font-bold flex items-center">
+                                <i data-lucide="bot" class="w-5 h-5 mr-2 text-indigo-400"></i>
+                                Soporte Inteligente AI
+                            </h2>
+                            <span class="flex h-3.5 w-3.5 relative">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-emerald-500"></span>
+                            </span>
+                        </div>
+                        <p class="text-[10px] text-indigo-200 uppercase font-semibold">Respuesta automatizada 24/7</p>
+                    </div>
+
+                    <!-- Chat History -->
+                    <div id="chat-history" class="flex-grow overflow-y-auto p-4 space-y-4 bg-slate-50/50 text-xs">
+                        <!-- Initial Message -->
+                        <div class="flex items-start max-w-[90%]">
+                            <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center mr-2 flex-shrink-0 border border-indigo-100">
+                                <i data-lucide="bot" class="w-4 h-4 text-indigo-600"></i>
+                            </div>
+                            <div class="bg-white border border-slate-100 p-3 rounded-2xl rounded-tl-sm shadow-sm text-slate-700">
+                                <p>Hola, soy el asistente virtual de SONICBI. ¿En qué te puedo ayudar hoy? Puedes escribir tu duda o seleccionar una de las preguntas frecuentes abajo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div class="p-4 border-t border-slate-100 bg-white">
+                        
+                        <!-- Quick Actions -->
+                        <div class="flex flex-wrap gap-2 mb-3">
+                            <button onclick="fillChatInput('¿Cómo armar una alarma recientemente instalada por nuestra empresa?')" class="text-[10px] font-semibold bg-indigo-50 hover:bg-indigo-100 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-full transition-colors text-left max-w-full">
+                                ¿Cómo armar el panel de alarma?
+                            </button>
+                            <button onclick="fillChatInput('Necesito una copia de mi última factura')" class="text-[10px] font-semibold bg-slate-50 hover:bg-slate-100 text-slate-600 border border-slate-200 px-3 py-1.5 rounded-full transition-colors truncate max-w-full">
+                                Copia de factura
+                            </button>
+                        </div>
+
+                        <!-- Form -->
+                        <form id="chat-form" onsubmit="sendChatMessage(event)" class="flex space-x-2">
+                            <input type="text" id="chat-input" placeholder="Escribe tu consulta..." required autocomplete="off"
+                                class="flex-grow bg-slate-50 border border-slate-200 rounded-full px-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-shadow">
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white w-9 h-9 rounded-full flex items-center justify-center shadow-sm transition-colors flex-shrink-0">
+                                <i data-lucide="send" class="w-4 h-4 -ml-0.5 mt-0.5"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                </section>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3"></div>
+
+    <script src="app2.js"></script>
+    <script>
+        // Initialize lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SONICBI - Advanced BPM & BI Platform</title>
+    
+    <!-- Tailwind CSS (Tailwind Play CDN for demo purposes) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            400: '#60a5fa',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        },
+                        dark: {
+                            bg: '#0f172a', // slate-900
+                            card: '#1e293b', // slate-800
+                            border: '#334155' // slate-700
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-slate-50 dark:bg-dark-bg text-slate-800 dark:text-slate-200 font-sans antialiased overflow-hidden flex h-screen">
+
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-slate-900/50 z-40 hidden md:hidden transition-opacity" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="w-64 bg-white dark:bg-dark-card border-r border-slate-200 dark:border-dark-border flex flex-col transition-transform duration-300 absolute inset-y-0 left-0 z-50 transform -translate-x-full md:relative md:translate-x-0">
+        <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-dark-border">
+            <i data-lucide="zap" class="text-brand-500 mr-2 w-6 h-6"></i>
+            <span class="text-xl font-bold tracking-wider text-slate-900 dark:text-white">SONICBI<span class="text-brand-500">.</span></span>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4">
+            <ul class="space-y-1 px-3">
+                <li>
+                    <a href="#" data-view="dashboard" class="nav-btn active flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5 mr-3"></i>
+                        Dashboard Principal
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="report-builder" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5 mr-3"></i>
+                        Creador de Reportes
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="crm" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="users" class="w-5 h-5 mr-3"></i>
+                        CRM / Clientes
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="quotes" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="file-signature" class="w-5 h-5 mr-3"></i>
+                        Cotizaciones
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="bpm" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="git-merge" class="w-5 h-5 mr-3"></i>
+                        Motor de Procesos (BPM)
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="tasks" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="check-square" class="w-5 h-5 mr-3"></i>
+                        Mis Pendientes
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="purchases" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="shopping-cart" class="w-5 h-5 mr-3"></i>
+                        Control de Compras
+                    </a>
+                </li>
+                <li class="pt-4 pb-2">
+                    <p class="px-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Operación & Talento</p>
+                </li>
+                <li>
+                    <a href="#" data-view="hr" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="contact-2" class="w-5 h-5 mr-3"></i>
+                        Recursos Humanos (RH)
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="comm" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="message-square" class="w-5 h-5 mr-3"></i>
+                        Comunicaciones
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-view="gps" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="map-pin" class="w-5 h-5 mr-3"></i>
+                        Rastreador GPS
+                    </a>
+                </li>
+                <li class="pt-4 pb-2">
+                    <p class="px-3 text-xs font-semibold text-slate-500 dark:text-slate-500 uppercase tracking-wider">Simuladores</p>
+                </li>
+                <li>
+                    <a href="#" data-view="mobileapp" class="nav-btn flex items-center px-3 py-2.5 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-brand-500/10 hover:text-brand-500 transition-colors">
+                        <i data-lucide="smartphone" class="w-5 h-5 mr-3 text-brand-400"></i>
+                        App Móvil (Técnicos)
+                    </a>
+                </li>
+                <!-- Remove original bpm/tasks/predictive below since we reorganized -->
+            </ul>
+        </nav>
+        
+        <div class="p-4 border-t border-slate-200 dark:border-dark-border">
+            <div class="flex items-center">
+                <div class="w-8 h-8 rounded-full bg-brand-500 flex items-center justify-center text-white font-bold">
+                    SA
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm font-medium text-slate-900 dark:text-white">Super Admin</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400">Telecom Global Demo</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col h-screen overflow-hidden bg-slate-50 dark:bg-dark-bg relative">
+        <!-- Topbar -->
+        <header class="h-16 flex items-center justify-between px-4 md:px-8 border-b border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card/50 backdrop-blur-sm z-10 flex-shrink-0">
+            <div class="flex items-center">
+                <button onclick="toggleSidebar()" class="md:hidden mr-3 p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors" title="Abrir Menú">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <h2 id="view-title" class="text-lg font-semibold text-slate-900 dark:text-white">Dashboard Principal</h2>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleTheme()" class="flex items-center justify-center p-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors" title="Alternar Tema">
+                    <i data-lucide="moon" id="theme-icon" class="w-4 h-4"></i>
+                </button>
+                <button onclick="resetDemo()" class="hidden md:flex items-center px-3 py-1.5 bg-slate-200 dark:bg-slate-700 hover:bg-slate-600 text-white text-xs font-medium rounded transition-colors">
+                    <i data-lucide="refresh-cw" class="w-3 h-3 mr-1.5"></i> Reiniciar Demo
+                </button>
+                <button class="relative p-2 text-slate-600 dark:text-slate-400 hover:text-white transition-colors" title="Notificaciones">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- View Container -->
+        <div class="flex-1 overflow-y-auto p-4 md:p-8 view-container relative">
+            
+            <!-- VIEW: Dashboard -->
+            <section id="view-dashboard" class="view-section active space-y-6">
+                <!-- Alerts Feed (ML Anomalies) -->
+                <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg"
+                     data-demo-guide="Motor de Machine Learning (ML) que detecta patrones inusuales antes de que se conviertan en problemas. Utilidad: En lugar de esperar a que un cliente se queje, la IA detecta que el 'Nodo 4' está perdiendo paquetes y despacha un técnico proactivamente.">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="bot" class="text-brand-500 mr-2 w-5 h-5"></i>
+                        <h3 class="font-medium text-slate-900 dark:text-white">Alertas de Anomalías por IA</h3>
+                    </div>
+                    <div id="alerts-container" class="space-y-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- B2B Tickets Feed -->
+                <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg"
+                     data-demo-guide="Buzón de entrada en tiempo real de tickets urgentes reportados por clientes B2B. Utilidad: Permite visibilidad inmediata de problemas críticos.">
+                    <div class="flex items-center mb-4">
+                        <i data-lucide="inbox" class="text-brand-500 mr-2 w-5 h-5"></i>
+                        <h3 class="font-medium text-slate-900 dark:text-white">Alertas de Ticket portal de cliente</h3>
+                    </div>
+                    <div id="tickets-b2b-container" class="space-y-3">
+                        <p class="text-sm text-slate-500 italic">No hay tickets urgentes reportados recientemente.</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Gauge -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg flex flex-col items-center justify-center min-h-[250px]"
+                         data-demo-guide="Muestra el SLA (Service Level Agreement o Acuerdo de Nivel de Servicio) global. Mide el porcentaje de cumplimiento en los tiempos de respuesta prometidos. Utilidad: Si este número baja del 80%, el sistema sugiere automáticamente rediseñar las rutas de los técnicos.">
+                        <h3 class="font-medium text-slate-700 dark:text-slate-300 mb-2 w-full text-left">Cumplimiento Global (SLA)</h3>
+                        <div class="relative w-48 h-48 flex items-center justify-center">
+                            <canvas id="gaugeChart"></canvas>
+                            <div class="absolute flex flex-col items-center">
+                                <span class="text-3xl font-bold text-slate-900 dark:text-white">87%</span>
+                                <span class="text-xs text-brand-500">Óptimo</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SLA por Técnico -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg md:col-span-2"
+                         data-demo-guide="Desglose del rendimiento operativo (KPIs) por equipo de trabajo en campo. Utilidad: Permite a Recursos Humanos identificar qué cuadrilla requiere capacitación técnica adicional o si están sobrecargados de trabajo afectando el SLA.">
+                        <h3 class="font-medium text-slate-700 dark:text-slate-300 mb-4">SLA por Cuadrilla de Campo (Últimos 7 días)</h3>
+                        <div class="h-64">
+                            <canvas id="slaBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Origen Leads -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg"
+                         data-demo-guide="Analítica de Inbound Marketing conectada al CRM (Customer Relationship Management). Utilidad: Determina qué campaña publicitaria trae clientes corporativos más rentables, optimizando el ROI (Retorno de Inversión) del equipo de ventas.">
+                        <h3 class="font-medium text-slate-700 dark:text-slate-300 mb-4">Origen de Leads Corporativos</h3>
+                        <div class="h-64 flex justify-center">
+                            <canvas id="leadsPieChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg flex flex-col justify-center"
+                         data-demo-guide="Consola de KPIs (Key Performance Indicators) vitales en tiempo real. Utilidad: Un directivo puede ver de un vistazo el MTTR (Mean Time To Repair o Tiempo Medio de Reparación); si el MTTR sube a 4 horas, sabe instantáneamente que hay cuellos de botella en almacén o falta personal.">
+                        <h3 class="font-medium text-slate-700 dark:text-slate-300 mb-4">Resumen Operativo</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 dark:bg-dark-bg p-4 rounded-lg border border-slate-200 dark:border-dark-border">
+                                <p class="text-slate-600 dark:text-slate-400 text-sm">Nodos Desplegados</p>
+                                <p class="text-2xl font-bold text-slate-900 dark:text-white mt-1">1,248</p>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-dark-bg p-4 rounded-lg border border-slate-200 dark:border-dark-border">
+                                <p class="text-slate-600 dark:text-slate-400 text-sm">Tickets Abiertos</p>
+                                <p class="text-2xl font-bold text-yellow-400 mt-1">34</p>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-dark-bg p-4 rounded-lg border border-slate-200 dark:border-dark-border">
+                                <p class="text-slate-600 dark:text-slate-400 text-sm">MTTR (Hrs)</p>
+                                <p class="text-2xl font-bold text-green-400 mt-1">2.4</p>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-dark-bg p-4 rounded-lg border border-slate-200 dark:border-dark-border">
+                                <p class="text-slate-600 dark:text-slate-400 text-sm">Presupuesto Ejecutado</p>
+                                <p class="text-2xl font-bold text-blue-400 mt-1">68%</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Report Builder -->
+            <section id="view-report-builder" class="view-section space-y-6 hidden">
+                <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg"
+                     data-demo-guide="Generador Dinámico de Inteligencia de Negocios (BI). Utilidad: Permite cruzar variables que normalmente viven en silos (ej. RRHH vs Operaciones). Descubre si los técnicos con menor 'Tiempo de Inducción' causan más 'Errores en Campo'.">
+                    <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-2">Cruce de Silos Operativos</h3>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm mb-6">Genera análisis cruzados que plataformas rígidas no permiten. Selecciona variables para descubrir correlaciones ocultas.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Variable X (Dimensión)</label>
+                            <select id="report-var-x" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-slate-900 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+                                <option value="induction">Tiempo de Inducción de Personal (Semanas)</option>
+                                <option value="region">Región Operativa</option>
+                                <option value="equipment">Tipo de Equipamiento</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Variable Y (Métrica)</label>
+                            <select id="report-var-y" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-slate-900 dark:text-white rounded-lg px-4 py-2.5 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500">
+                                <option value="sales">Velocidad de Cierre de Ventas (Días)</option>
+                                <option value="errors">Tasa de Errores en Campo (%)</option>
+                                <option value="costs">Costos Operativos ($)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="generate-report-btn" class="bg-brand-500 hover:bg-brand-600 text-white font-medium py-2.5 px-6 rounded-lg transition-colors flex items-center">
+                        <i data-lucide="play" class="w-4 h-4 mr-2"></i> Generar Análisis
+                    </button>
+                </div>
+
+                <div id="report-result-container" class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg hidden">
+                    <h3 class="font-medium text-slate-900 dark:text-white mb-4" id="report-result-title">Resultados del Análisis</h3>
+                    <div class="h-80">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: CRM -->
+            <section id="view-crm" class="view-section space-y-6 hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg lg:col-span-1">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-4 flex items-center">
+                            <i data-lucide="building-2" class="text-brand-500 w-5 h-5 mr-2"></i>
+                            Registrar Cliente
+                        </h3>
+                        <form id="form-crm-client" onsubmit="saveClient(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre de la Empresa</label>
+                                <input type="text" id="crm-client-name" required class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">RFC</label>
+                                <input type="text" id="crm-client-rfc" required class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Número de Sucursales</label>
+                                <input type="number" id="crm-client-branches" required min="1" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Guardar Cliente
+                            </button>
+                        </form>
+                    </div>
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg lg:col-span-2"
+                         data-demo-guide="Directorio Inteligente. Utilidad: Almacena los prospectos B2B calificados; cuando se captura un RFC aquí, el sistema puede consultar su buró de crédito automáticamente para pre-aprobar financiamiento de equipos.">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-4">Directorio de Clientes</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-600 dark:text-slate-400 uppercase bg-slate-50 dark:bg-dark-bg/50">
+                                    <tr>
+                                        <th class="px-4 py-2 rounded-tl-lg">Empresa</th>
+                                        <th class="px-4 py-2">RFC</th>
+                                        <th class="px-4 py-2 rounded-tr-lg text-center">Sucursales</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="crm-clients-table-body">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Quotes -->
+            <section id="view-quotes" class="view-section space-y-6 hidden">
+                <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg"
+                     data-demo-guide="CPQ (Configure, Price, Quote). Motor de Cotización. Utilidad: Si apruebas una cotización aquí, el sistema lanza automáticamente el flujo en el BPM para iniciar la instalación sin volver a capturar los datos del cliente.">
+                    <h3 class="font-medium text-slate-900 dark:text-white mb-4 flex items-center">
+                        <i data-lucide="file-signature" class="text-brand-500 w-5 h-5 mr-2"></i>
+                        Cotizaciones y Seguimiento
+                    </h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-600 dark:text-slate-400 uppercase bg-slate-50 dark:bg-dark-bg/50">
+                                <tr>
+                                    <th class="px-4 py-2 rounded-tl-lg">Folio</th>
+                                    <th class="px-4 py-2">Cliente</th>
+                                    <th class="px-4 py-2">Servicio</th>
+                                    <th class="px-4 py-2 text-right">Monto</th>
+                                    <th class="px-4 py-2 text-right">Margen Est.</th>
+                                    <th class="px-4 py-2 text-center">Estado</th>
+                                    <th class="px-4 py-2 rounded-tr-lg text-center">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="quotes-table-body">
+                                <!-- Injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Purchases, OCR & Inventory -->
+            <section id="view-purchases" class="view-section space-y-6 hidden">
+                
+                <!-- SUBMÓDULO A: Facturación y Entrada OCR -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- OCR Simulator -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg lg:col-span-1 flex flex-col">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-2 flex items-center">
+                            <i data-lucide="scan-line" class="text-brand-500 w-5 h-5 mr-2"></i>
+                            Recepción de Facturas / OCR
+                        </h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">Sube una factura de proveedor (ej. Refacciones FO) para extraer datos automáticamente usando IA.</p>
+                        
+                        <div class="flex-1 border-2 border-dashed border-slate-200 dark:border-dark-border rounded-lg bg-slate-50 dark:bg-dark-bg flex flex-col items-center justify-center p-6 text-center mb-4 transition-colors hover:border-brand-500/50">
+                            <i data-lucide="file-text" class="w-10 h-10 text-slate-500 dark:text-slate-500 mb-3"></i>
+                            <p class="text-sm text-slate-700 dark:text-slate-300 font-medium">Arrastra archivo PDF o XML aquí</p>
+                            <p class="text-xs text-slate-500 dark:text-slate-500 mt-1">Factura_Proveedor_Fibra_089.pdf</p>
+                        </div>
+                        
+                        <button id="btn-ocr-scan" class="w-full bg-slate-200 dark:bg-slate-700 hover:bg-brand-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center"
+                                data-demo-guide="El OCR (Optical Character Recognition) utiliza Visión Artificial para 'leer' documentos PDF/XML. Utilidad: El contador ya no captura manualmente compras de 500m de fibra; el sistema lee la factura e inyecta el material al almacén en segundos.">
+                            <i data-lucide="cpu" class="w-4 h-4 mr-2"></i> Simular Escaneo OCR
+                        </button>
+                    </div>
+
+                    <!-- OCR Results & Margin Chart -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg lg:col-span-2 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="font-medium text-slate-900 dark:text-white">Panel de Margen y Costos en Tiempo Real</h3>
+                            <span class="px-3 py-1 bg-green-500/10 text-green-400 text-xs rounded-full font-medium border border-green-500/20">Rentabilidad: Viva</span>
+                        </div>
+                        
+                        <div class="h-48 mb-4">
+                            <canvas id="financialChart"></canvas>
+                        </div>
+
+                        <!-- OCR Results Table -->
+                        <div id="ocr-results" class="hidden animate-fade-in border-t border-slate-200 dark:border-dark-border pt-4">
+                            <div class="flex justify-between items-center mb-3">
+                                <h4 class="text-sm font-medium text-slate-700 dark:text-slate-300">Última extracción exitosa:</h4>
+                                <button id="btn-ingresar-stock" onclick="ingresarFacturaAlStock()" class="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium py-1.5 px-3 rounded flex items-center transition-colors">
+                                    <i data-lucide="download" class="w-3 h-3 mr-1"></i> Ingresar Artículos a Almacén
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-slate-600 dark:text-slate-400 uppercase bg-slate-50 dark:bg-dark-bg/50">
+                                        <tr>
+                                            <th class="px-4 py-2 rounded-tl-lg">Proveedor RFC</th>
+                                            <th class="px-4 py-2">Concepto</th>
+                                            <th class="px-4 py-2 text-right">Monto Neto</th>
+                                            <th class="px-4 py-2 rounded-tr-lg text-center">Estado</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ocr-table-body">
+                                        <!-- Injected via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gestor de Inventarios (Dividido 50/50) -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+                    <!-- SUBMÓDULO B: Gestor de Stock (Consumibles) -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg"
+                         data-demo-guide="Control Inteligente de Inventario (ERP). Utilidad: Si un operario reporta que agotó 'Conectores RJ45', el sistema cruza esta alerta con el stock mínimo y detona una orden de compra automática.">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-4 flex items-center">
+                            <i data-lucide="package" class="text-brand-500 w-5 h-5 mr-2"></i>
+                            Gestor de Stock (Consumibles)
+                        </h3>
+                        <div class="overflow-x-auto max-h-[300px]">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-600 dark:text-slate-400 uppercase bg-slate-50 dark:bg-dark-bg/50 sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 rounded-tl-lg">Código</th>
+                                        <th class="px-3 py-2">Producto</th>
+                                        <th class="px-3 py-2 text-center">Cantidad</th>
+                                        <th class="px-3 py-2 rounded-tr-lg text-center">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="stock-table-body" class="divide-y divide-dark-border">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- SUBMÓDULO C: Control de Herramientas y Equipo -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg"
+                         data-demo-guide="Gestión de Activos Fijos y Herramientas especializadas. Utilidad: Evita pérdidas rastreando a qué técnico se le asignó la fusionadora de fibra óptica de $10,000 USD, cruzando datos con el módulo de Recursos Humanos.">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-4 flex items-center">
+                            <i data-lucide="wrench" class="text-brand-500 w-5 h-5 mr-2"></i>
+                            Control de Herramientas (Activos Fijos)
+                        </h3>
+                        <div class="overflow-x-auto max-h-[300px]">
+                            <table class="w-full text-sm text-left">
+                                <thead class="text-xs text-slate-600 dark:text-slate-400 uppercase bg-slate-50 dark:bg-dark-bg/50 sticky top-0">
+                                    <tr>
+                                        <th class="px-3 py-2 rounded-tl-lg">Activo Fijo</th>
+                                        <th class="px-3 py-2">No. Serie</th>
+                                        <th class="px-3 py-2 text-center">Estado / Asignación</th>
+                                        <th class="px-3 py-2 rounded-tr-lg text-center">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tools-table-body" class="divide-y divide-dark-border">
+                                    <!-- Injected via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Loader -->
+                <div id="ocr-loader" class="fixed inset-0 bg-slate-50 dark:bg-dark-bg/80 backdrop-blur-sm z-50 hidden flex-col items-center justify-center text-brand-500">
+                    <i data-lucide="scan" class="w-16 h-16 animate-pulse mb-4"></i>
+                    <p class="text-white font-medium text-lg">Procesando Documento mediante IA...</p>
+                    <p class="text-slate-600 dark:text-slate-400 text-sm mt-2">Extrayendo XML y montos...</p>
+                </div>
+            </section>
+
+            <!-- VIEW: Predictive Analytics -->
+            <section id="view-predictive" class="view-section space-y-6 hidden">
+                <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg mb-6">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-2 flex items-center">
+                                <i data-lucide="radar" class="text-brand-500 w-5 h-5 mr-2"></i>
+                                Pipeline de Proyectos de Infraestructura
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">
+                                Clasificación predictiva de éxito en instalaciones basándose en modelos de IA (tráfico, clima, carga técnica histórica).
+                            </p>
+                        </div>
+                        <button class="bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border hover:border-brand-500 text-slate-700 dark:text-slate-300 py-1.5 px-3 rounded text-sm transition-colors flex items-center">
+                            <i data-lucide="filter" class="w-4 h-4 mr-2"></i> Filtrar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="projects-container">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- VIEW: BPM Engine -->
+            <section id="view-bpm" class="view-section space-y-6 hidden">
+                <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg mb-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h3 class="text-lg font-medium text-slate-900 dark:text-white mb-2 flex items-center">
+                                <i data-lucide="git-merge" class="text-brand-500 w-5 h-5 mr-2"></i>
+                                Diseñador de Flujos (BPM)
+                            </h3>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">Modelado visual de procesos de telecomunicaciones.</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2 justify-end" id="template-buttons-container">
+                            <button onclick="loadTemplate('fo')" class="bg-slate-50 dark:bg-dark-bg hover:bg-slate-200 dark:bg-slate-700 border border-slate-200 dark:border-dark-border text-slate-700 dark:text-slate-300 font-medium py-2 px-3 rounded-lg transition-colors flex items-center text-sm whitespace-nowrap">
+                                <i data-lucide="git-commit" class="w-4 h-4 mr-2 text-brand-400"></i> [FO] Fibra
+                            </button>
+                            <button onclick="loadTemplate('critico')" class="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-medium py-2 px-3 rounded-lg transition-colors flex items-center text-sm whitespace-nowrap">
+                                <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i> [Crítico] Cámaras
+                            </button>
+                            <button onclick="openCustomTemplateModal()" class="bg-brand-500/10 hover:bg-brand-500/20 border border-brand-500/30 text-brand-400 font-medium py-2 px-3 rounded-lg transition-colors flex items-center text-sm border-dashed whitespace-nowrap">
+                                <i data-lucide="plus" class="w-4 h-4 mr-2"></i> Crear Nueva Plantilla
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Gantt Chart Container (Split Panel) -->
+                    <div id="bpm-dynamic-container" class="border border-slate-200 dark:border-dark-border rounded-lg bg-slate-50 dark:bg-dark-bg flex flex-col md:flex-row overflow-hidden min-h-[400px]"
+                         data-demo-guide="El BPM (Business Process Management) es el cerebro que orquesta tareas complejas. Utilidad: Si un cliente contrata 50 sucursales, el BPM genera automáticamente las tareas de cableado, fusión y pruebas para cada sucursal, ahorrando días de planeación manual.">
+                        
+                        <!-- Left Panel: Task Table (40%) -->
+                        <div class="w-full md:w-5/12 border-b md:border-b-0 md:border-r border-slate-200 dark:border-dark-border flex flex-col bg-white dark:bg-dark-card">
+                            <!-- Headers -->
+                            <div class="grid grid-cols-12 gap-2 p-3 border-b border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-bg text-[10px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+                                <div class="col-span-6">Fase / Tarea</div>
+                                <div class="col-span-2 text-center">Duración</div>
+                                <div class="col-span-4 text-center">Estado</div>
+                            </div>
+                            <!-- Rows -->
+                            <div id="gantt-table-body" class="flex-1 overflow-y-auto">
+                                <div class="p-8 text-center text-slate-500 dark:text-slate-500 text-sm flex flex-col items-center justify-center h-full">
+                                    <i data-lucide="bar-chart-horizontal" class="w-8 h-8 mb-3 opacity-50"></i>
+                                    Haz clic en "Cargar Plantilla Preconfigurada" para iniciar simulación.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Panel: Timeline (60%) -->
+                        <div class="w-full md:w-7/12 bg-slate-50 dark:bg-dark-bg relative overflow-x-auto flex flex-col">
+                            <!-- Timeline Header -->
+                            <div class="flex border-b border-slate-200 dark:border-dark-border bg-white dark:bg-dark-card min-w-[700px] h-[41px] items-center text-[10px] font-bold text-slate-500 dark:text-slate-500 uppercase tracking-wider" id="gantt-timeline-header">
+                                <!-- Days injected via JS -->
+                            </div>
+                            
+                            <!-- Timeline Body -->
+                            <div id="gantt-timeline-body" class="relative flex-1 min-w-[700px] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCI+PHJlY3Qgd2lkdGg9IjQ0IiBoZWlnaHQ9IjQ0IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgNDRMMCAwIiBzdHJva2U9IiMxZTI5M2IiIHN0cm9rZS13aWR0aD0iMSIvPjwvc3ZnPg==')] bg-[length:44px_44px]">
+                                <!-- SVG Connections -->
+                                <svg id="gantt-svg" class="absolute inset-0 pointer-events-none w-full h-full z-10"></svg>
+                                <!-- Bars injected via JS -->
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Tasks (Operarios) -->
+            <section id="view-tasks" class="view-section space-y-6 hidden">
+                <div id="tasks-container" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    
+                    <!-- Task 1 -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg flex flex-col">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="px-2 py-1 bg-brand-500/20 text-brand-400 text-xs rounded uppercase font-medium">Activa</span>
+                                <h4 class="text-lg font-bold text-white mt-2">Fusión de Fibra en Poste 14</h4>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Cliente: Megacable - Zona Centro Sur</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-dark-border">
+                                <i data-lucide="wrench" class="w-5 h-5 text-slate-700 dark:text-slate-300"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6 flex-1">
+                            <div>
+                                <label class="block text-xs text-slate-600 dark:text-slate-400 mb-1">Evidencia Fotográfica (Candado)</label>
+                                <div class="flex items-center space-x-3">
+                                    <input type="file" id="evidence-1" class="hidden" accept="image/*">
+                                    <label for="evidence-1" class="cursor-pointer bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border hover:border-brand-500 text-sm text-slate-700 dark:text-slate-300 py-2 px-4 rounded-lg flex items-center transition-colors"
+                                           data-demo-guide="Bloqueo duro de base de datos. Impide el cierre de un ticket sin comprobación. Utilidad: Evita que los técnicos reporten 'Fusión Terminada' sin subir la foto de los niveles de potencia óptica, garantizando calidad total al cliente.">
+                                        <i data-lucide="camera" class="w-4 h-4 mr-2"></i> Subir Foto
+                                    </label>
+                                    <span id="evidence-status-1" class="text-xs text-slate-500 dark:text-slate-500">Ningún archivo...</span>
+                                </div>
+                                <p id="evidence-error-1" class="text-xs text-red-500 mt-1 hidden">⚠️ Evidencia obligatoria para terminar.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 border-t border-slate-200 dark:border-dark-border pt-4">
+                            <button onclick="saveTaskDraft(1)" class="flex-1 bg-slate-50 dark:bg-dark-bg hover:bg-slate-200 dark:bg-slate-700 border border-slate-200 dark:border-dark-border text-slate-700 dark:text-slate-300 py-2 rounded transition-colors text-sm font-medium">
+                                Guardar Avance
+                            </button>
+                            <button onclick="postponeTask(1)" class="flex-1 bg-slate-50 dark:bg-dark-bg hover:bg-orange-500/20 border border-slate-200 dark:border-dark-border text-orange-400 py-2 rounded transition-colors text-sm font-medium">
+                                Posponer
+                            </button>
+                            <button onclick="finishTask(1)" class="flex-1 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded transition-colors text-sm font-medium">
+                                Terminar
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Component -->
+                        <div class="mt-4 border-t border-slate-200 dark:border-dark-border pt-4">
+                            <h5 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center"><i data-lucide="message-square" class="w-4 h-4 mr-1"></i> Chat de Seguimiento</h5>
+                            <div id="chat-box-1" class="h-32 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded p-3 overflow-y-auto space-y-2 mb-2 text-sm flex flex-col">
+                                <div class="self-start bg-slate-200 dark:bg-slate-700/50 rounded-lg p-2 text-slate-700 dark:text-slate-300 max-w-[85%]">
+                                    <span class="text-[10px] text-slate-600 dark:text-slate-400 block mb-0.5">Despacho - 08:30 AM</span>
+                                    Cuadrilla, ¿cómo va el avance en el poste 14?
+                                </div>
+                            </div>
+                            <div class="flex space-x-2">
+                                <input type="text" id="chat-input-1" placeholder="Escribe un comentario..." class="flex-1 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded px-3 py-1.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-brand-500">
+                                <button onclick="sendChatMessage(1)" class="bg-brand-500 text-white px-3 py-1.5 rounded hover:bg-brand-600 transition-colors">
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Task 2 -->
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-5 shadow-lg flex flex-col">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <span class="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded uppercase font-medium">Programada</span>
+                                <h4 class="text-lg font-bold text-white mt-2">Revisión de Atenuación Óptica</h4>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Nodo Principal - Parque Industrial</p>
+                            </div>
+                            <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center border border-slate-200 dark:border-dark-border">
+                                <i data-lucide="activity" class="w-5 h-5 text-slate-700 dark:text-slate-300"></i>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4 mb-6 flex-1">
+                            <div>
+                                <label class="block text-xs text-slate-600 dark:text-slate-400 mb-1">Evidencia Fotográfica (Candado)</label>
+                                <div class="flex items-center space-x-3">
+                                    <input type="file" id="evidence-2" class="hidden" accept="image/*">
+                                    <label for="evidence-2" class="cursor-pointer bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border hover:border-brand-500 text-sm text-slate-700 dark:text-slate-300 py-2 px-4 rounded-lg flex items-center transition-colors">
+                                        <i data-lucide="camera" class="w-4 h-4 mr-2"></i> Subir Foto
+                                    </label>
+                                    <span id="evidence-status-2" class="text-xs text-slate-500 dark:text-slate-500">Ningún archivo...</span>
+                                </div>
+                                <p id="evidence-error-2" class="text-xs text-red-500 mt-1 hidden">⚠️ Evidencia obligatoria para terminar.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-2 border-t border-slate-200 dark:border-dark-border pt-4">
+                            <button onclick="saveTaskDraft(2)" class="flex-1 bg-slate-50 dark:bg-dark-bg hover:bg-slate-200 dark:bg-slate-700 border border-slate-200 dark:border-dark-border text-slate-700 dark:text-slate-300 py-2 rounded transition-colors text-sm font-medium">
+                                Guardar Avance
+                            </button>
+                            <button onclick="postponeTask(2)" class="flex-1 bg-slate-50 dark:bg-dark-bg hover:bg-orange-500/20 border border-slate-200 dark:border-dark-border text-orange-400 py-2 rounded transition-colors text-sm font-medium">
+                                Posponer
+                            </button>
+                            <button onclick="finishTask(2)" class="flex-1 bg-brand-500 hover:bg-brand-600 text-white py-2 rounded transition-colors text-sm font-medium">
+                                Terminar
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Component -->
+                        <div class="mt-4 border-t border-slate-200 dark:border-dark-border pt-4">
+                            <h5 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 flex items-center"><i data-lucide="message-square" class="w-4 h-4 mr-1"></i> Chat de Seguimiento</h5>
+                            <div id="chat-box-2" class="h-32 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded p-3 overflow-y-auto space-y-2 mb-2 text-sm flex flex-col">
+                                <!-- empty chat -->
+                            </div>
+                            <div class="flex space-x-2">
+                                <input type="text" id="chat-input-2" placeholder="Escribe un comentario..." class="flex-1 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded px-3 py-1.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-brand-500">
+                                <button onclick="sendChatMessage(2)" class="bg-brand-500 text-white px-3 py-1.5 rounded hover:bg-brand-600 transition-colors">
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            <!-- VIEW: HR -->
+            <section id="view-hr" class="view-section space-y-6 hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg lg:col-span-1">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-4 flex items-center">
+                            <i data-lucide="user-plus" class="text-brand-500 w-5 h-5 mr-2"></i>
+                            Registrar Colaborador
+                        </h3>
+                        <form id="form-hr" onsubmit="saveEmployee(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Nombre Completo</label>
+                                <input type="text" id="hr-name" required class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Puesto / Rol</label>
+                                <input type="text" id="hr-role" required placeholder="Ej: Técnico Instalador" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Reporta A (Jerarquía)</label>
+                                <input type="text" id="hr-manager" placeholder="Ej: Dirección de Operaciones" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="col-span-2">
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Grado Académico</label>
+                                    <select id="hr-degree" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none appearance-none">
+                                        <option value="Ingeniería">Ingeniería</option>
+                                        <option value="Licenciatura">Licenciatura</option>
+                                        <option value="Técnico Superior">Técnico Superior</option>
+                                        <option value="Bachillerato">Bachillerato</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Certificación</label>
+                                    <input type="text" id="hr-cert" placeholder="Ej: CCNA" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">NSS</label>
+                                    <input type="text" id="hr-nss" placeholder="4109-78-XXXX" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border text-slate-900 dark:text-white rounded-lg px-4 py-2 focus:border-brand-500 focus:outline-none">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Guardar Colaborador
+                            </button>
+                        </form>
+                    </div>
+                    <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl p-6 shadow-lg lg:col-span-2"
+                         data-demo-guide="Analítica Avanzada de Recursos Humanos. Utilidad: Al dar clic en un técnico, el sistema despliega su 'Expediente Técnico Avanzado'. Así puedes saber si el instalador está capacitado en FOA antes de asignarle un ticket crítico.">
+                        <h3 class="font-medium text-slate-900 dark:text-white mb-4 flex items-center">
+                            <i data-lucide="network" class="text-brand-500 w-5 h-5 mr-2"></i>
+                            Organigrama y Jerarquías
+                        </h3>
+                        <div id="hr-list" class="space-y-3 max-h-[500px] overflow-y-auto pr-2">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Communications -->
+            <section id="view-comm" class="view-section hidden h-[calc(100vh-120px)]">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 h-full bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden shadow-lg">
+                    <!-- Left: Channels & DMs -->
+                    <div class="md:col-span-1 bg-slate-50 dark:bg-dark-bg/50 border-r border-slate-200 dark:border-dark-border flex flex-col p-4 overflow-y-auto">
+                        <h3 class="font-bold text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wider mb-3">Canales de Proyecto</h3>
+                        <ul class="space-y-1 mb-6">
+                            <li><button class="w-full text-left px-3 py-2 rounded-md hover:bg-brand-500/10 text-brand-500 font-medium flex items-center"><i data-lucide="hash" class="w-4 h-4 mr-2"></i> general</button></li>
+                            <li><button class="w-full text-left px-3 py-2 rounded-md hover:bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium flex items-center"><i data-lucide="hash" class="w-4 h-4 mr-2"></i> urgencias-campo</button></li>
+                        </ul>
+                        <h3 class="font-bold text-slate-600 dark:text-slate-400 text-xs uppercase tracking-wider mb-3">Mensajes Directos</h3>
+                        <ul id="comm-dm-list" class="space-y-1">
+                            <!-- DMs injected via JS -->
+                        </ul>
+                    </div>
+                    <!-- Right: Active Chat -->
+                    <div class="md:col-span-3 flex flex-col h-full bg-white dark:bg-dark-card relative"
+                         data-demo-guide="Centro de Comunicaciones Unificado (Omnicanal). Utilidad: En lugar de usar WhatsApp, los despachadores y técnicos chatean aquí, vinculando automáticamente cada mensaje al ticket o nodo en cuestión.">
+                        <div class="h-14 border-b border-slate-200 dark:border-dark-border flex items-center px-6">
+                            <h3 id="comm-active-title" class="font-bold text-white flex items-center">
+                                <i data-lucide="hash" class="w-5 h-5 mr-2 text-slate-600 dark:text-slate-400"></i> general
+                            </h3>
+                        </div>
+                        <div id="comm-chat-history" class="flex-1 overflow-y-auto p-6 space-y-4">
+                            <!-- Dummy welcome message -->
+                            <div class="flex items-start max-w-[80%]">
+                                <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center mr-3 flex-shrink-0">
+                                    <i data-lucide="bot" class="w-4 h-4 text-brand-400"></i>
+                                </div>
+                                <div class="bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border p-3 rounded-lg rounded-tl-none">
+                                    <p class="text-sm text-slate-700 dark:text-slate-300">¡Bienvenido al Centro de Comunicaciones! Selecciona un canal o chatea directamente con un técnico desde Recursos Humanos.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-bg/30">
+                            <form onsubmit="sendMessage(event)" class="flex space-x-2">
+                                <input type="text" id="comm-input" placeholder="Escribe un mensaje..." required class="flex-1 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded-lg px-4 py-2.5 text-sm text-slate-900 dark:text-white focus:outline-none focus:border-brand-500">
+                                <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-lg transition-colors flex items-center">
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Rastreador GPS -->
+            <section id="view-gps" class="view-section hidden h-full flex flex-col space-y-6">
+                <div class="flex items-center justify-between mb-2">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center">
+                            <i data-lucide="map-pin" class="w-6 h-6 mr-3 text-brand-500"></i> Rastreador GPS (Telemetría en Vivo)
+                        </h2>
+                        <p class="text-slate-600 dark:text-slate-400 mt-1">Monitoreo de coordenadas en tiempo real de la plantilla activa.</p>
+                    </div>
+                    <div class="flex items-center space-x-2 bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border px-3 py-1.5 rounded-lg">
+                        <span class="relative flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                        </span>
+                        <span class="text-xs text-emerald-400 font-medium">Conectado al Satélite</span>
+                    </div>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-6 h-[calc(100vh-14rem)]">
+                    <!-- Panel Izquierdo: Lista de Personal (35%) -->
+                    <div class="w-full lg:w-[35%] bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl shadow-lg flex flex-col overflow-hidden">
+                        <div class="p-4 border-b border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-dark-bg/50">
+                            <h3 class="font-bold text-white text-sm">Centro de Mando</h3>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-4 space-y-6" id="gps-list-container">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Panel Derecho: Consola de Mapa (65%) -->
+                    <div class="w-full lg:w-[65%] bg-slate-100 dark:bg-[#0B1120] border border-slate-200 dark:border-dark-border rounded-xl shadow-lg relative overflow-hidden group"
+                         data-demo-guide="Rastreo satelital con actualización en vivo de la cuadrilla (Telemetría). Utilidad: Al ocurrir una caída de fibra en la zona norte, el despachador localiza instantáneamente a la camioneta más cercana para redirigirla, ahorrando horas en logística.">
+                        
+                        <!-- Grid Cyberpunk (Calles Simuladas) -->
+                        <div class="absolute inset-0" 
+                             style="background-image: 
+                                linear-gradient(to right, #1e293b 1px, transparent 1px),
+                                linear-gradient(to bottom, #1e293b 1px, transparent 1px);
+                                background-size: 40px 40px;
+                                opacity: 0.3;">
+                        </div>
+                        
+                        <!-- Ejes Principales (Avenidas) -->
+                        <div class="absolute top-1/3 left-0 w-full h-[2px] bg-brand-500/20 shadow-[0_0_10px_rgba(59,130,246,0.3)]"></div>
+                        <div class="absolute top-2/3 left-0 w-full h-[2px] bg-brand-500/20 shadow-[0_0_10px_rgba(59,130,246,0.3)]"></div>
+                        <div class="absolute top-0 left-1/3 w-[2px] h-full bg-brand-500/20 shadow-[0_0_10px_rgba(59,130,246,0.3)]"></div>
+                        
+                        <!-- Overlay Radar Sweep (Opcional visual) -->
+                        <div class="absolute top-1/2 left-1/2 w-[800px] h-[800px] -ml-[400px] -mt-[400px] rounded-full border border-brand-500/10 pointer-events-none"></div>
+                        
+                        <!-- GPS Map Markers Container -->
+                        <div id="gps-map-container" class="absolute inset-0">
+                            <!-- Injected via JS -->
+                        </div>
+
+                        <!-- Legend -->
+                        <div class="absolute bottom-4 right-4 bg-white dark:bg-dark-card/90 backdrop-blur-md border border-slate-200 dark:border-dark-border p-3 rounded-lg flex flex-col space-y-2">
+                            <div class="flex items-center text-xs text-slate-700 dark:text-slate-300">
+                                <div class="w-2.5 h-2.5 rounded-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)] mr-2"></div> Técnicos
+                            </div>
+                            <div class="flex items-center text-xs text-slate-700 dark:text-slate-300">
+                                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] mr-2"></div> Supervisores
+                            </div>
+                            <div class="flex items-center text-xs text-slate-700 dark:text-slate-300">
+                                <div class="w-2.5 h-2.5 rounded-full bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)] mr-2"></div> Directivos
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: Mobile App Simulator -->
+            <section id="view-mobileapp" class="view-section hidden h-full flex flex-col items-center justify-center pb-12">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Simulador de App Móvil (Operadores)</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Interactúa con el ecosistema desde la perspectiva del técnico en campo.</p>
+                </div>
+
+                <!-- Smartphone Frame -->
+                <div class="relative w-[375px] h-[750px] bg-slate-50 dark:bg-dark-bg border-[14px] border-slate-900 rounded-[3rem] shadow-[0_20px_50px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col flex-shrink-0">
+                    <!-- Top Notch -->
+                    <div class="absolute top-0 inset-x-0 h-6 flex justify-center z-50">
+                        <div class="w-32 h-6 bg-slate-900 rounded-b-3xl"></div>
+                    </div>
+                    
+                    <!-- Mobile Header (Status Bar) -->
+                    <div class="h-12 bg-white dark:bg-dark-card flex items-center justify-between px-6 pt-3 text-[10px] text-slate-700 dark:text-slate-300 font-medium border-b border-slate-200 dark:border-dark-border z-40">
+                        <span id="mobile-time">12:00</span>
+                        <div class="flex items-center space-x-1.5">
+                            <i data-lucide="signal" class="w-3 h-3"></i>
+                            <i data-lucide="wifi" class="w-3 h-3"></i>
+                            <i data-lucide="battery-medium" class="w-4 h-4"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mobile App Header -->
+                    <div class="bg-brand-500 text-white px-4 py-3 shadow-md z-30">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-2">
+                                    <i data-lucide="user" class="w-4 h-4"></i>
+                                </div>
+                                <div>
+                                    <h1 class="text-sm font-bold">Ing. Carlos Mendoza</h1>
+                                    <p class="text-[10px] opacity-80">En Ruta - Zona Norte</p>
+                                </div>
+                            </div>
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Content Area -->
+                    <div class="flex-1 bg-[#0f172a] overflow-y-auto relative pb-20" id="mobile-content-area">
+                        
+                        <!-- Mobile View: Tasks -->
+                        <div id="mobile-view-tasks" class="mobile-inner-view p-4 space-y-4">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Mobile View: Inventory -->
+                        <div id="mobile-view-inventory" class="mobile-inner-view p-4 space-y-4 hidden">
+                            <!-- Populated by JS -->
+                        </div>
+
+                        <!-- Mobile View: Chat -->
+                        <div id="mobile-view-chat" class="mobile-inner-view p-4 flex flex-col h-full hidden">
+                            <div class="flex-1 overflow-y-auto space-y-3 mb-4" id="mobile-chat-history">
+                                <!-- Populated by JS -->
+                            </div>
+                            <form onsubmit="sendMobileMessage(event)" class="flex space-x-2 mt-auto">
+                                <input type="text" id="mobile-chat-input" placeholder="Mensaje..." required class="flex-1 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded-full px-3 py-1.5 text-xs text-slate-900 dark:text-white focus:outline-none focus:border-brand-500">
+                                <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white w-8 h-8 rounded-full flex justify-center items-center">
+                                    <i data-lucide="send" class="w-3 h-3"></i>
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+
+                    <!-- Bottom Navigation Bar -->
+                    <div class="absolute bottom-0 w-full bg-white dark:bg-dark-card border-t border-slate-200 dark:border-dark-border flex justify-around items-center pt-2 pb-6 px-2 z-40 rounded-b-[2.2rem]">
+                        <button onclick="switchMobileView('tasks')" data-mview="tasks" class="mobile-nav-btn flex flex-col items-center justify-center w-16 text-brand-400">
+                            <i data-lucide="clipboard-list" class="w-5 h-5 mb-1"></i>
+                            <span class="text-[10px] font-medium">Tareas</span>
+                        </button>
+                        <button onclick="switchMobileView('inventory')" data-mview="inventory" class="mobile-nav-btn flex flex-col items-center justify-center w-16 text-slate-500 dark:text-slate-500 transition-colors">
+                            <i data-lucide="package" class="w-5 h-5 mb-1"></i>
+                            <span class="text-[10px] font-medium">Material</span>
+                        </button>
+                        <button onclick="switchMobileView('chat')" data-mview="chat" class="mobile-nav-btn flex flex-col items-center justify-center w-16 text-slate-500 dark:text-slate-500 transition-colors relative">
+                            <i data-lucide="message-circle" class="w-5 h-5 mb-1"></i>
+                            <span class="text-[10px] font-medium">Chat</span>
+                            <span class="absolute top-0 right-4 w-2 h-2 bg-red-500 rounded-full border border-dark-card"></span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Global Modal -->
+    <div id="global-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl max-w-md w-full p-6 shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-lg font-bold text-white mb-2" id="modal-title">Evidencia Fotográfica</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-4" id="modal-desc">Sucursal 1: Mantenimiento de Cámara Completado</p>
+            <div class="bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded-lg aspect-video flex items-center justify-center overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1557597774-9d273605dfa9?q=80&w=600&auto=format&fit=crop" alt="Evidencia Cámara" class="object-cover w-full h-full opacity-80" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay Loading para OCR -->
+    <div id="ocr-loader" class="fixed inset-0 bg-slate-50 dark:bg-dark-bg/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hidden">
+        <div class="relative w-16 h-16 mb-4">
+            <div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-brand-500 rounded-full border-t-transparent animate-spin"></div>
+        </div>
+        <p class="text-brand-500 font-medium tracking-wide">Analizando documento con IA...</p>
+        <p class="text-slate-600 dark:text-slate-400 text-sm mt-1">Extrayendo RFC, Conceptos y Montos</p>
+    </div>
+
+    <!-- Custom Template Modal -->
+    <div id="custom-template-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/80 backdrop-blur-sm">
+        <div class="bg-white dark:bg-dark-card border border-slate-200 dark:border-dark-border rounded-xl max-w-lg w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+            <button onclick="closeCustomTemplateModal()" class="absolute top-4 right-4 text-slate-600 dark:text-slate-400 hover:text-white transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-xl font-bold text-white mb-1">Nuevo Proceso / Plantilla</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-6">Diseña un flujo personalizado interactivo para SONICBI.</p>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Nombre de la Plantilla</label>
+                    <input type="text" id="custom-tpl-name" placeholder="Ej: Mantenimiento Preventivo de Enlaces" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded-lg px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 transition-colors">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Tipo de Flujo / Vista</label>
+                    <select id="custom-tpl-type" class="w-full bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded-lg px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 transition-colors appearance-none">
+                        <option value="gantt">Proyecto de Ingeniería [Diagrama Gantt]</option>
+                        <option value="crm">Gestión de Cuentas [CRM Multi-sucursal]</option>
+                    </select>
+                </div>
+                
+                <div class="border-t border-slate-200 dark:border-dark-border pt-4 mt-2">
+                    <label class="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">Constructor de Nodos / Sucursales</label>
+                    <div class="flex space-x-2 mb-3">
+                        <input type="text" id="custom-tpl-node-input" placeholder="Nombre del paso o ubicación" class="flex-1 bg-slate-50 dark:bg-dark-bg border border-slate-200 dark:border-dark-border rounded-lg px-4 py-2 text-slate-900 dark:text-white focus:outline-none focus:border-brand-500 transition-colors" onkeypress="if(event.key === 'Enter') addCustomNode()">
+                        <button onclick="addCustomNode()" class="bg-slate-200 dark:bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-lg transition-colors flex items-center text-sm font-medium">
+                            <i data-lucide="plus" class="w-4 h-4 mr-1"></i> Añadir
+                        </button>
+                    </div>
+                    
+                    <ul id="custom-tpl-nodes-list" class="space-y-2 max-h-32 overflow-y-auto bg-slate-50 dark:bg-dark-bg/50 border border-slate-200 dark:border-dark-border rounded-lg p-2 min-h-[4rem]">
+                        <li class="text-slate-500 dark:text-slate-500 text-xs text-center py-2 italic" id="custom-tpl-empty-msg">No hay nodos agregados. Escribe uno arriba.</li>
+                    </ul>
+                </div>
+
+                <div class="pt-4 mt-2">
+                    <button onclick="saveAndDeployCustomTemplate()" class="w-full bg-brand-500 hover:bg-brand-600 text-white font-medium py-3 rounded-lg transition-colors flex justify-center items-center">
+                        <i data-lucide="play-circle" class="w-5 h-5 mr-2"></i> Guardar y Desplegar Plantilla
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col space-y-3"></div>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>

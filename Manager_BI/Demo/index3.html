@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manager Project - Demo Al Instante</title>
+    <!-- Tailwind CSS (CDN Play) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#6366f1', // Violeta/Indigo Real
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        accent: {
+                            500: '#8b5cf6', // Violeta acento
+                            600: '#7c3aed',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Custom CSS for global overrides -->
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+        .signature-pad {
+            border: 2px dashed #cbd5e1;
+            background-color: #f8fafc;
+            cursor: crosshair;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes slideRight {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        .animate-slide-right {
+            animation: slideRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-out forwards;
+        }
+        
+        /* Odoo-style Status Chevron Bar */
+        .odoo-step-btn {
+            position: relative;
+            height: 28px;
+            display: inline-flex;
+            align-items: center;
+            padding: 0 16px 0 24px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            background-color: #f1f5f9;
+            color: #64748b;
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+        .odoo-step-btn:first-child {
+            padding-left: 16px;
+            border-top-left-radius: 0.375rem;
+            border-bottom-left-radius: 0.375rem;
+        }
+        .odoo-step-btn:last-child {
+            border-top-right-radius: 0.375rem;
+            border-bottom-right-radius: 0.375rem;
+        }
+        .odoo-step-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            border-left: 10px solid #ffffff; /* Simula corte en flecha izquierdo */
+            z-index: 1;
+        }
+        .odoo-step-btn:first-child::before {
+            display: none;
+        }
+        .odoo-step-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: -10px;
+            width: 0;
+            height: 0;
+            border-top: 14px solid transparent;
+            border-bottom: 14px solid transparent;
+            border-left: 10px solid #f1f5f9; /* Simula punta en flecha derecha */
+            z-index: 2;
+            transition: all 0.2s ease;
+        }
+        .odoo-step-btn:last-child::after {
+            display: none;
+        }
+        /* Hover general */
+        .odoo-step-btn:hover:not(.active-proceso):not(.active-pausa):not(.active-terminada) {
+            background-color: #e2e8f0;
+            color: #475569;
+        }
+        .odoo-step-btn:hover:not(.active-proceso):not(.active-pausa):not(.active-terminada)::after {
+            border-left-color: #e2e8f0;
+        }
+        /* Estados Activos */
+        .odoo-step-btn.active-proceso {
+            background-color: #3b82f6;
+            color: #ffffff;
+        }
+        .odoo-step-btn.active-proceso::after {
+            border-left-color: #3b82f6;
+        }
+        .odoo-step-btn.active-pausa {
+            background-color: #f59e0b;
+            color: #ffffff;
+        }
+        .odoo-step-btn.active-pausa::after {
+            border-left-color: #f59e0b;
+        }
+        .odoo-step-btn.active-terminada {
+            background-color: #10b981;
+            color: #ffffff;
+        }
+        .odoo-step-btn.active-terminada::after {
+            border-left-color: #10b981;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0, 0); }
+            10%, 30%, 50%, 70%, 90% { transform: translate(-8px, -5px) rotate(-1deg); }
+            20%, 40%, 60%, 80% { transform: translate(8px, 5px) rotate(1deg); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+            animation-iteration-count: 3;
+        }
+
+        /* --- OVERRIDES RESPONSIVOS PARA SCROLL MÓVIL (EVITA BLOQUEOS EN SAFARI/CHROME) --- */
+        @media (max-width: 1023px) {
+            body {
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                height: auto !important;
+                min-height: 100vh !important;
+                position: relative !important;
+            }
+            main {
+                height: auto !important;
+                min-height: 100vh !important;
+                overflow: visible !important;
+            }
+            #main-content-viewport {
+                overflow-y: visible !important;
+                overflow-x: visible !important;
+                height: auto !important;
+                flex-grow: 1 !important;
+            }
+            #desktop-sidebar {
+                position: fixed !important;
+                height: 100vh !important;
+                z-index: 50 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-[#f8f9fa] text-slate-800 flex h-screen overflow-hidden relative">
+
+    <!-- SIDEBAR BACKDROP FOR MOBILE -->
+    <div id="sidebar-backdrop" onclick="toggleSidebarMenu()" class="fixed inset-0 bg-slate-900/50 z-30 hidden transition-all duration-300 lg:hidden"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="desktop-sidebar" class="fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r border-slate-200 flex flex-col justify-between shrink-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out h-full shadow-xl lg:shadow-none">
+        <div>
+            <!-- LOGO corporativo simulado -->
+            <div class="h-20 flex items-center px-6 border-b border-slate-100 gap-3">
+                <div class="bg-gradient-to-tr from-brand-500 to-brand-700 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl shadow-md">
+                    ai
+                </div>
+                <div class="flex flex-col">
+                    <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Manager Project</span>
+                    <span class="text-md font-bold text-accent-500 leading-none">al instante</span>
+                </div>
+            </div>
+
+            <!-- Navegación -->
+            <nav class="p-4 space-y-2">
+                <a href="#" onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all active bg-brand-50 text-brand-500">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" onclick="switchTab('alerts')" id="btn-alerts" class="nav-link flex items-center justify-between px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                    <div class="flex items-center gap-3">
+                        <i data-lucide="bell-ring" class="w-5 h-5"></i>
+                        <span>Alertas de SLA</span>
+                    </div>
+                    <span id="badge-alerts-count" class="bg-accent-500 text-white text-xs px-2 py-0.5 rounded-full font-bold shadow-sm">3</span>
+                </a>
+                
+                <!-- Botón de Flujo del Proceso -->
+                <a href="#" onclick="switchTab('bpmn')" id="btn-bpmn" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                    <i data-lucide="git-branch" class="w-5 h-5"></i>
+                    <span>Flujo del Proceso</span>
+                </a>
+
+                <!-- Subbotones Dependientes: Nodos, Departamentos, Personal -->
+                <div id="bpmn-submenu" class="pl-8 space-y-1 mt-1 hidden">
+                    <a href="#" onclick="switchTab('catalog-nodes')" id="btn-catalog-nodes" class="nav-link-sub flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                        <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i>
+                        <span>Nodos</span>
+                    </a>
+                    <a href="#" onclick="switchTab('departments')" id="btn-departments" class="nav-link-sub flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                        <i data-lucide="building" class="w-3.5 h-3.5"></i>
+                        <span>Departamentos</span>
+                    </a>
+                    <a href="#" onclick="switchTab('personal')" id="btn-personal" class="nav-link-sub flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                        <i data-lucide="users" class="w-3.5 h-3.5"></i>
+                        <span>Personal</span>
+                    </a>
+                </div>
+
+                <!-- Botón de Ventas (ERP) -->
+                <a href="#" onclick="switchTab('sales')" id="btn-sales" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    <span>Ventas</span>
+                </a>
+
+                <!-- Botón de Comunicaciones (Omnicanal) -->
+                <a href="#" onclick="switchTab('comm')" id="btn-comm" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                    <i data-lucide="message-square" class="w-5 h-5"></i>
+                    <span>Comunicaciones</span>
+                </a>
+
+                <a href="#" onclick="switchTab('mobile-sim')" id="btn-mobile-sim" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                    <i data-lucide="smartphone" class="w-5 h-5"></i>
+                    <span>Simulador Técnico</span>
+                </a>
+            </nav>
+        </div>
+
+        <div class="p-4 border-t border-slate-100 bg-slate-50">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-sm">
+                    M
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span class="text-xs text-slate-400">Rol: Administrador</span>
+                    <span class="text-sm font-semibold truncate text-slate-700">Manager General</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-1 flex flex-col min-w-0 bg-[#f8f9fa]">
+        
+        <!-- TOPBAR -->
+        <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-8 shrink-0">
+            <div class="flex items-center gap-3">
+                <button onclick="toggleSidebarMenu()" class="lg:hidden text-slate-500 hover:text-slate-700 p-1.5 focus:outline-none border border-slate-200 rounded-lg bg-slate-50" title="Menú">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
+                </button>
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <h1 id="view-title" class="text-lg sm:text-2xl font-bold text-slate-800 truncate">Dashboard</h1>
+                        <span id="view-badge" class="bg-brand-50 text-brand-500 text-[10px] sm:text-xs px-2 py-0.5 sm:py-1 rounded-full font-medium border border-brand-100 shrink-0">BPM 2.0</span>
+                    </div>
+                    <p id="view-subtitle" class="text-[10px] sm:text-xs text-slate-400 font-medium leading-none mt-1">Modelado visual y asignación de tareas operativas.</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 sm:gap-4">
+                <div class="text-right hidden md:block">
+                    <p class="text-xs text-slate-400">Última actualización de procesos</p>
+                    <p class="text-sm font-medium text-slate-600" id="current-time-display">Hoy</p>
+                </div>
+                <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
+                <!-- Notification Bell (Odoo-style dropdown container) -->
+                <div class="relative" id="notifications-dropdown-container">
+                    <button onclick="toggleNotificationsDropdown(event)" class="relative p-2 hover:bg-slate-100 rounded-lg transition-all text-slate-650 hover:text-brand-600 flex items-center justify-center" title="Centro de Notificaciones">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span id="notification-badge" class="absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center border border-white animate-pulse hidden">0</span>
+                    </button>
+                    
+                    <!-- Dropdown Panel -->
+                    <div id="notifications-dropdown-menu" class="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-[99] hidden flex flex-col overflow-hidden">
+                        <!-- Header -->
+                        <div class="p-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                            <span class="font-bold text-slate-800 text-xs flex items-center gap-1.5">
+                                <i data-lucide="bell" class="w-3.5 h-3.5 text-brand-500"></i>
+                                Notificaciones
+                            </span>
+                            <button onclick="markAllNotificationsAsRead()" class="text-[10px] text-brand-500 hover:text-brand-600 hover:underline font-bold transition-all focus:outline-none">
+                                Marcar todo leído
+                            </button>
+                        </div>
+                        
+                        <!-- List -->
+                        <div id="notifications-list" class="max-h-72 overflow-y-auto divide-y divide-slate-100 flex-1">
+                            <!-- Items dynamically loaded here -->
+                        </div>
+                        
+                        <!-- Footer -->
+                        <div class="p-2 bg-slate-50/50 border-t border-slate-100 text-center">
+                            <button onclick="clearNotifications()" class="text-[9px] font-bold text-red-500 hover:text-red-650 hover:underline transition-all">
+                                Borrar todas
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="resetDemoData()" class="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Reiniciar Demo</span>
+                    <span class="sm:hidden">Reiniciar</span>
+                </button>
+                <button onclick="clearAllDemoData()" class="flex items-center gap-1.5 px-2.5 py-1.5 border border-red-200 text-red-650 rounded-lg text-xs font-semibold hover:bg-red-50 transition-all" title="Limpiar todos los datos para realizar un ejercicio desde cero">
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Limpiar Datos</span>
+                    <span class="sm:hidden">Limpiar</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- CONTENT VIEWPORT -->
+        <div id="main-content-viewport" class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8">
+            
+            <!-- VIEW: DASHBOARD -->
+            <section id="view-dashboard" class="space-y-6">
+
+
+                <!-- Bloque: Alertas Prioritarias (Anomalías por IA) -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
+                    <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
+                        <i data-lucide="bot" class="text-brand-500 w-5 h-5"></i>
+                        <h3 class="font-bold text-slate-800 text-lg">Alertas Prioritarias</h3>
+                    </div>
+                    <div id="alerts-prioritarias-container" class="space-y-3">
+                        <!-- Inyectado dinámicamente con alertas vencidas y por vencer -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: ALERTS TABLE -->
+            <section id="view-alerts" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
+                <!-- Control Panel / Subheader Bar (Odoo-style) -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-1">
+                    <!-- Title -->
+                    <h2 class="text-lg sm:text-xl font-bold text-slate-800 shrink-0">Alertas de SLA en Tiempo Real</h2>
+                    
+                    <!-- Search Bar & Filters -->
+                    <div class="flex-1 max-w-lg relative" id="alerts-search-container">
+                        <div class="w-full bg-white border border-slate-200 rounded-lg shadow-sm hover:border-slate-300 transition-colors flex items-center p-1.5 gap-1.5 cursor-pointer relative" onclick="toggleAlertsSearchDropdown(event)">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0 ml-1"></i>
+                            
+                            <!-- Search Tags -->
+                            <div class="flex flex-wrap gap-1 items-center flex-1 overflow-hidden" id="alerts-search-tags">
+                                <!-- Chips dynamically inserted here -->
+                            </div>
+                            
+                            <input type="text" id="alerts-search-input" oninput="applyAlertsFilters()" onclick="event.stopPropagation(); showAlertsSearchDropdown();" placeholder="Buscar..." class="flex-1 bg-transparent border-none text-xs focus:outline-none placeholder-slate-400 min-w-[60px]">
+                            
+                            <button type="button" class="p-1 hover:bg-slate-100 rounded-md transition-colors shrink-0">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Dropdown Menu -->
+                        <div id="alerts-search-dropdown" class="absolute left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 hidden p-4">
+                            <div class="grid grid-cols-3 gap-6 text-xs text-slate-650">
+                                <!-- Filters -->
+                                <div>
+                                    <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[9px] mb-2 flex items-center gap-1">
+                                        <i data-lucide="filter" class="w-3 h-3 text-brand-500"></i>
+                                        <span>Filtros</span>
+                                    </h4>
+                                    <div class="space-y-1.5">
+                                        <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none">
+                                            <input type="checkbox" id="filter-alert-vencido" onchange="applyAlertsFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                            <span>Vencidos</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none">
+                                            <input type="checkbox" id="filter-alert-porvencer" onchange="applyAlertsFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                            <span>Por Vencer</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none">
+                                            <input type="checkbox" id="filter-alert-reincidencia" onchange="applyAlertsFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                            <span>Por Reincidencia</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Group By -->
+                                <div>
+                                    <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[9px] mb-2 flex items-center gap-1">
+                                        <i data-lucide="layers" class="w-3 h-3 text-brand-500"></i>
+                                        <span>Agrupar por</span>
+                                    </h4>
+                                    <div class="space-y-1.5">
+                                        <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none">
+                                            <input type="radio" name="group-alerts" value="none" checked onchange="applyAlertsFilters()" class="text-brand-500 focus:ring-brand-500">
+                                            <span>Ninguno</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none">
+                                            <input type="radio" name="group-alerts" value="client" onchange="applyAlertsFilters()" class="text-brand-500 focus:ring-brand-500">
+                                            <span>Cliente</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer hover:text-slate-900 select-none">
+                                            <input type="radio" name="group-alerts" value="assigned" onchange="applyAlertsFilters()" class="text-brand-500 focus:ring-brand-500">
+                                            <span>Responsable</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <!-- Favorites -->
+                                <div>
+                                    <h4 class="font-bold text-slate-800 uppercase tracking-wider text-[9px] mb-2 flex items-center gap-1">
+                                        <i data-lucide="star" class="w-3 h-3 text-brand-500"></i>
+                                        <span>Favoritos</span>
+                                    </h4>
+                                    <div id="alerts-favorites-list" class="space-y-1.5 max-h-[80px] overflow-y-auto pr-1">
+                                        <!-- Favorites loaded dynamically -->
+                                    </div>
+                                    <div class="border-t border-slate-100 pt-2 mt-2 flex flex-col gap-1.5">
+                                        <input type="text" id="new-alert-favorite-name" placeholder="Nombre favorito..." class="w-full p-1 border border-slate-200 rounded text-[10px] focus:outline-none focus:border-brand-500">
+                                        <button onclick="saveAlertsFavorite()" class="w-full bg-brand-500 hover:bg-brand-600 text-white rounded py-1 text-[9px] font-bold transition-colors">Guardar Favorito</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Actions (Pagination) -->
+                    <div class="flex items-center gap-3 shrink-0">
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold select-none">
+                            <span id="alerts-pagination-label">1-5 / 5</span>
+                            <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <button onclick="navigateAlertsList('prev')" class="p-1.5 hover:bg-slate-50 text-slate-600 border-r border-slate-200 focus:outline-none transition-colors">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="navigateAlertsList('next')" class="p-1.5 hover:bg-slate-50 text-slate-600 focus:outline-none transition-colors">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <!-- Tabla de Alertas -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-50/50 text-slate-400 uppercase text-[10px] tracking-wider font-bold border-b border-slate-200">
+                                    <th class="px-6 py-4">Actividad / Tarea</th>
+                                    <th class="px-6 py-4">Cliente</th>
+                                    <th class="px-6 py-4">Asignado</th>
+                                    <th class="px-6 py-4">Tiempo Restante</th>
+                                    <th class="px-6 py-4 text-center">Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody id="alerts-table-body" class="divide-y divide-slate-100">
+                                <!-- Filas de datos insertadas dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: TEMPLATES LIST (BPM) -->
+            <section id="view-bpmn" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
+                <!-- Control Panel / Subheader Bar (Odoo-style) -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-1">
+                    <!-- Izquierda: Título -->
+                    <div class="text-slate-800 text-sm font-bold shrink-0 self-start md:self-center">
+                        Plantillas de Procesos
+                    </div>
+                    
+                    <!-- Centro: Buscador Avanzado Odoo-style -->
+                    <div class="flex-1 max-w-xl w-full relative">
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm pl-3 pr-2 py-1.5 gap-2" id="odoo-search-container">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                            
+                            <!-- Chips / Tags activos de búsqueda -->
+                            <div id="odoo-search-tags" class="flex flex-wrap gap-1 items-center">
+                                <!-- Chips insertados dinámicamente -->
+                            </div>
+                            
+                            <!-- Input de texto de búsqueda -->
+                            <input type="text" id="odoo-search-input" onfocus="showOdooSearchDropdown()" oninput="applyOdooFilters()" placeholder="Buscar..." class="flex-1 min-w-[60px] text-xs focus:outline-none bg-transparent">
+                            
+                            <!-- Botón desplegable Filtros/Grupo/Favorito -->
+                            <button onclick="toggleOdooSearchDropdown(event)" class="p-1 hover:bg-slate-50 text-slate-500 rounded focus:outline-none transition-colors border border-slate-200" title="Filtros, Agrupadores y Favoritos">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Panel Desplegable de Filtros/Agrupadores/Favoritos (Odoo-style) -->
+                        <div id="odoo-search-dropdown" class="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-4 hidden grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                            <!-- Filtros -->
+                            <div class="space-y-3.5">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="filter" class="w-3 h-3 text-slate-400"></i> Filtros
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="odoo-filter-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-tpl-proceso" onchange="applyOdooFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                        <span>En Proceso</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-tpl-pausa" onchange="applyOdooFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                        <span>En Pausa</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-tpl-terminada" onchange="applyOdooFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                        <span>Terminadas</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-tpl-retraso" onchange="applyOdooFilters()" class="rounded border-slate-300 text-brand-500 focus:ring-brand-500">
+                                        <span>Con Tareas Vencidas</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Agrupar Por -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="layers" class="w-3 h-3 text-slate-400"></i> Agrupar por
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="odoo-group-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-tpl" value="none" checked onchange="applyOdooFilters()" class="text-brand-500 focus:ring-brand-500">
+                                        <span>Sin agrupar</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-tpl" value="client" onchange="applyOdooFilters()" class="text-brand-500 focus:ring-brand-500">
+                                        <span>Cliente</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-tpl" value="createdBy" onchange="applyOdooFilters()" class="text-brand-500 focus:ring-brand-500">
+                                        <span>Creador / Capturista</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Favoritos -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-slate-400"></i> Favoritos
+                                </h5>
+                                <div class="space-y-3 text-xs text-slate-600">
+                                    <div class="flex flex-col gap-1.5 max-h-24 overflow-y-auto pr-1" id="odoo-favorites-list">
+                                        <!-- Favoritos guardados inyectados dinámicamente -->
+                                    </div>
+                                    <div class="border-t border-slate-100 pt-2 space-y-2">
+                                        <input type="text" id="new-favorite-name" placeholder="Nombre del favorito..." class="w-full p-1.5 border border-slate-200 rounded text-[11px] focus:outline-none">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                            <input type="checkbox" id="favorite-default-chk" class="rounded border-slate-300 text-brand-500">
+                                            <span>Filtro predeterminado</span>
+                                        </label>
+                                        <button onclick="saveOdooFavorite()" class="w-full bg-brand-500 hover:bg-brand-600 text-white py-1 rounded font-bold text-[10px] uppercase tracking-wider shadow-sm transition-all">
+                                            Guardar Búsqueda
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Derecha: Paginación + Botón Nuevo -->
+                    <div class="flex items-center gap-3 shrink-0 self-end md:self-center">
+                        <!-- Paginación Odoo-style -->
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold select-none">
+                            <span id="tpl-pagination-label">1-5 / 5</span>
+                            <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <button onclick="navigateTemplatesList('prev')" class="p-1.5 hover:bg-slate-50 text-slate-600 border-r border-slate-200 focus:outline-none transition-colors">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="navigateTemplatesList('next')" class="p-1.5 hover:bg-slate-50 text-slate-600 focus:outline-none transition-colors">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Botón Nuevo -->
+                        <button onclick="openCreateTemplateModal()" class="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-brand-500 text-brand-500 hover:text-brand-600 text-xs px-3.5 py-1.5 rounded-lg font-semibold shadow-sm transition-all" title="Crear Nueva Plantilla">
+                            <span>Nuevo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta que contiene el Listado de Plantillas -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3">Nombre de la Plantilla</th>
+                                    <th class="px-4 py-3">Cliente</th>
+                                    <th class="px-4 py-3 text-center">Tareas</th>
+                                    <th class="px-4 py-3 text-center">Fecha de Arranque</th>
+                                    <th class="px-4 py-3 text-center">Creado por</th>
+                                    <th class="px-4 py-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="templates-table-body" class="divide-y divide-slate-150">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: BPM DESIGNER -->
+            <section id="view-bpmn-designer" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
+                <!-- Control Panel / Subheader Bar (Odoo-style) -->
+                <div class="flex items-center justify-between px-1">
+                    <div class="flex items-center gap-1.5 text-slate-800 text-sm font-semibold">
+                        <!-- Botón Listado Plantillas con flecha -->
+                        <button onclick="switchTab('bpmn')" class="hover:underline text-brand-500 font-bold transition-all text-xs flex items-center gap-1">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i>
+                            <span>Listado Plantillas</span>
+                        </button>
+                        <span class="text-slate-400">/</span>
+                        <span class="font-normal text-slate-500 text-xs" id="template-sub-folio-label">PL-0001</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <!-- Botón Acción (Gear Dropdown) -->
+                        <div class="relative" id="action-dropdown-container">
+                            <button onclick="toggleActionDropdown(event)" class="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-600 hover:text-slate-800 text-xs px-3 py-1.5 rounded-lg font-semibold shadow-sm transition-all" title="Acciones">
+                                <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                                <span>Acción</span>
+                                <i data-lucide="chevron-down" class="w-3 h-3 text-slate-400"></i>
+                            </button>
+                            <!-- Dropdown Menu -->
+                            <div id="action-dropdown-menu" class="hidden absolute right-0 mt-1 w-32 bg-white border border-slate-200 rounded-lg shadow-lg z-50 py-1 font-semibold text-xs text-slate-700">
+                                <button onclick="openActivityHistoryDrawer()" class="w-full text-left px-4 py-2 hover:bg-slate-100 hover:text-brand-500 transition-colors flex items-center gap-1.5">
+                                    <i data-lucide="history" class="w-3.5 h-3.5"></i>
+                                    <span>Historial</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Paginación Odoo-style -->
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold select-none">
+                            <span id="gantt-pagination-label">1 / 1</span>
+                            <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <button onclick="navigateTemplate('prev')" class="p-1.5 hover:bg-slate-50 text-slate-600 border-r border-slate-200 focus:outline-none transition-colors">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="navigateTemplate('next')" class="p-1.5 hover:bg-slate-50 text-slate-600 focus:outline-none transition-colors">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Botón Nuevo -->
+                        <button onclick="openCreateTemplateModal()" class="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-brand-500 text-brand-500 hover:text-brand-600 text-xs px-3.5 py-1.5 rounded-lg font-semibold shadow-sm transition-all" title="Crear Nueva Plantilla">
+                            <span>Nuevo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- El Cuadro / Tarjeta de la Plantilla -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex flex-col xl:flex-row xl:items-start justify-between mb-6 gap-4 border-b border-slate-100 pb-4">
+                        <div>
+                            <div class="space-y-1.5">
+                                <!-- Nombre de la Plantilla con Botón de Edición -->
+                                <div class="flex items-center gap-2 flex-wrap" id="active-template-display-box">
+                                    <h2 id="active-template-name-label" class="text-xl sm:text-2xl font-bold text-slate-800">Proyecto: Instalación Enlaces B2B</h2>
+                                    <button onclick="openEditActiveTemplateModal()" class="p-1.5 hover:bg-slate-100 rounded-lg text-brand-500 hover:text-brand-600 transition-colors shrink-0" title="Editar Plantilla en Constructor Visual">
+                                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Cliente -->
+                                <div class="text-sm font-semibold text-slate-500 flex items-center gap-1.5" id="gantt-client-display-box">
+                                    <i data-lucide="building" class="w-4 h-4 text-slate-400"></i>
+                                    <span>Cliente: <strong id="gantt-client-name-label" class="text-slate-700">Inmobiliaria Norte</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Columna Derecha: Barra de Estado Tipo Odoo y Tiempos agrupados debajo -->
+                        <div class="shrink-0 flex flex-col items-end gap-3 pt-1">
+                            <!-- Barra de Estado Tipo Odoo -->
+                            <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200 text-xs font-semibold shadow-sm select-none" id="template-status-stepbar">
+                                <!-- Inyectado dinámicamente -->
+                            </div>
+                            
+                            <!-- Arranque y Tiempo Consumido -->
+                            <div class="flex flex-wrap items-center gap-2 justify-end">
+                                <span class="text-[10px] bg-slate-50 text-slate-650 font-bold px-2.5 py-1 rounded-lg border border-slate-200 flex items-center gap-1.5" id="gantt-start-date-badge">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 text-brand-500"></i>
+                                    <span id="gantt-start-date-label">Arranque: 12/07/2026 09:00</span>
+                                </span>
+                                <span class="text-[10px] bg-slate-50 text-slate-650 font-bold px-2.5 py-1 rounded-lg border border-slate-200 flex items-center gap-1.5" id="gantt-elapsed-time-badge">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-500 animate-spin" style="animation-duration: 8s;"></i>
+                                    <span id="gantt-elapsed-time-label">Tiempo Consumido: 00:00:00</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Contenedor Gantt unificado con Scroll 2D y Columnas/Cabeceras Sticky -->
+                    <div id="bpm-dynamic-container" class="border border-slate-200 rounded-lg bg-slate-50 overflow-auto max-h-[600px] w-full relative">
+                        <div class="min-w-[1120px] flex flex-col relative" id="gantt-unified-wrapper">
+                            <!-- Cabecera del Gantt (Sticky superior) -->
+                            <div class="sticky top-0 z-40 flex bg-white border-b border-slate-200 h-[41px] shrink-0">
+                                <!-- Cabecera Izquierda (Sticky superior izquierdo) -->
+                                <div class="sticky left-0 z-50 w-[420px] shrink-0 bg-slate-50 border-r border-slate-200 flex items-center p-2.5 text-[10px] font-bold text-slate-650 uppercase tracking-wider h-[40px]">
+                                    <div class="w-[260px]">Fase / Tarea</div>
+                                    <div class="w-[70px] text-center">Duración</div>
+                                    <div class="w-[80px] text-center">Estado</div>
+                                </div>
+                                <!-- Cabecera Derecha (Días) -->
+                                <div class="flex-1 flex bg-white h-[40px] items-center text-[10px] font-bold text-slate-500 uppercase tracking-wider min-w-[700px]" id="gantt-timeline-header">
+                                    <!-- D1, D2... inyectado dinámicamente -->
+                                </div>
+                            </div>
+                            
+                            <!-- Cuerpo de Tareas y Timeline -->
+                            <div id="gantt-rows-container" class="flex flex-col divide-y divide-slate-100 relative bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0NCIgaGVpZ2h0PSI0NCI+PHJlY3Qgd2lkdGg9IjQ0IiBoZWlnaHQ9IjQ0IiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTAgNDRMMCAwIiBzdHJva2U9IiNlMmU4ZjAiIiBzdHJva2Utd2lkdGg9IjYiLz48L3N2Zz4=')] bg-[length:44px_44px]">
+                                <svg id="gantt-svg" class="absolute inset-0 pointer-events-none w-full h-full z-10"></svg>
+                                <!-- Filas inyectadas dinámicamente (cada fila contiene lado izquierdo y lado derecho) -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: CATALOG NODES (Nodos) -->
+            <section id="view-catalog-nodes" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
+                <!-- Control Panel / Subheader Bar (Odoo-style) -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-1">
+                    <!-- Izquierda: Título -->
+                    <div class="text-slate-800 text-sm font-bold shrink-0 self-start md:self-center">
+                        Nodos del Catálogo
+                    </div>
+                    
+                    <!-- Centro: Buscador Avanzado Odoo-style -->
+                    <div class="flex-1 max-w-xl w-full relative">
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm pl-3 pr-2 py-1.5 gap-2" id="nodes-search-container">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                            <div id="nodes-search-tags" class="flex flex-wrap gap-1 items-center"></div>
+                            <input type="text" id="nodes-search-input" onfocus="showNodesSearchDropdown()" oninput="applyNodesFilters()" placeholder="Buscar..." class="flex-1 min-w-[60px] text-xs focus:outline-none bg-transparent">
+                            <button onclick="toggleNodesSearchDropdown(event)" class="p-1 hover:bg-slate-50 text-slate-500 rounded focus:outline-none transition-colors border border-slate-200">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Dropdown -->
+                        <div id="nodes-search-dropdown" class="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-4 hidden grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                            <!-- Filtros -->
+                            <div class="space-y-3.5">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="filter" class="w-3 h-3 text-slate-400"></i> Filtros (Asignación)
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="nodes-filter-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-node-comercial" onchange="applyNodesFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Área Comercial</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-node-campo" onchange="applyNodesFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Técnicos de Campo</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-node-soporte" onchange="applyNodesFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Área Soporte</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Agrupar Por -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="layers" class="w-3 h-3 text-slate-400"></i> Agrupar por
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="nodes-group-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-nodes" value="none" checked onchange="applyNodesFilters()" class="text-brand-500">
+                                        <span>Sin agrupar</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-nodes" value="assigned" onchange="applyNodesFilters()" class="text-brand-500">
+                                        <span>Especialista Asignado</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Favoritos -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-slate-400"></i> Favoritos
+                                </h5>
+                                <div class="space-y-3 text-xs text-slate-600">
+                                    <div class="flex flex-col gap-1.5 max-h-24 overflow-y-auto pr-1" id="nodes-favorites-list"></div>
+                                    <div class="border-t border-slate-100 pt-2 space-y-2">
+                                        <input type="text" id="new-node-favorite-name" placeholder="Nombre..." class="w-full p-1.5 border border-slate-200 rounded text-[11px] focus:outline-none">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                            <input type="checkbox" id="node-favorite-default-chk" class="rounded border-slate-300 text-brand-500">
+                                            <span>Predeterminado</span>
+                                        </label>
+                                        <button onclick="saveNodesFavorite()" class="w-full bg-brand-500 hover:bg-brand-600 text-white py-1 rounded font-bold text-[10px] uppercase tracking-wider shadow-sm">
+                                            Guardar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Derecha: Paginación + Botón Nuevo -->
+                    <div class="flex items-center gap-3 shrink-0 self-end md:self-center">
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold select-none">
+                            <span id="nodes-pagination-label">1-5 / 5</span>
+                            <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <button onclick="navigateNodesList('prev')" class="p-1.5 hover:bg-slate-50 text-slate-600 border-r border-slate-200">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="navigateNodesList('next')" class="p-1.5 hover:bg-slate-50 text-slate-600">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="openCatalogNodeModal()" class="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-brand-500 text-brand-500 hover:text-brand-600 text-xs px-3.5 py-1.5 rounded-lg font-semibold shadow-sm transition-all">
+                            <span>Nuevo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3">Nombre del Nodo</th>
+                                    <th class="px-4 py-3">Asignación Predeterminada</th>
+                                    <th class="px-4 py-3 text-center">Duración</th>
+                                    <th class="px-4 py-3 text-center">Estado</th>
+                                    <th class="px-4 py-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="catalog-nodes-table-body" class="divide-y divide-slate-100">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: DEPARTMENTS -->
+            <section id="view-departments" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
+                <!-- Control Panel / Subheader Bar (Odoo-style) -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-1">
+                    <!-- Izquierda: Título -->
+                    <div class="text-slate-800 text-sm font-bold shrink-0 self-start md:self-center">
+                        Departamentos
+                    </div>
+                    
+                    <!-- Centro: Buscador Avanzado Odoo-style -->
+                    <div class="flex-1 max-w-xl w-full relative">
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm pl-3 pr-2 py-1.5 gap-2" id="depts-search-container">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                            <div id="depts-search-tags" class="flex flex-wrap gap-1 items-center"></div>
+                            <input type="text" id="depts-search-input" onfocus="showDeptsSearchDropdown()" oninput="applyDeptsFilters()" placeholder="Buscar..." class="flex-1 min-w-[60px] text-xs focus:outline-none bg-transparent">
+                            <button onclick="toggleDeptsSearchDropdown(event)" class="p-1 hover:bg-slate-50 text-slate-500 rounded focus:outline-none transition-colors border border-slate-200">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Dropdown -->
+                        <div id="depts-search-dropdown" class="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-4 hidden grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                            <!-- Filtros -->
+                            <div class="space-y-3.5">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="filter" class="w-3 h-3 text-slate-400"></i> Filtros
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="depts-filter-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-dept-active" onchange="applyDeptsFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Con personal</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-dept-empty" onchange="applyDeptsFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Sin personal</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Agrupar Por -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="layers" class="w-3 h-3 text-slate-400"></i> Agrupar por
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="depts-group-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-depts" value="none" checked onchange="applyDeptsFilters()" class="text-brand-500">
+                                        <span>Sin agrupar</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-depts" value="manager" onchange="applyDeptsFilters()" class="text-brand-500">
+                                        <span>Responsable</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Favoritos -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-slate-400"></i> Favoritos
+                                </h5>
+                                <div class="space-y-3 text-xs text-slate-600">
+                                    <div class="flex flex-col gap-1.5 max-h-24 overflow-y-auto pr-1" id="depts-favorites-list"></div>
+                                    <div class="border-t border-slate-100 pt-2 space-y-2">
+                                        <input type="text" id="new-dept-favorite-name" placeholder="Nombre..." class="w-full p-1.5 border border-slate-200 rounded text-[11px] focus:outline-none">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                            <input type="checkbox" id="dept-favorite-default-chk" class="rounded border-slate-300 text-brand-500">
+                                            <span>Predeterminado</span>
+                                        </label>
+                                        <button onclick="saveDeptsFavorite()" class="w-full bg-brand-500 hover:bg-brand-600 text-white py-1 rounded font-bold text-[10px] uppercase tracking-wider shadow-sm">
+                                            Guardar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Derecha: Paginación + Botón Nuevo -->
+                    <div class="flex items-center gap-3 shrink-0 self-end md:self-center">
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold select-none">
+                            <span id="depts-pagination-label">1-5 / 5</span>
+                            <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <button onclick="navigateDeptsList('prev')" class="p-1.5 hover:bg-slate-50 text-slate-600 border-r border-slate-200">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="navigateDeptsList('next')" class="p-1.5 hover:bg-slate-50 text-slate-600">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="openDeptModal()" class="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-brand-500 text-brand-500 hover:text-brand-600 text-xs px-3.5 py-1.5 rounded-lg font-semibold shadow-sm transition-all">
+                            <span>Nuevo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3">Nombre</th>
+                                    <th class="px-4 py-3">Jefe / Responsable</th>
+                                    <th class="px-4 py-3">Personal Integrante</th>
+                                    <th class="px-4 py-3 text-center">Nº Empleados</th>
+                                    <th class="px-4 py-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="depts-table-body" class="divide-y divide-slate-100">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: PERSONAL -->
+            <section id="view-personal" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
+                <!-- Control Panel / Subheader Bar (Odoo-style) -->
+                <div class="flex flex-col md:flex-row items-center justify-between gap-4 px-1">
+                    <!-- Izquierda: Título -->
+                    <div class="text-slate-800 text-sm font-bold shrink-0 self-start md:self-center">
+                        Personal Registrado
+                    </div>
+                    
+                    <!-- Centro: Buscador Avanzado Odoo-style -->
+                    <div class="flex-1 max-w-xl w-full relative">
+                        <div class="flex items-center bg-white border border-slate-200 rounded-lg shadow-sm pl-3 pr-2 py-1.5 gap-2" id="emps-search-container">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 shrink-0"></i>
+                            <div id="emps-search-tags" class="flex flex-wrap gap-1 items-center"></div>
+                            <input type="text" id="emps-search-input" onfocus="showEmpsSearchDropdown()" oninput="applyEmpsFilters()" placeholder="Buscar..." class="flex-1 min-w-[60px] text-xs focus:outline-none bg-transparent">
+                            <button onclick="toggleEmpsSearchDropdown(event)" class="p-1 hover:bg-slate-50 text-slate-500 rounded focus:outline-none transition-colors border border-slate-200">
+                                <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Dropdown -->
+                        <div id="emps-search-dropdown" class="absolute left-0 right-0 mt-2 bg-white border border-slate-200 rounded-xl shadow-xl z-50 p-4 hidden grid grid-cols-1 md:grid-cols-3 gap-6 divide-y md:divide-y-0 md:divide-x divide-slate-100">
+                            <!-- Filtros -->
+                            <div class="space-y-3.5">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="filter" class="w-3 h-3 text-slate-400"></i> Filtros (Roles)
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="emps-filter-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-emp-comercial" onchange="applyEmpsFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Rol Comercial</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-emp-soporte" onchange="applyEmpsFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Rol Soporte</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="checkbox" id="filter-emp-control" onchange="applyEmpsFilters()" class="rounded border-slate-300 text-brand-500">
+                                        <span>Rol de Control</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Agrupar Por -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="layers" class="w-3 h-3 text-slate-400"></i> Agrupar por
+                                </h5>
+                                <div class="flex flex-col gap-2 text-xs text-slate-600" id="emps-group-options">
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-emps" value="none" checked onchange="applyEmpsFilters()" class="text-brand-500">
+                                        <span>Sin agrupar</span>
+                                    </label>
+                                    <label class="inline-flex items-center gap-2 cursor-pointer hover:text-brand-500 transition-colors">
+                                        <input type="radio" name="group-emps" value="dept" onchange="applyEmpsFilters()" class="text-brand-500">
+                                        <span>Departamento</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <!-- Favoritos -->
+                            <div class="space-y-3.5 md:pl-6">
+                                <h5 class="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                    <i data-lucide="star" class="w-3 h-3 text-slate-400"></i> Favoritos
+                                </h5>
+                                <div class="space-y-3 text-xs text-slate-600">
+                                    <div class="flex flex-col gap-1.5 max-h-24 overflow-y-auto pr-1" id="emps-favorites-list"></div>
+                                    <div class="border-t border-slate-100 pt-2 space-y-2">
+                                        <input type="text" id="new-emp-favorite-name" placeholder="Nombre..." class="w-full p-1.5 border border-slate-200 rounded text-[11px] focus:outline-none">
+                                        <label class="inline-flex items-center gap-1.5 cursor-pointer">
+                                            <input type="checkbox" id="emp-favorite-default-chk" class="rounded border-slate-300 text-brand-500">
+                                            <span>Predeterminado</span>
+                                        </label>
+                                        <button onclick="saveEmpsFavorite()" class="w-full bg-brand-500 hover:bg-brand-600 text-white py-1 rounded font-bold text-[10px] uppercase tracking-wider shadow-sm">
+                                            Guardar
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Derecha: Paginación + Botón Nuevo -->
+                    <div class="flex items-center gap-3 shrink-0 self-end md:self-center">
+                        <div class="flex items-center gap-2 text-xs text-slate-500 font-semibold select-none">
+                            <span id="emps-pagination-label">1-5 / 5</span>
+                            <div class="flex items-center bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
+                                <button onclick="navigateEmpsList('prev')" class="p-1.5 hover:bg-slate-50 text-slate-600 border-r border-slate-200">
+                                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
+                                </button>
+                                <button onclick="navigateEmpsList('next')" class="p-1.5 hover:bg-slate-50 text-slate-600">
+                                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button onclick="openEmployeeModal()" class="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-brand-500 text-brand-500 hover:text-brand-600 text-xs px-3.5 py-1.5 rounded-lg font-semibold shadow-sm transition-all">
+                            <span>Nuevo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tarjeta -->
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col space-y-4">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
+                                <tr>
+                                    <th class="px-4 py-3">Nombre</th>
+                                    <th class="px-4 py-3">Puesto / Rol</th>
+                                    <th class="px-4 py-3">Departamento Asignado</th>
+                                    <th class="px-4 py-3 text-center">Num Tareas completadas semanal</th>
+                                    <th class="px-4 py-3 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="emps-table-body" class="divide-y divide-slate-100">
+                                <!-- Inyectado dinámicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: VENTAS (ERP) -->
+            <section id="view-sales" class="space-y-6 hidden">
+                <!-- Barra de acciones: Buscar, Filtros y Nuevo -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-1 items-center gap-3 w-full sm:w-auto">
+                        <div class="relative flex-1 max-w-md">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="sales-search-input" onkeyup="filterSalesTable()" placeholder="Buscar cotización por número o cliente..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
+                        </div>
+                        <select id="sales-status-filter" onchange="filterSalesTable()" class="p-2 border border-slate-200 bg-white rounded-lg text-sm focus:outline-none text-slate-600">
+                            <option value="all">Todos los estados</option>
+                            <option value="Cotización">Cotizaciones</option>
+                            <option value="Pedido de venta">Pedidos de venta</option>
+                            <option value="Cancelado">Cancelados</option>
+                        </select>
+                    </div>
+                    <button onclick="openCreateQuotationView()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-md transition-all shrink-0">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Nueva Cotización</span>
+                    </button>
+                </div>
+
+                <!-- Tabla de cotizaciones -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">Número</th>
+                                    <th class="px-6 py-3 font-semibold">Fecha de Creación</th>
+                                    <th class="px-6 py-3 font-semibold">Cliente</th>
+                                    <th class="px-6 py-3 font-semibold">Vendedor</th>
+                                    <th class="px-6 py-3 font-semibold">Empresa</th>
+                                    <th class="px-6 py-3 font-semibold text-right">Total</th>
+                                    <th class="px-6 py-3 font-semibold text-center">Estado</th>
+                                    <th class="px-6 py-3 font-semibold text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-table-body" class="divide-y divide-slate-100">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: DETALLE / CREACIÓN DE COTIZACIÓN -->
+            <section id="view-sales-detail" class="space-y-6 hidden">
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+                    
+                    <!-- Cabecera de estado / pipeline de venta y botones principales -->
+                    <div class="border-b border-slate-200 p-4 bg-slate-50 flex flex-col lg:flex-row gap-4 items-stretch lg:items-center justify-between">
+                        <!-- Acciones del pedido -->
+                        <div class="flex flex-wrap items-center gap-2">
+                            <button onclick="confirmSalesOrder()" id="sales-confirm-btn" class="bg-brand-500 hover:bg-brand-600 text-white text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                                <i data-lucide="check" class="w-4 h-4"></i>
+                                <span>Confirmar Pedido</span>
+                            </button>
+                            <button onclick="simulateSendByEmail()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                                <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
+                                <span>Enviar por Correo</span>
+                            </button>
+                            <button onclick="simulateProformaInvoice()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                                <i data-lucide="printer" class="w-4 h-4 text-slate-400"></i>
+                                <span>Imprimir Proforma</span>
+                            </button>
+                            <button onclick="cancelSalesOrder()" id="sales-cancel-btn" class="border border-slate-200 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-600 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                                <i data-lucide="ban" class="w-4 h-4 text-slate-400"></i>
+                                <span>Cancelar</span>
+                            </button>
+                        </div>
+
+                        <!-- Estado y entregas -->
+                        <div class="flex items-center gap-4 justify-between lg:justify-end">
+                            <!-- Badge de Entrega -->
+                            <div class="bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-semibold">
+                                <i data-lucide="truck" class="w-4 h-4 text-amber-500"></i>
+                                <span>Entrega: <strong id="sales-delivery-count">1</strong></span>
+                            </div>
+                            
+                            <!-- Pipeline -->
+                            <div class="flex items-center text-xs font-semibold text-slate-400 border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
+                                <span id="pipeline-step-draft" class="px-3 py-1.5 bg-slate-100 text-slate-700 border-r border-slate-200">Presupuesto</span>
+                                <span id="pipeline-step-sent" class="px-3 py-1.5 border-r border-slate-200">Enviado</span>
+                                <span id="pipeline-step-sale" class="px-3 py-1.5">Pedido de venta</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cuerpo del formulario -->
+                    <div class="p-6 space-y-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-slate-100 pb-4">
+                            <h3 id="sales-doc-number" class="text-2xl font-bold text-slate-800 tracking-tight">S00163-2026</h3>
+                            <div class="text-xs text-slate-400 font-semibold mt-1 sm:mt-0">Creado por: <span id="sales-doc-creator" class="text-slate-600">Mitchell Admin</span></div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Columna Izquierda: Datos del Cliente -->
+                            <div class="space-y-4">
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cliente:</label>
+                                    <select id="sales-client-select" onchange="autoFillSalesAddresses()" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                        <!-- Dinámico -->
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dirección de Facturación:</label>
+                                    <input type="text" id="sales-invoice-address" placeholder="Dirección para la emisión de factura" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-slate-50">
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dirección de Entrega:</label>
+                                    <input type="text" id="sales-delivery-address" placeholder="Dirección física para la entrega/servicio" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-slate-50">
+                                </div>
+                            </div>
+
+                            <!-- Columna Derecha: Tiempos y Parámetros -->
+                            <div class="space-y-4">
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Fecha del Pedido:</label>
+                                    <input type="datetime-local" id="sales-order-date" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Condiciones de Pago:</label>
+                                    <select id="sales-payment-terms" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                        <option value="Inmediato">Inmediato</option>
+                                        <option value="15 días">15 días</option>
+                                        <option value="30 días" selected>30 días</option>
+                                        <option value="45 días">45 días</option>
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Referencia del Cliente:</label>
+                                    <input type="text" id="sales-client-ref" placeholder="Ej: PEDIDO-001, ORDEN-992" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Líneas del Pedido (Tab) -->
+                        <div class="space-y-4 mt-6">
+                            <div class="border-b border-slate-200">
+                                <span class="border-b-2 border-brand-500 px-4 py-2 text-xs font-bold text-brand-500 inline-block uppercase tracking-wider cursor-default">Líneas del Pedido</span>
+                            </div>
+                            
+                            <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                                <table class="w-full text-sm text-left">
+                                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                                        <tr>
+                                            <th class="px-4 py-2.5 font-semibold">Producto / Concepto</th>
+                                            <th class="px-4 py-2.5 font-semibold text-center w-[120px]">Cantidad</th>
+                                            <th class="px-4 py-2.5 font-semibold text-right w-[150px]">Precio Unitario</th>
+                                            <th class="px-4 py-2.5 font-semibold text-center w-[120px]">Impuestos</th>
+                                            <th class="px-4 py-2.5 font-semibold text-right w-[160px]">Importe</th>
+                                            <th class="px-4 py-2.5 font-semibold text-center w-[60px]">Eliminar</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="sales-lines-body" class="divide-y divide-slate-100">
+                                        <!-- Dinámico -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <button type="button" onclick="addSalesOrderLine()" class="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-bold shadow-sm transition-all border border-slate-350">
+                                <i data-lucide="plus-circle" class="w-4 h-4 text-brand-500"></i>
+                                <span>Añadir Producto</span>
+                            </button>
+                        </div>
+
+                        <!-- Totales -->
+                        <div class="flex justify-end mt-6">
+                            <div class="w-full sm:w-80 bg-slate-50 p-4 border border-slate-200 rounded-xl space-y-2 shadow-sm">
+                                <div class="flex justify-between text-xs text-slate-500 font-semibold">
+                                    <span>Subtotal:</span>
+                                    <span id="sales-subtotal-display">$0.00 USD</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-slate-500 font-semibold">
+                                    <span>Impuestos (IVA 16%):</span>
+                                    <span id="sales-tax-display">$0.00 USD</span>
+                                </div>
+                                <div class="flex justify-between text-sm font-bold text-slate-800 border-t border-slate-200 pt-2">
+                                    <span>Total:</span>
+                                    <span id="sales-total-display">$0.00 USD</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botones de Guardar / Cancelar en el pie -->
+                    <div class="p-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3">
+                        <button onclick="cancelSalesDetailView()" class="border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs px-4 py-2 rounded-lg font-bold transition-all shadow-sm">
+                            Cancelar
+                        </button>
+                        <button onclick="saveSalesOrder()" class="bg-brand-500 hover:bg-brand-600 text-white text-xs px-5 py-2.5 rounded-lg font-bold transition-all shadow-md flex items-center gap-1.5">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            <span>Guardar Cotización</span>
+                        </button>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- VIEW: COMUNICACIONES (OMNICANAL) -->
+            <section id="view-comm" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <!-- Columna Izquierda: Canales y Mensajes Directos (1/4) -->
+                    <div class="lg:col-span-1 bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-6 flex flex-col h-auto lg:h-[600px] overflow-y-auto">
+                        <!-- Canales -->
+                        <div>
+                            <h3 class="font-bold text-slate-400 text-[10px] uppercase tracking-wider mb-3">Canales de Proyecto</h3>
+                            <ul class="space-y-1">
+                                <li>
+                                    <button onclick="openChannelChat('general')" id="btn-chan-general" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center transition-all bg-brand-50 text-brand-600 border border-brand-100">
+                                        <i data-lucide="hash" class="w-4 h-4 mr-2"></i>
+                                        <span>general</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button onclick="openChannelChat('urgencias-campo')" id="btn-chan-urgencias-campo" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all">
+                                        <i data-lucide="hash" class="w-4 h-4 mr-2"></i>
+                                        <span>urgencias-campo</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Mensajes Directos -->
+                        <div class="flex-1 flex flex-col">
+                            <h3 class="font-bold text-slate-400 text-[10px] uppercase tracking-wider mb-3">Mensajes Directos</h3>
+                            <ul id="comm-dm-list" class="space-y-1 overflow-y-auto pr-1">
+                                <!-- Inyectado dinámicamente -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Columna Derecha: Panel de Chat (3/4) -->
+                    <div class="lg:col-span-3 bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[500px] lg:h-[600px] justify-between">
+                        <!-- Cabecera del Chat -->
+                        <div class="h-14 border-b border-slate-200 flex items-center justify-between px-6 bg-slate-50">
+                            <h3 id="comm-active-title" class="font-bold text-slate-800 flex items-center text-sm">
+                                <i data-lucide="hash" class="w-4 h-4 mr-2 text-slate-500"></i> general
+                            </h3>
+                            <span class="text-[10px] bg-slate-100 text-slate-500 font-bold px-2 py-0.5 rounded border border-slate-200 flex items-center gap-1">
+                                <i data-lucide="shield" class="w-3 h-3 text-brand-500"></i> Canal de Despacho
+                            </span>
+                        </div>
+
+                        <!-- Historial de Conversación -->
+                        <div id="comm-chat-history" class="flex-1 overflow-y-auto p-6 space-y-4 bg-[#f8f9fa]">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+
+                        <!-- Input de Mensaje -->
+                        <div class="p-4 border-t border-slate-200 bg-slate-50">
+                            <form onsubmit="sendCommMessage(event)" class="flex gap-2">
+                                <input type="text" id="comm-input" placeholder="Escribe un mensaje..." required autocomplete="off" class="flex-1 bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
+                                <button type="submit" class="bg-brand-500 hover:bg-brand-600 text-white px-4 py-2.5 rounded-lg transition-all flex items-center shadow-md">
+                                    <i data-lucide="send" class="w-4 h-4"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: MOBILE SIMULATOR -->
+            <section id="view-mobile-sim" class="flex justify-center items-center py-2 sm:py-4 hidden w-full h-full">
+                <div id="mobile-phone-container" class="w-full sm:w-[360px] h-[calc(100vh-140px)] sm:h-[720px] bg-transparent sm:bg-slate-900 rounded-none sm:rounded-[40px] p-0 sm:p-4 shadow-none sm:shadow-2xl border-0 sm:border-4 border-slate-800 relative flex flex-col transition-all">
+                    <div class="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-4 shrink-0 hidden sm:block"></div>
+                    <div id="mobile-screen-content" class="flex-1 bg-white rounded-none sm:rounded-[24px] overflow-hidden flex flex-col text-slate-800 relative border border-slate-150 sm:border-0 shadow-sm sm:shadow-none">
+                    </div>
+                    <div class="w-10 h-10 bg-slate-800 rounded-full mx-auto mt-4 cursor-pointer hover:bg-slate-700 transition-all shrink-0 hidden sm:block" onclick="resetMobileSimulator()" title="Resetear Móvil"></div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Modal para Reasignación de Especialista -->
+    <div id="modal-reasign" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-96 space-y-4">
+            <h4 class="font-bold text-slate-800 text-lg">Reasignar Especialista (Nivel 2)</h4>
+            <p class="text-xs text-slate-400">Recomendado para resolver fallas con etiqueta "Reincidencia Potencial".</p>
+            <div class="space-y-2">
+                <label class="text-xs font-semibold text-slate-500 uppercase">Seleccionar Técnico:</label>
+                <select id="select-specialist" class="w-full p-2 border border-slate-200 rounded-lg text-sm bg-white">
+                    <!-- Dinámico -->
+                </select>
+            </div>
+            <div class="flex items-center justify-end gap-2 pt-2">
+                <button onclick="closeReasignModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button onclick="confirmReasign()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Confirmar Reasignación</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Crear / Editar Departamento Relacional -->
+    <div id="modal-dept-editor" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[480px] space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5" id="dept-modal-title">
+                    <i data-lucide="building" class="w-4 h-4 text-brand-500"></i>
+                    Crear Departamento
+                </h4>
+                <button onclick="closeDeptModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3.5 text-xs">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Nombre del Departamento:</label>
+                    <input type="text" id="dept-modal-name" placeholder="Ej. Soporte Técnico" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Responsable / Jefe:</label>
+                    <select id="dept-modal-manager" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <!-- Cargado dinámicamente -->
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Seleccionar Integrantes del Personal:</label>
+                    <div class="border border-slate-200 rounded-lg max-h-48 overflow-y-auto p-2 bg-slate-50 space-y-1.5" id="dept-modal-members-container">
+                        <!-- Lista de checkboxes del personal -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button onclick="closeDeptModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button id="dept-modal-submit-btn" onclick="saveDeptFromModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Guardar Departamento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Crear / Editar Nodo Estándar -->
+    <div id="modal-catalog-node-editor" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[480px] space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5" id="catalog-node-modal-title">
+                    <i data-lucide="plus-circle" class="w-4 h-4 text-brand-500"></i>
+                    Crear Nodo Estándar
+                </h4>
+                <button onclick="closeCatalogNodeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3.5 text-xs">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Nombre del Nodo:</label>
+                    <input type="text" id="catalog-modal-node-name" placeholder="Ej. Cableado de Red" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                </div>
+                
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Asignación Predeterminada:</label>
+                    <select id="catalog-modal-node-assigned" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <!-- Cargado en JS -->
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Tiempo Predeterminado:</label>
+                        <input type="number" id="catalog-modal-node-timeval" value="1" min="1" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Unidad:</label>
+                        <select id="catalog-modal-node-unit" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <option value="min">minutos</option>
+                            <option value="hora">horas</option>
+                            <option value="dia" selected>días</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Estado Predeterminado:</label>
+                    <div class="flex gap-1.5 mt-1">
+                        <select id="catalog-modal-node-status" class="flex-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            <!-- Cargado dinámicamente -->
+                        </select>
+                        <input type="text" id="catalog-modal-quick-status-input" placeholder="Nuevo Estado" class="w-[100px] p-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 bg-slate-50">
+                        <button onclick="addCatalogModalQuickStatus()" class="bg-emerald-600 hover:bg-emerald-700 text-white p-2.5 rounded-lg font-bold shadow-sm transition-all flex items-center justify-center shrink-0" title="Guardar y Seleccionar Estado">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Descripción / Observaciones:</label>
+                    <textarea id="catalog-modal-node-obs" placeholder="Detalle o instrucción estándar de esta actividad..." rows="3" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500"></textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button onclick="closeCatalogNodeModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button id="catalog-node-modal-submit-btn" onclick="saveCatalogNodeFromModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Guardar Nodo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Registrar / Editar Personal -->
+    <div id="modal-employee-editor" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[440px] space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5" id="employee-modal-title">
+                    <i data-lucide="users" class="w-4 h-4 text-brand-500"></i>
+                    Registrar Personal
+                </h4>
+                <button onclick="closeEmployeeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3.5 text-xs">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Nombre del Empleado:</label>
+                    <input type="text" id="emp-modal-name" placeholder="Ej. Juan Pérez" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Puesto / Rol:</label>
+                    <input type="text" id="emp-modal-role" placeholder="Ej. Técnico de Campo" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Departamento:</label>
+                    <select id="emp-modal-dept" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <!-- Cargado dinámicamente -->
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Horario Laboral y de Comida:</label>
+                    <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Entrada:</label>
+                            <input type="time" id="emp-modal-time-in" value="09:00" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Salida Comer:</label>
+                            <input type="time" id="emp-modal-time-lunch-out" value="14:00" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Regreso Comer:</label>
+                            <input type="time" id="emp-modal-time-lunch-in" value="15:00" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Salida:</label>
+                            <input type="time" id="emp-modal-time-out" value="18:00" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button onclick="closeEmployeeModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button id="employee-modal-submit-btn" onclick="saveEmployeeFromModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Registrar Empleado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Pequeño: Edición Rápida de Nodo con alerta de sobrecarga -->
+    <div id="modal-quick-edit-task" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-96 space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="edit" class="w-4 h-4 text-brand-500"></i>
+                    Editar Nodo Rápido
+                </h4>
+                <button onclick="closeQuickEditTaskModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-4.5 h-4.5"></i>
+                </button>
+            </div>
+
+            <!-- Alerta Reactiva de Sobrecarga de Horas -->
+            <div id="quick-edit-overload-alert" class="hidden p-3 bg-red-50 border border-red-200 text-red-800 text-xs rounded-lg font-semibold flex items-start gap-2">
+                <i data-lucide="alert-triangle" class="w-4 h-4 text-accent-500 shrink-0 mt-0.5 animate-bounce"></i>
+                <div class="flex-1" id="quick-edit-overload-msg"></div>
+            </div>
+            
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Actividad / Tarea:</label>
+                    <input type="text" id="quick-task-name" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none">
+                </div>
+                <div class="relative">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Especialista Asignado:</label>
+                    <button type="button" id="quick-task-assigned-trigger" onclick="toggleCustomDropdown('quick-task-assigned-dropdown', event)" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none flex items-center justify-between font-semibold text-xs text-slate-800">
+                        <span id="quick-task-assigned-value">Sin Asignar</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400"></i>
+                    </button>
+                    <div id="quick-task-assigned-dropdown" class="absolute left-0 right-0 mt-1 max-h-[380px] overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-xl z-50 hidden p-2 space-y-1">
+                        <!-- Las opciones personalizadas con degradados se cargan aquí -->
+                    </div>
+                    <input type="hidden" id="quick-task-assigned" onchange="checkQuickEditOverload()">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Duración:</label>
+                        <input type="number" id="quick-task-duration" oninput="checkQuickEditOverload()" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Unidad:</label>
+                        <select id="quick-task-unit" onchange="checkQuickEditOverload()" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-white focus:outline-none">
+                            <option value="min">minutos</option>
+                            <option value="hora">horas</option>
+                            <option value="dia">días</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Observaciones / Descripción:</label>
+                    <textarea id="quick-task-obs" rows="2" placeholder="Notas sobre el estado..." class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none"></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Urgencia:</label>
+                        <select id="quick-task-urgency" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-white focus:outline-none">
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Ubicación:</label>
+                        <input type="text" id="quick-task-location" placeholder="Ej. Av. Garza Sada #450" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Inicio de Acción (Fecha):</label>
+                        <input type="date" id="quick-task-start-date" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-55 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Inicio de Acción (Hora):</label>
+                        <input type="time" id="quick-task-start-time" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-55 focus:outline-none">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button onclick="closeQuickEditTaskModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button onclick="saveQuickEditTask()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Actualizar Nodo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Crear / Editar Plantilla (Modelador Visual BPM) -->
+    <div id="modal-create-template" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[95vw] max-w-6xl h-[90vh] flex flex-col space-y-4">
+            
+            <!-- Cabecera -->
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 shrink-0">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="git-branch" class="text-brand-500 w-5 h-5"></i>
+                    <h4 class="font-bold text-slate-800 text-lg" id="modal-builder-title">Modelador Visual de Flujos de Trabajo (BPMS)</h4>
+                </div>
+                <button onclick="closeCreateTemplateModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Cuerpo del Constructor (Grid responsivo) -->
+            <div class="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 overflow-y-auto lg:overflow-hidden">
+                
+                <!-- Columna 1: Parámetros del Proyecto (Ancho fijo en desktop) -->
+                <div class="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 flex flex-col gap-4 shrink-0 text-xs">
+                    <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
+                        <i data-lucide="info" class="w-4 h-4 text-brand-500"></i>
+                        Parámetros del Proyecto
+                    </h5>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Nombre del Proyecto / Plantilla:</label>
+                        <input type="text" id="new-template-name" placeholder="Ej. Instalación Enlaces B2B" class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 font-medium">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Cliente:</label>
+                        <input type="text" id="new-template-client" value="Cliente General" class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">Fecha Arranque:</label>
+                            <input type="date" id="new-template-start-date" onchange="renderPropertiesPanel()" class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 font-mono text-[11px]">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">Hora Arranque:</label>
+                            <input type="time" id="new-template-start-time" onchange="renderPropertiesPanel()" value="09:00" class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 font-mono text-[11px]">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-400 uppercase">Observaciones Generales:</label>
+                        <textarea id="new-template-observations" rows="3" placeholder="Detalles de la planificación..." class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500"></textarea>
+                    </div>
+                </div>
+
+                <!-- Columna 2: Biblioteca de Nodos (Ancho fijo en desktop) -->
+                <div class="w-full lg:w-60 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 flex flex-col gap-3 shrink-0">
+                    <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider flex items-center gap-1.5">
+                        <i data-lucide="book-open" class="w-4 h-4 text-brand-500"></i>
+                        Biblioteca de Nodos
+                    </h5>
+                    <!-- Crear rápido de nodo para biblioteca -->
+                    <div class="flex gap-1.5 shrink-0">
+                        <input type="text" id="custom-node-name-input" placeholder="Guardar Nodo Rápido" class="flex-1 p-2 border border-slate-250 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 bg-slate-50">
+                        <button onclick="addNewCustomNodeToLibrary()" class="bg-brand-500 hover:bg-brand-600 text-white p-2 rounded-lg font-bold shadow-sm transition-all" title="Guardar en Biblioteca">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                    <!-- Lista de nodos estándar de la biblioteca -->
+                    <div class="flex-1 overflow-y-auto space-y-2 pr-1 min-h-[150px] lg:min-h-0" id="library-nodes-buttons-container">
+                        <!-- Lista de botones -->
+                    </div>
+                </div>
+
+                <!-- Columna 3: Lienzo de Secuencia Visual (Flex-1) -->
+                <div class="flex-1 min-h-[300px] lg:min-h-0 flex flex-col gap-2 min-w-0 bg-slate-50 border border-slate-200 rounded-xl p-4 overflow-y-auto" id="visual-sequence-canvas">
+                    <!-- Secuencia de tarjetas del constructor inyectada en JS -->
+                </div>
+
+                <!-- Columna 4: Propiedades del Nodo Seleccionado (Ancho fijo en desktop) -->
+                <div class="w-full lg:w-64 border-t lg:border-t-0 lg:pl-2 pt-6 lg:pt-0 flex flex-col justify-between shrink-0" id="node-properties-panel">
+                    <!-- Propiedades del nodo inyectadas dinámicamente -->
+                </div>
+
+            </div>
+
+            <!-- Pie de Modal -->
+            <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100 shrink-0">
+                <button onclick="closeCreateTemplateModal()" class="px-5 py-2.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button onclick="saveNewTemplate()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                    <i data-lucide="check" class="w-4 h-4"></i>
+                    <span>Guardar y Aplicar Flujo</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Modal: Catálogo General de Tareas -->
+    <div id="modal-task-catalog" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[680px] max-h-[85vh] flex flex-col space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="database" class="text-brand-500 w-5 h-5"></i>
+                    <h4 class="font-bold text-slate-800 text-lg">Catálogo General de Tareas</h4>
+                </div>
+                <button onclick="closeTaskCatalogModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500">
+                Buscador optimizado para grandes catálogos de hasta 5,000+ registros en tiempo real. Soporta paginación de 5 en 5 para esta demo.
+            </p>
+
+            <!-- Buscador y Filtros -->
+            <div class="flex gap-3">
+                <div class="relative flex-1">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                    <input type="text" id="catalog-search-input" oninput="searchCatalogTasks()" placeholder="Buscar tarea por nombre..." class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:border-brand-500 focus:outline-none bg-slate-50">
+                </div>
+                <select id="catalog-filter-status" onchange="searchCatalogTasks()" class="border border-slate-200 rounded-lg px-3 py-2 text-xs font-semibold bg-white text-slate-600">
+                    <option value="all">Todos los estados</option>
+                    <option value="Vencido">Vencidos</option>
+                    <option value="Por vencer">Por Vencer</option>
+                    <option value="Reincidencia Potencial">Reincidencia Potencial</option>
+                    <option value="Completado">Completados</option>
+                    <option value="Pendiente">Pendientes</option>
+                </select>
+            </div>
+
+            <!-- Tabla de Tareas del Catálogo -->
+            <div class="flex-1 overflow-y-auto border border-slate-100 rounded-lg">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3">Tarea</th>
+                            <th class="px-4 py-3">Plantilla Asociada</th>
+                            <th class="px-4 py-3 text-center">Estado</th>
+                            <th class="px-4 py-3">Rango de Fecha</th>
+                            <th class="px-4 py-3 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="catalog-table-body" class="divide-y divide-slate-100">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Controles de Paginación -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+                <span id="catalog-pagination-info">Mostrando 1-5 de 20</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="catalogPrevPage()" id="btn-catalog-prev" class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Anterior</button>
+                    <button onclick="catalogNextPage()" id="btn-catalog-next" class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Catálogo General de Plantillas -->
+    <div id="modal-template-catalog" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[640px] max-h-[80vh] flex flex-col space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="folder-open" class="text-brand-500 w-5 h-5"></i>
+                    <h4 class="font-bold text-slate-800 text-lg">Catálogo de Plantillas de Procesos</h4>
+                </div>
+                <button onclick="closeTemplateCatalogModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <p class="text-xs text-slate-500">
+                Buscador optimizado para grandes catálogos de plantillas de procesos. Soporta filtrado de texto y paginación en tiempo real.
+            </p>
+
+            <!-- Buscador -->
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-3"></i>
+                <input type="text" id="tpl-catalog-search-input" oninput="searchCatalogTemplates()" placeholder="Buscar plantilla por nombre o fecha..." class="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:border-brand-500 focus:outline-none bg-slate-50">
+            </div>
+
+            <!-- Tabla de Plantillas -->
+            <div class="flex-1 overflow-y-auto border border-slate-100 rounded-lg">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3">Nombre de la Plantilla</th>
+                            <th class="px-4 py-3 text-center">Cliente</th>
+                            <th class="px-4 py-3">Fecha de Creación</th>
+                            <th class="px-4 py-3 text-center">Total Tareas</th>
+                            <th class="px-4 py-3 text-right">Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tpl-catalog-table-body" class="divide-y divide-slate-100">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Controles de Paginación -->
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-xs text-slate-500">
+                <span id="tpl-catalog-pagination-info">Mostrando 1-3 de 4</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="tplCatalogPrevPage()" id="btn-tpl-prev" class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Anterior</button>
+                    <button onclick="tplCatalogNextPage()" id="btn-tpl-next" class="px-3 py-1.5 border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed">Siguiente</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Tarjeta flotante de Guía del Tour Simulado -->
+    <div id="tour-guide-card" class="fixed bottom-6 right-6 w-96 bg-white border border-brand-200 rounded-2xl shadow-2xl p-5 z-[100] hidden flex flex-col space-y-3.5 transition-all duration-300">
+        <div class="flex items-center justify-between">
+            <span class="text-[10px] bg-brand-50 text-brand-500 font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-brand-100 flex items-center gap-1">
+                <span class="animate-ping w-1.5 h-1.5 rounded-full bg-brand-500 inline-block mr-1"></span>
+                Simulación en Curso
+            </span>
+            <button onclick="endAutoSimulationTour()" class="text-slate-400 hover:text-slate-600 transition-all text-xs font-bold">Salir</button>
+        </div>
+        <div class="space-y-1">
+            <h4 class="font-bold text-slate-800 text-sm" id="tour-step-title">Paso 1: Creación del Proceso</h4>
+            <p class="text-xs text-slate-500 leading-relaxed" id="tour-step-desc">Se genera la plantilla operativa...</p>
+        </div>
+        <div class="flex items-center justify-between pt-2 border-t border-slate-100 shrink-0">
+            <span class="text-[10px] text-slate-400 font-semibold" id="tour-step-counter">1 de 7</span>
+            <div class="flex items-center gap-2">
+                <button id="tour-prev-btn" onclick="prevTourStep()" class="p-1 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all text-slate-600 disabled:opacity-50">
+                    <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                </button>
+                <button id="tour-play-btn" onclick="toggleTourPlay()" class="p-1 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all text-slate-600">
+                    <i id="tour-play-icon" data-lucide="pause" class="w-4 h-4"></i>
+                </button>
+                <button id="tour-next-btn" onclick="nextTourStep()" class="px-3 py-1 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition-all shadow-sm">
+                    Siguiente
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Puntero de mouse simulado para el Tour Guiado -->
+    <div id="simulated-cursor" class="fixed w-6 h-6 z-[9999] pointer-events-none hidden transition-all duration-1000 ease-in-out select-none">
+        <svg viewBox="0 0 24 24" class="w-full h-full drop-shadow-[0_2px_4px_rgba(0,0,0,0.35)]" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.5 3V18.5L10.2 13.8L15.5 21L18.5 19L13.2 11.8L18.5 11.8L5.5 3Z" fill="white" stroke="#1e293b" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Drawer de Historial de Actividades (Odoo-style Chatter) -->
+    <div id="activity-history-drawer" class="fixed inset-y-0 right-0 w-80 sm:w-96 bg-white border-l border-slate-200 shadow-2xl z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col hidden">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
+            <div class="flex items-center gap-2 text-slate-800">
+                <i data-lucide="history" class="w-4 h-4 text-brand-500"></i>
+                <h3 class="font-bold text-sm">Historial de Actividades</h3>
+            </div>
+            <button onclick="closeActivityHistoryDrawer()" class="p-1 hover:bg-slate-200 rounded text-slate-500 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+        
+        <!-- Body (Timeline) -->
+        <div class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/50" id="activity-history-timeline">
+            <!-- Separadores e items inyectados dinámicamente -->
+        </div>
+    </div>
+
+    <!-- Script de lógica de la demo -->
+    <script src="app3.js"></script>
+</body>
+</html>
