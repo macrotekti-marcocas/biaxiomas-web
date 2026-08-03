@@ -136,3 +136,9 @@ def actualizar_licencia(id: str, req: TenantUpdate, db: Session = Depends(get_db
         clientes_count=clientes_count,
         comision_acumulada=comision_acumulada
     )
+
+# Montar archivos estáticos para servir el frontend de Admin_tenant en la raíz
+from fastapi.staticfiles import StaticFiles
+import os
+parent_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+app.mount("/", StaticFiles(directory=parent_dir, html=True), name="static")
