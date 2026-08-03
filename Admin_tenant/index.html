@@ -107,7 +107,7 @@
                 <div class="flex justify-between items-start">
                     <div>
                         <span class="text-slate-500 text-xs font-medium uppercase tracking-wider block">Clientes Totales</span>
-                        <span class="text-3xl font-bold font-outfit mt-2 block text-indigo-950">36</span>
+                        <span class="text-3xl font-bold font-outfit mt-2 block text-indigo-950" id="totalClientes">0</span>
                     </div>
                     <div class="bg-emerald-50 text-emerald-600 p-2.5 rounded-xl">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
@@ -405,7 +405,7 @@
 
     <!-- JAVASCRIPT -->
     <script>
-        let currentTargetContainerId = '';
+        const API_URL = window.location.origin.startsWith("file") ? "http://127.0.0.1:8010/api" : (window.location.port ? window.location.origin.replace(window.location.port, "8010") + "/api" : window.location.origin + "/api/admin");
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -416,20 +416,76 @@
             }, 3000);
         }
 
-        function editarModulos(tenedorName, modulosActivos, containerId) {
-            document.getElementById('modalTitle').textContent = `Gestionar Licencia - ${tenedorName}`;
-            document.getElementById('targetTenedorId').value = containerId;
-            currentTargetContainerId = containerId;
+        async function cargarTenedores() {
+            try {
+                const res = await fetch(`${API_URL}/tenants`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const tbody = document.getElementById('tablaTenedores');
+                    tbody.innerHTML = '';
+                    
+                    let totalClientes = 0;
+                    let totalComisiones = 0.0;
+                    
+                    data.forEach(tenant => {
+                        totalClientes += tenant.clientes_count;
+                        totalComisiones += tenant.comision_acumulada;
+                        
+                        const modulosArr = tenant.modulos ? tenant.modulos.split(',') : [];
+                        let badgeHTML = '';
+                        modulosArr.forEach(mod => {
+                            let badgeClass = 'bg-slate-50 text-slate-700 border-slate-100';
+                            if (mod === 'Facturación') badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                            if (mod === 'Contabilidad') badgeClass = 'bg-indigo-50 text-indigo-700 border-indigo-100';
+                            if (mod === 'XMLs') badgeClass = 'bg-cyan-50 text-cyan-700 border-cyan-100';
+                            if (mod === 'Checador') badgeClass = 'bg-orange-50 text-orange-700 border-orange-100';
+                            if (mod === 'Leads') badgeClass = 'bg-purple-50 text-purple-700 border-purple-100';
+                            badgeHTML += `<span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold border ${badgeClass}">${mod}</span> `;
+                        });
 
-            // Desmarcar todos primero
+                        const tr = document.createElement('tr');
+                        tr.className = 'hover:bg-slate-50/50 transition-colors';
+                        tr.innerHTML = `
+                            <td class="py-4">
+                                <div class="font-semibold text-slate-900">${tenant.nombre}</div>
+                                <div class="text-xs text-slate-400">RFC: ${tenant.rfc} &middot; ID: <strong class="font-mono">${tenant.id}</strong></div>
+                            </td>
+                            <td class="py-4 font-semibold text-slate-700">${tenant.clientes_count}</td>
+                            <td class="py-4">
+                                <div class="flex flex-wrap gap-1">
+                                    ${badgeHTML}
+                                </div>
+                            </td>
+                            <td class="py-4 font-bold text-slate-800">$${tenant.comision_acumulada.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                            <td class="py-4 text-right">
+                                <button onclick="editarModulos('${tenant.id}', '${tenant.nombre}', '${tenant.modulos}', ${tenant.comision_rate})" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
+                                    Gestionar Licencia
+                                </button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                    
+                    document.getElementById('totalTenants').textContent = data.length;
+                    document.getElementById('totalClientes').textContent = totalClientes;
+                    document.getElementById('comisionTotal').textContent = `$${totalComisiones.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                }
+            } catch (err) {
+                console.error("Error al cargar tenedores:", err);
+            }
+        }
+
+        function editarModulos(tenantId, tenantName, modulosStr, comisionRate) {
+            document.getElementById('modalTitle').textContent = `Gestionar Licencia - ${tenantName}`;
+            document.getElementById('targetTenedorId').value = tenantId;
+            
+            // Set comision input
+            document.getElementById('tasaComision').value = comisionRate;
+
+            const modulosActivos = modulosStr ? modulosStr.split(',') : [];
             const checkboxes = document.querySelectorAll('#checkboxesModulos input[type="checkbox"]');
-            checkboxes.forEach(cb => cb.checked = false);
-
-            // Marcar los activos
-            modulosActivos.forEach(mod => {
-                checkboxes.forEach(cb => {
-                    if (cb.value === mod) cb.checked = true;
-                });
+            checkboxes.forEach(cb => {
+                cb.checked = modulosActivos.includes(cb.value);
             });
 
             document.getElementById('modalLicencia').classList.remove('hidden');
@@ -439,32 +495,38 @@
             document.getElementById('modalLicencia').classList.add('hidden');
         }
 
-        function guardarLicencia() {
+        async function guardarLicencia() {
+            const id = document.getElementById('targetTenedorId').value;
+            const rate = parseFloat(document.getElementById('tasaComision').value) || 1.5;
+            
             const checkboxes = document.querySelectorAll('#checkboxesModulos input[type="checkbox"]');
             const modulosNuevos = [];
             checkboxes.forEach(cb => {
                 if (cb.checked) modulosNuevos.push(cb.value);
             });
 
-            const container = document.getElementById(currentTargetContainerId);
-            container.innerHTML = '';
-            
-            modulosNuevos.forEach(mod => {
-                let badgeClass = 'bg-slate-50 text-slate-700 border-slate-100';
-                if (mod === 'Facturación') badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-100';
-                if (mod === 'Contabilidad') badgeClass = 'bg-indigo-50 text-indigo-700 border-indigo-100';
-                if (mod === 'XMLs') badgeClass = 'bg-cyan-50 text-cyan-700 border-cyan-100';
-                if (mod === 'Checador') badgeClass = 'bg-orange-50 text-orange-700 border-orange-100';
-                if (mod === 'Leads') badgeClass = 'bg-purple-50 text-purple-700 border-purple-100';
+            try {
+                const res = await fetch(`${API_URL}/tenants/${id}/licencia`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        modulos: modulosNuevos.join(','),
+                        comision_rate: rate
+                    })
+                });
 
-                const span = document.createElement('span');
-                span.className = `badge text-[10px] px-2 py-0.5 rounded-full font-semibold border ${badgeClass}`;
-                span.textContent = mod;
-                container.appendChild(span);
-            });
-
-            cerrarModalLicencia();
-            showToast('Suscripción modular actualizada correctamente.');
+                if (res.ok) {
+                    cerrarModalLicencia();
+                    cargarTenedores();
+                    showToast('Suscripción modular actualizada correctamente.');
+                } else {
+                    const err = await res.json();
+                    alert(`Error: ${err.detail}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de conexión con el servidor.");
+            }
         }
 
         function mostrarModalNuevoTenedor() {
@@ -475,7 +537,7 @@
             document.getElementById('modalNuevoTenedor').classList.add('hidden');
         }
 
-        function crearTenedor() {
+        async function crearTenedor() {
             const name = document.getElementById('nuevoNombre').value;
             const rfc = document.getElementById('nuevoRFC').value;
 
@@ -484,49 +546,51 @@
                 return;
             }
 
-            const tbody = document.getElementById('tablaTenedores');
-            const randId = 'modules-' + Math.floor(Math.random() * 1000);
+            // Generar ID único
+            const id = name.toLowerCase()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .replace(/[^a-z0-9]/g, "_")
+                .replace(/_+/g, "_")
+                .trim();
 
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-50/50 transition-colors';
-            tr.innerHTML = `
-                <td class="py-4">
-                    <div class="font-semibold text-slate-900">${name}</div>
-                    <div class="text-xs text-slate-400">RFC: ${rfc.toUpperCase()}</div>
-                </td>
-                <td class="py-4 font-semibold text-slate-700">0</td>
-                <td class="py-4">
-                    <div class="flex flex-wrap gap-1" id="${randId}">
-                        <span class="badge text-[10px] px-2 py-0.5 rounded-full font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">Facturación</span>
-                    </div>
-                </td>
-                <td class="py-4 font-bold text-slate-800">$0.00</td>
-                <td class="py-4 text-right">
-                    <button onclick="editarModulos('${name}', ['Facturación'], '${randId}')" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
-                        Gestionar Licencia
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+            try {
+                const res = await fetch(`${API_URL}/tenants`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        id,
+                        nombre: name,
+                        rfc: rfc.toUpperCase(),
+                        modulos: "Facturación",
+                        comision_rate: 1.5
+                    })
+                });
 
-            // Increment Total Tenants count
-            const currentTotal = parseInt(document.getElementById('totalTenants').textContent);
-            document.getElementById('totalTenants').textContent = currentTotal + 1;
-
-            cerrarModalNuevoTenedor();
-            showToast(`Tenedor "${name}" registrado exitosamente.`);
-            document.getElementById('nuevoNombre').value = '';
-            document.getElementById('nuevoRFC').value = '';
+                if (res.ok) {
+                    cerrarModalNuevoTenedor();
+                    cargarTenedores();
+                    showToast(`Tenedor "${name}" registrado exitosamente.`);
+                    document.getElementById('nuevoNombre').value = '';
+                    document.getElementById('nuevoRFC').value = '';
+                } else {
+                    const err = await res.json();
+                    alert(`Error: ${err.detail}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error al conectar con el servidor.");
+            }
         }
 
         function actualizarTasa() {
-            const tasa = document.getElementById('tasaComision').value;
-            showToast(`Tasa de comisión global ajustada a ${tasa}%`);
-            // Dynamic commission calculation change
-            const baseCommission = 5320.00;
-            const adjusted = (baseCommission * (tasa / 1.5)).toFixed(2);
-            document.getElementById('comisionTotal').textContent = `$${parseFloat(adjusted).toLocaleString('es-MX')}`;
+            // Se calcula y guarda dinámicamente al guardar la licencia del Tenant
         }
+
+        // Cargar tenedores al iniciar
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarTenedores();
+        });
     </script>
 </body>
 </html>
