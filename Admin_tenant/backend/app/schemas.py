@@ -7,6 +7,8 @@ class TenantBase(BaseModel):
     rfc: str
     modulos: Optional[str] = "Facturación"
     comision_rate: Optional[float] = 1.5
+    username: Optional[str] = None
+    password: Optional[str] = None
 
 class TenantCreate(TenantBase):
     pass

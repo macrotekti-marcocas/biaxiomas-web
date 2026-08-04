@@ -39,8 +39,54 @@
 </head>
 <body class="bg-slate-50 font-sans min-h-screen text-slate-900 pb-12">
 
-    <!-- MAIN CONTAINER -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <!-- LOGIN SUPERADMIN -->
+    <div id="superadminLogin" class="min-h-screen flex items-center justify-center bg-slate-950 px-4 relative overflow-hidden">
+        <!-- Background glows -->
+        <div class="absolute -left-32 -top-32 w-96 h-96 bg-indigo-600 rounded-full blur-3xl opacity-30"></div>
+        <div class="absolute -right-32 -bottom-32 w-96 h-96 bg-purple-600 rounded-full blur-3xl opacity-30"></div>
+        
+        <div class="glass max-w-md w-full rounded-3xl p-8 shadow-2xl border border-white/10 relative z-10 text-white">
+            <div class="text-center mb-8">
+                <span class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3 border border-indigo-400/20">
+                    SaaS Control Center
+                </span>
+                <h2 class="text-3xl font-outfit font-extrabold tracking-tight">SuperAdmin Access</h2>
+                <p class="text-slate-400 text-sm mt-2">Introduce tus credenciales para acceder a la gestión de despachos.</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Usuario</label>
+                    <input type="text" id="adminUser" placeholder="superadmin" class="w-full bg-slate-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">Contraseña</label>
+                    <input type="password" id="adminPass" placeholder="••••••••" class="w-full bg-slate-900/80 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all placeholder:text-slate-600">
+                </div>
+                
+                <!-- Captcha matemático -->
+                <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 flex flex-col gap-2">
+                    <label class="block text-xs font-semibold text-indigo-300 uppercase tracking-wider">Verificación de Seguridad</label>
+                    <div class="flex items-center gap-3">
+                        <div class="bg-indigo-600/20 text-indigo-300 font-bold px-4 py-2 rounded-xl text-lg font-mono border border-indigo-500/20 flex-grow text-center select-none" id="captchaQuestion">
+                            5 + 7 = ?
+                        </div>
+                        <input type="number" id="captchaAnswer" placeholder="Resultado" class="w-24 bg-slate-900 border border-white/10 rounded-xl px-3 py-2.5 text-center text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all">
+                    </div>
+                </div>
+                
+                <button onclick="loginSuperadmin()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl text-sm transition-all shadow-lg hover:shadow-indigo-500/20 flex justify-center items-center gap-2 mt-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    Iniciar Sesión
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD CONTAINER -->
+    <div id="superadminDashboard" class="hidden">
+        <!-- MAIN CONTAINER -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
         
         <!-- HEADER -->
         <header class="gradient-bg rounded-3xl p-8 md:p-10 text-white shadow-xl mb-8 relative overflow-hidden">
@@ -359,6 +405,20 @@
                     <label class="block text-xs font-semibold text-slate-600 mb-1">RFC</label>
                     <input type="text" id="nuevoRFC" placeholder="Ej. SFN191024XYZ" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 uppercase">
                 </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">ID / Ruta de Acceso (Minúsculas, sin espacios)</label>
+                    <input type="text" id="nuevoID" placeholder="Ej. soluciones_fiscales" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 lowercase">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Usuario</label>
+                        <input type="text" id="nuevoUsuario" placeholder="Usuario" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña</label>
+                        <input type="password" id="nuevoContrasena" placeholder="Contraseña" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
             </div>
 
             <div class="flex gap-3">
@@ -372,6 +432,37 @@
         </div>
     </div>
 
+    <!-- MODAL EDITAR CREDENCIALES TENEDOR -->
+    <div id="modalCredenciales" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl mx-4">
+            <h3 class="text-xl font-outfit font-bold text-slate-900" id="credencialesModalLabel">Editar Accesos del Tenedor</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Actualiza las credenciales del despacho contable / tenedor.</p>
+            
+            <input type="hidden" id="credTenedorId">
+            
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Usuario de Acceso</label>
+                    <input type="text" id="credUser" placeholder="Usuario" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Contraseña de Acceso</label>
+                    <input type="password" id="credPass" placeholder="Nueva Contraseña" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalCredenciales()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="guardarCredenciales()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                    Guardar Cambios
+                </button>
+            </div>
+        </div>
+    </div>
+    </div> <!-- Cierre de #superadminDashboard -->
+
     <!-- TOAST NOTIFICATION -->
     <div id="toast" class="fixed bottom-5 right-5 bg-indigo-950 text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-indigo-800 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
         <span class="text-emerald-400 bg-emerald-400/10 p-1.5 rounded-lg text-xs">✓</span>
@@ -381,6 +472,71 @@
     <!-- JAVASCRIPT -->
     <script>
         const API_URL = window.location.origin.startsWith("file") ? "http://127.0.0.1:8010/api" : (window.location.port ? window.location.origin.replace(window.location.port, "8010") + "/api" : window.location.origin + "/api/admin");
+
+        // --- SISTEMA DE LOGIN SUPERADMIN ---
+        let captchaResultVal = 0;
+
+        function generarCaptcha() {
+            const num1 = Math.floor(Math.random() * 10) + 1;
+            const num2 = Math.floor(Math.random() * 10) + 1;
+            captchaResultVal = num1 + num2;
+            document.getElementById('captchaQuestion').textContent = `${num1} + ${num2} = ?`;
+            document.getElementById('captchaAnswer').value = '';
+        }
+
+        async function loginSuperadmin() {
+            const user = document.getElementById('adminUser').value;
+            const pass = document.getElementById('adminPass').value;
+            const captcha = parseInt(document.getElementById('captchaAnswer').value) || 0;
+
+            if (!user || !pass) {
+                alert("Por favor rellene todos los campos de acceso.");
+                return;
+            }
+
+            if (captcha !== captchaResultVal) {
+                alert("Respuesta del Captcha incorrecta.");
+                generarCaptcha();
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                if (res.ok) {
+                    sessionStorage.setItem('superadmin_logged', 'true');
+                    verificarSesion();
+                    showToast("Acceso concedido.");
+                } else {
+                    const err = await res.json();
+                    alert(err.detail || "Credenciales incorrectas.");
+                    generarCaptcha();
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error de comunicación con el servidor.");
+                generarCaptcha();
+            }
+        }
+
+        function verificarSesion() {
+            const isLogged = sessionStorage.getItem('superadmin_logged') === 'true';
+            if (isLogged) {
+                document.getElementById('superadminLogin').classList.add('hidden');
+                document.getElementById('superadminDashboard').classList.remove('hidden');
+                cargarTenedores();
+            } else {
+                document.getElementById('superadminLogin').classList.remove('hidden');
+                document.getElementById('superadminDashboard').classList.add('hidden');
+                generarCaptcha();
+            }
+        }
+
+        // --- GESTIÓN DE TENEDORES (TENANTS) ---
 
         function showToast(message) {
             const toast = document.getElementById('toast');
@@ -423,7 +579,8 @@
                         tr.innerHTML = `
                             <td class="py-4">
                                 <div class="font-semibold text-slate-900">${tenant.nombre}</div>
-                                <div class="text-xs text-slate-400">RFC: ${tenant.rfc} &middot; ID: <strong class="font-mono">${tenant.id}</strong></div>
+                                <div class="text-xs text-slate-400">RFC: ${tenant.rfc} &middot; ID/Ruta: <strong class="font-mono text-indigo-600">${tenant.id}</strong></div>
+                                <div class="text-[11px] text-slate-500 font-medium">Usuario: ${tenant.username || '<em>Sin credenciales</em>'}</div>
                             </td>
                             <td class="py-4 font-semibold text-slate-700">${tenant.clientes_count}</td>
                             <td class="py-4">
@@ -434,7 +591,10 @@
                             <td class="py-4 font-bold text-slate-800">$${tenant.comision_acumulada.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
                             <td class="py-4 text-right">
                                 <button onclick="editarModulos('${tenant.id}', '${tenant.nombre}', '${tenant.modulos}', ${tenant.comision_rate})" class="text-indigo-600 hover:text-indigo-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors">
-                                    Gestionar Licencia
+                                    Licencia
+                                </button>
+                                <button onclick="abrirEditarCredenciales('${tenant.id}', '${tenant.nombre}', '${tenant.username || ''}', '${tenant.password || ''}')" class="text-slate-600 hover:text-slate-900 font-medium text-xs px-2.5 py-1.5 rounded-lg hover:bg-slate-100 transition-colors ml-1 border border-slate-200">
+                                    Acceso
                                 </button>
                             </td>
                         `;
@@ -453,8 +613,6 @@
         function editarModulos(tenantId, tenantName, modulosStr, comisionRate) {
             document.getElementById('modalTitle').textContent = `Gestionar Licencia - ${tenantName}`;
             document.getElementById('targetTenedorId').value = tenantId;
-            
-            // Set comision input
             document.getElementById('tasaComision').value = comisionRate;
 
             const modulosActivos = modulosStr ? modulosStr.split(',') : [];
@@ -473,7 +631,6 @@
         async function guardarLicencia() {
             const id = document.getElementById('targetTenedorId').value;
             const rate = parseFloat(document.getElementById('tasaComision').value) || 1.5;
-            
             const checkboxes = document.querySelectorAll('#checkboxesModulos input[type="checkbox"]');
             const modulosNuevos = [];
             checkboxes.forEach(cb => {
@@ -504,6 +661,49 @@
             }
         }
 
+        // --- EDICIÓN DE CREDENCIALES TENANT ---
+        function abrirEditarCredenciales(id, name, user, pass) {
+            document.getElementById('credencialesModalLabel').textContent = `Accesos de: ${name}`;
+            document.getElementById('credTenedorId').value = id;
+            document.getElementById('credUser').value = user;
+            document.getElementById('credPass').value = pass;
+            document.getElementById('modalCredenciales').classList.remove('hidden');
+        }
+
+        function cerrarModalCredenciales() {
+            document.getElementById('modalCredenciales').classList.add('hidden');
+        }
+
+        async function guardarCredenciales() {
+            const id = document.getElementById('credTenedorId').value;
+            const user = document.getElementById('credUser').value;
+            const pass = document.getElementById('credPass').value;
+
+            try {
+                const res = await fetch(`${API_URL}/tenants/${id}/credenciales`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: user || null,
+                        password: pass || null
+                    })
+                });
+
+                if (res.ok) {
+                    cerrarModalCredenciales();
+                    cargarTenedores();
+                    showToast('Credenciales actualizadas correctamente.');
+                } else {
+                    const err = await res.json();
+                    alert(`Error: ${err.detail}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error al guardar credenciales.");
+            }
+        }
+
+        // --- CREACIÓN DE TENEDOR ---
         function mostrarModalNuevoTenedor() {
             document.getElementById('modalNuevoTenedor').classList.remove('hidden');
         }
@@ -515,30 +715,38 @@
         async function crearTenedor() {
             const name = document.getElementById('nuevoNombre').value;
             const rfc = document.getElementById('nuevoRFC').value;
+            const customId = document.getElementById('nuevoID').value;
+            const user = document.getElementById('nuevoUsuario').value;
+            const pass = document.getElementById('nuevoContrasena').value;
 
             if (!name || !rfc) {
-                alert('Por favor rellene todos los campos.');
+                alert('Por favor ingrese Nombre y RFC.');
                 return;
             }
 
-            // Generar ID único
-            const id = name.toLowerCase()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .replace(/[^a-z0-9]/g, "_")
-                .replace(/_+/g, "_")
-                .trim();
+            // Generar o usar el ID personalizado
+            let id = customId.trim();
+            if (!id) {
+                id = name.toLowerCase()
+                    .normalize("NFD")
+                    .replace(/[\u0300-\u036f]/g, "")
+                    .replace(/[^a-z0-9]/g, "_")
+                    .replace(/_+/g, "_")
+                    .trim();
+            }
 
             try {
                 const res = await fetch(`${API_URL}/tenants`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        id,
+                        id: id,
                         nombre: name,
                         rfc: rfc.toUpperCase(),
                         modulos: "Facturación",
-                        comision_rate: 1.5
+                        comision_rate: 1.5,
+                        username: user || null,
+                        password: pass || null
                     })
                 });
 
@@ -548,6 +756,9 @@
                     showToast(`Tenedor "${name}" registrado exitosamente.`);
                     document.getElementById('nuevoNombre').value = '';
                     document.getElementById('nuevoRFC').value = '';
+                    document.getElementById('nuevoID').value = '';
+                    document.getElementById('nuevoUsuario').value = '';
+                    document.getElementById('nuevoContrasena').value = '';
                 } else {
                     const err = await res.json();
                     alert(`Error: ${err.detail}`);
@@ -562,9 +773,9 @@
             // Se calcula y guarda dinámicamente al guardar la licencia del Tenant
         }
 
-        // Cargar tenedores al iniciar
+        // Verificar sesión al cargar
         window.addEventListener('DOMContentLoaded', () => {
-            cargarTenedores();
+            verificarSesion();
         });
     </script>
 </body>

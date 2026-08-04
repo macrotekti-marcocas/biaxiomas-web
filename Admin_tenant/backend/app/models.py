@@ -9,3 +9,5 @@ class Tenant(Base):
     rfc = Column(String, nullable=False)
     modulos = Column(String, default="Facturación") # Lista separada por comas, ej: "Facturación,Contabilidad,XMLs"
     comision_rate = Column(Float, default=1.5) # Tasa de comisión contratada, ej: 1.5%
+    username = Column(String, nullable=True) # Usuario de acceso al tenant
+    password = Column(String, nullable=True) # Contraseña de acceso al tenant
