@@ -93,8 +93,14 @@
             <div class="absolute -right-16 -top-16 w-64 h-64 bg-indigo-500 rounded-full blur-3xl opacity-35"></div>
             <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                 <div>
-                    <div class="bg-indigo-500/30 text-indigo-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider inline-block mb-3 border border-indigo-400/20">
-                        Consola SaaS Global
+                    <div class="flex items-center gap-2 mb-3">
+                        <div class="bg-indigo-500/30 text-indigo-200 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider border border-indigo-400/20">
+                            Consola SaaS Global
+                        </div>
+                        <button onclick="logoutSuperadmin()" class="bg-red-500/20 hover:bg-red-500/40 text-red-200 text-xs font-bold px-3 py-1 rounded-full border border-red-500/25 transition-all flex items-center gap-1 shadow-sm">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                            Cerrar Sesión
+                        </button>
                     </div>
                     <h1 class="text-3xl md:text-4xl font-outfit font-extrabold tracking-tight">Panel SuperAdmin</h1>
                     <p class="text-indigo-200 mt-1 max-w-xl font-light">Supervisión general del SaaS multitenant, control de licenciamiento modular y cobro de comisiones.</p>
@@ -534,6 +540,12 @@
                 document.getElementById('superadminDashboard').classList.add('hidden');
                 generarCaptcha();
             }
+        }
+
+        function logoutSuperadmin() {
+            sessionStorage.removeItem('superadmin_logged');
+            verificarSesion();
+            showToast("Sesión cerrada.");
         }
 
         // --- GESTIÓN DE TENEDORES (TENANTS) ---

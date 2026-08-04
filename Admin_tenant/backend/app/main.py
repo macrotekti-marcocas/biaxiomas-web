@@ -203,6 +203,24 @@ def actualizar_credenciales(id: str, req: TenantCredencialesRequest, db: Session
         comision_acumulada=comision_acumulada
     )
 
+class TenantLoginRequest(BaseModel):
+    id: str
+    username: str
+    password: str
+
+@app.post("/api/tenants/login")
+def tenant_login(req: TenantLoginRequest, db: Session = Depends(get_db)):
+    tenant = db.query(Tenant).filter(Tenant.id == req.id.lower()).first()
+    if not tenant:
+        raise HTTPException(status_code=404, detail="El ID del Tenedor no se encuentra registrado.")
+    if tenant.username != req.username or tenant.password != req.password:
+        raise HTTPException(status_code=401, detail="Usuario o contraseña incorrectos.")
+    return {
+        "success": True,
+        "tenant_id": tenant.id,
+        "tenant_nombre": tenant.nombre
+    }
+
 # Montar archivos estáticos para servir el frontend de Admin_tenant en la raíz
 from fastapi.staticfiles import StaticFiles
 import os
