@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <script src="auth-guard.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manager Project - Demo Al Instante</title>
@@ -227,11 +228,11 @@
 
             <!-- Navegación -->
             <nav class="p-4 space-y-2">
-                <a href="#" onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all active bg-brand-50 text-brand-500">
+                <a href="#" onclick="switchTab('dashboard')" id="btn-dashboard" class="nav-link hidden items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all active bg-brand-50 text-brand-500">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" onclick="switchTab('alerts')" id="btn-alerts" class="nav-link flex items-center justify-between px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                <a href="#" onclick="switchTab('alerts')" id="btn-alerts" class="nav-link hidden items-center justify-between px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
                     <div class="flex items-center gap-3">
                         <i data-lucide="bell-ring" class="w-5 h-5"></i>
                         <span>Alertas de SLA</span>
@@ -240,56 +241,66 @@
                 </a>
                 
                 <!-- Botón de Flujo del Proceso -->
-                <a href="#" onclick="switchTab('bpmn')" id="btn-bpmn" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                <a href="#" onclick="switchTab('bpmn')" id="btn-bpmn" class="nav-link hidden items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
                     <i data-lucide="git-branch" class="w-5 h-5"></i>
                     <span>Flujo del Proceso</span>
                 </a>
 
                 <!-- Subbotones Dependientes: Nodos, Departamentos, Personal -->
                 <div id="bpmn-submenu" class="pl-8 space-y-1 mt-1 hidden">
-                    <a href="#" onclick="switchTab('catalog-nodes')" id="btn-catalog-nodes" class="nav-link-sub flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                    <a href="#" onclick="switchTab('catalog-nodes')" id="btn-catalog-nodes" class="nav-link-sub hidden items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
                         <i data-lucide="folder-kanban" class="w-3.5 h-3.5"></i>
                         <span>Nodos</span>
                     </a>
-                    <a href="#" onclick="switchTab('departments')" id="btn-departments" class="nav-link-sub flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                    <a href="#" onclick="switchTab('departments')" id="btn-departments" class="nav-link-sub hidden items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
                         <i data-lucide="building" class="w-3.5 h-3.5"></i>
                         <span>Departamentos</span>
                     </a>
-                    <a href="#" onclick="switchTab('personal')" id="btn-personal" class="nav-link-sub flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                    <a href="#" onclick="switchTab('personal')" id="btn-personal" class="nav-link-sub hidden items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
                         <i data-lucide="users" class="w-3.5 h-3.5"></i>
                         <span>Personal</span>
                     </a>
                 </div>
 
                 <!-- Botón de Ventas (ERP) -->
-                <a href="#" onclick="switchTab('sales')" id="btn-sales" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                <a href="#" onclick="switchTab('sales')" id="btn-sales" class="nav-link hidden items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
                     <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                     <span>Ventas</span>
                 </a>
+                <div class="pl-4 flex flex-col gap-1">
+                    <a href="#" onclick="switchTab('clients')" id="btn-clients" class="nav-link-sub hidden items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                        <i data-lucide="contact" class="w-3.5 h-3.5"></i>
+                        <span>Clientes</span>
+                    </a>
+                </div>
 
                 <!-- Botón de Comunicaciones (Omnicanal) -->
-                <a href="#" onclick="switchTab('comm')" id="btn-comm" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
+                <a href="#" onclick="switchTab('comm')" id="btn-comm" class="nav-link hidden items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
                     <i data-lucide="message-square" class="w-5 h-5"></i>
                     <span>Comunicaciones</span>
                 </a>
-
-                <a href="#" onclick="switchTab('mobile-sim')" id="btn-mobile-sim" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-slate-600 hover:bg-slate-100 font-medium transition-all">
-                    <i data-lucide="smartphone" class="w-5 h-5"></i>
-                    <span>Simulador Técnico</span>
-                </a>
             </nav>
         </div>
+        <div id="rbac-config-container" class="px-4 py-2 mt-auto border-t border-slate-100 hidden">
+            <button onclick="switchTab('config')" class="nav-link w-full flex items-center justify-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition-colors text-xs font-bold shadow-sm border border-slate-200/60" id="btn-config">
+                <i data-lucide="settings" class="w-4 h-4"></i>
+                Configuración
+            </button>
+        </div>
 
-        <div class="p-4 border-t border-slate-100 bg-slate-50">
+        <div class="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-sm">
+                <div id="sidebar-profile-initials" class="w-8 h-8 rounded-full bg-brand-500 text-white flex items-center justify-center font-bold text-sm">
                     M
                 </div>
-                <div class="flex flex-col overflow-hidden">
-                    <span class="text-xs text-slate-400">Rol: Administrador</span>
-                    <span class="text-sm font-semibold truncate text-slate-700">Manager General</span>
+                <div class="flex flex-col overflow-hidden max-w-[120px]">
+                    <span id="sidebar-profile-role" class="text-[10px] text-slate-400 uppercase font-bold">Administrador</span>
+                    <span id="sidebar-profile-name" class="text-xs font-bold truncate text-slate-700">Mitchell Admin</span>
                 </div>
             </div>
+            <button onclick="cerrarSesion()" class="text-slate-450 hover:text-red-600 p-1.5 hover:bg-slate-200/50 rounded-lg transition-all" title="Cerrar Sesión">
+                <i data-lucide="log-out" class="w-4.5 h-4.5"></i>
+            </button>
         </div>
     </aside>
 
@@ -350,37 +361,213 @@
                         </div>
                     </div>
                 </div>
-                <button onclick="resetDemoData()" class="flex items-center gap-1.5 px-2.5 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">
-                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Reiniciar Demo</span>
-                    <span class="sm:hidden">Reiniciar</span>
-                </button>
-                <button onclick="clearAllDemoData()" class="flex items-center gap-1.5 px-2.5 py-1.5 border border-red-200 text-red-650 rounded-lg text-xs font-semibold hover:bg-red-50 transition-all" title="Limpiar todos los datos para realizar un ejercicio desde cero">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                    <span class="hidden sm:inline">Limpiar Datos</span>
-                    <span class="sm:hidden">Limpiar</span>
-                </button>
             </div>
         </header>
 
         <!-- CONTENT VIEWPORT -->
         <div id="main-content-viewport" class="flex-1 overflow-y-auto overflow-x-hidden p-4 sm:p-8">
             
-            <!-- VIEW: DASHBOARD -->
-            <section id="view-dashboard" class="space-y-6">
+        <!-- VIEW: LOADING (Pantalla de Carga Inicial) -->
+        <section id="view-loading" class="flex flex-col items-center justify-center h-full space-y-4 py-20">
+            <i data-lucide="loader" class="w-10 h-10 text-brand-500 animate-spin"></i>
+            <p class="text-slate-500 font-medium">Verificando permisos y cargando interfaz...</p>
+        </section>
 
-
-                <!-- Bloque: Alertas Prioritarias (Anomalías por IA) -->
-                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm space-y-4">
-                    <div class="flex items-center gap-2 pb-2 border-b border-slate-100">
-                        <i data-lucide="bot" class="text-brand-500 w-5 h-5"></i>
-                        <h3 class="font-bold text-slate-800 text-lg">Alertas Prioritarias</h3>
-                    </div>
-                    <div id="alerts-prioritarias-container" class="space-y-3">
-                        <!-- Inyectado dinámicamente con alertas vencidas y por vencer -->
+        <!-- VIEW: DASHBOARD -->
+        <section id="view-dashboard" class="space-y-6 hidden">
+            <!-- 1. Cabecera y Resumen de Métricas (Top Row) -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+                <!-- Ticket status group -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado de Tareas</span>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-100 flex items-center gap-1.5">
+                            <span id="dash-stat-open" class="font-bold text-sm">0</span> Abiertas
+                        </span>
+                        <span class="px-3 py-1.5 rounded-full bg-slate-100 text-slate-600 font-semibold border border-slate-200 flex items-center gap-1.5">
+                            <span id="dash-stat-pending" class="font-bold text-sm">0</span> En Espera
+                        </span>
+                        <span class="px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-200 flex items-center gap-1.5">
+                            <span id="dash-stat-duetoday" class="font-bold text-sm">0</span> Vence Hoy
+                        </span>
+                        <span class="px-3 py-1.5 rounded-full bg-rose-50 text-rose-700 font-semibold border border-rose-200 flex items-center gap-1.5">
+                            <span id="dash-stat-overdue" class="font-bold text-sm">0</span> Vencidas
+                        </span>
                     </div>
                 </div>
-            </section>
+                
+                <!-- Alert status group -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado de Alertas</span>
+                    <div class="flex flex-wrap items-center gap-2 text-xs">
+                        <span class="px-3 py-1.5 rounded-full bg-amber-50 text-amber-600 font-semibold border border-amber-200 flex items-center gap-1.5">
+                            <span id="dash-alert-warning" class="font-bold text-sm">0</span> Por Vencer
+                        </span>
+                        <span class="px-3 py-1.5 rounded-full bg-rose-50 text-rose-650 font-semibold border border-rose-200 flex items-center gap-1.5">
+                            <span id="dash-alert-critical" class="font-bold text-sm">0</span> Críticas
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Middle Row (2 Columns: SLA Compliance and Critical Tickets) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: SLA Compliance & Gauges -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm lg:col-span-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <h3 class="font-bold text-slate-800 text-base">Cumplimiento General de SLA</h3>
+                            <span id="dash-compliance-percent" class="text-2xl font-black text-brand-500">0%</span>
+                        </div>
+                        <div class="mt-4 space-y-4">
+                            <!-- Procesos Completados -->
+                            <div>
+                                <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-1">
+                                    <span>Procesos Completados</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="dash-process-percent" class="font-bold text-blue-500 text-sm">0%</span>
+                                        <span class="text-slate-300 font-normal">|</span>
+                                        <span id="dash-process-ratio" class="text-slate-400 font-medium">0 de 0 procesos</span>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                    <div id="dash-process-progress-bar" class="bg-blue-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+
+                            <!-- Tareas Cumplidas -->
+                            <div>
+                                <div class="flex justify-between items-center text-xs font-semibold text-slate-500 mb-1">
+                                    <span>Tareas Cumplidas</span>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="dash-compliance-percent-val" class="font-bold text-brand-500 text-sm">0%</span>
+                                        <span class="text-slate-300 font-normal">|</span>
+                                        <span id="dash-compliance-ratio" class="text-slate-400 font-medium">0 de 0 tareas</span>
+                                    </div>
+                                </div>
+                                <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                                    <div id="dash-compliance-progress-bar" class="bg-brand-500 h-full rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 4 Gauges Grid -->
+                    <div class="grid grid-cols-4 gap-2 mt-6 pt-6 border-t border-slate-100">
+                        <!-- Gauge 1 -->
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-16 h-16 flex items-center justify-center">
+                                <svg class="absolute w-full h-full transform -rotate-90">
+                                    <circle cx="32" cy="32" r="26" class="stroke-slate-100" stroke-width="5" fill="none" />
+                                    <circle id="dash-gauge-1" cx="32" cy="32" r="26" class="stroke-emerald-500 transition-all duration-500" stroke-width="5" fill="none" stroke-dasharray="163" stroke-dashoffset="163" stroke-linecap="round" />
+                                </svg>
+                                <i data-lucide="shield-check" class="w-5 h-5 text-emerald-500 z-10"></i>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400 mt-2 text-center uppercase tracking-wider">A Tiempo</span>
+                            <span id="dash-gauge-val-1" class="text-xs font-bold text-slate-700 mt-0.5">0%</span>
+                        </div>
+                        
+                        <!-- Gauge 2 -->
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-16 h-16 flex items-center justify-center">
+                                <svg class="absolute w-full h-full transform -rotate-90">
+                                    <circle cx="32" cy="32" r="26" class="stroke-slate-100" stroke-width="5" fill="none" />
+                                    <circle id="dash-gauge-2" cx="32" cy="32" r="26" class="stroke-blue-500 transition-all duration-500" stroke-width="5" fill="none" stroke-dasharray="163" stroke-dashoffset="163" stroke-linecap="round" />
+                                </svg>
+                                <i data-lucide="folders" class="w-5 h-5 text-blue-500 z-10"></i>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400 mt-2 text-center uppercase tracking-wider">Procesos</span>
+                            <span id="dash-gauge-val-2" class="text-xs font-bold text-slate-700 mt-0.5">0%</span>
+                        </div>
+                        
+                        <!-- Gauge 3 -->
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-16 h-16 flex items-center justify-center">
+                                <svg class="absolute w-full h-full transform -rotate-90">
+                                    <circle cx="32" cy="32" r="26" class="stroke-slate-100" stroke-width="5" fill="none" />
+                                    <circle id="dash-gauge-3" cx="32" cy="32" r="26" class="stroke-amber-500 transition-all duration-500" stroke-width="5" fill="none" stroke-dasharray="163" stroke-dashoffset="163" stroke-linecap="round" />
+                                </svg>
+                                <i data-lucide="alert-triangle" class="w-5 h-5 text-amber-500 z-10"></i>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400 mt-2 text-center uppercase tracking-wider">Por Vencer</span>
+                            <span id="dash-gauge-val-3" class="text-xs font-bold text-slate-700 mt-0.5">0%</span>
+                        </div>
+                        
+                        <!-- Gauge 4 -->
+                        <div class="flex flex-col items-center">
+                            <div class="relative w-16 h-16 flex items-center justify-center">
+                                <svg class="absolute w-full h-full transform -rotate-90">
+                                    <circle cx="32" cy="32" r="26" class="stroke-slate-100" stroke-width="5" fill="none" />
+                                    <circle id="dash-gauge-4" cx="32" cy="32" r="26" class="stroke-rose-500 transition-all duration-500" stroke-width="5" fill="none" stroke-dasharray="163" stroke-dashoffset="163" stroke-linecap="round" />
+                                </svg>
+                                <i data-lucide="alert-octagon" class="w-5 h-5 text-rose-500 z-10"></i>
+                            </div>
+                            <span class="text-[9px] font-bold text-slate-400 mt-2 text-center uppercase tracking-wider">Vencidas</span>
+                            <span id="dash-gauge-val-4" class="text-xs font-bold text-slate-700 mt-0.5">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Critical and Overdue Tickets -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm lg:col-span-6 flex flex-col">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h3 class="font-bold text-slate-800 text-base">Tareas Críticas y Vencidas</h3>
+                        <span id="dash-critical-count" class="bg-rose-50 text-rose-700 text-xs px-2.5 py-0.5 rounded-full font-bold">0</span>
+                    </div>
+                    <div class="flex-1 overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="text-slate-400 font-bold border-b border-slate-100">
+                                    <th class="pb-3 pr-2">Detalles</th>
+                                    <th class="pb-3 pr-2">Técnico</th>
+                                    <th class="pb-3 pr-2 text-center">Prioridad</th>
+                                    <th class="pb-3 text-right">SLA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-critical-table-body" class="divide-y divide-slate-100">
+                                <!-- Filas inyectadas por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Bottom Row (2 Columns: Recent Alerts and Availability Monitoring) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left: Recent Alerts -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm lg:col-span-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h3 class="font-bold text-slate-800 text-base">Alertas Recientes</h3>
+                        <i data-lucide="bell-ring" class="w-4 h-4 text-brand-500"></i>
+                    </div>
+                    <div id="dash-recent-alerts-list" class="space-y-3 flex-1">
+                        <!-- Alertas inyectadas por JS -->
+                    </div>
+                </div>
+
+                <!-- Right: Staff Load / Availability Monitoring -->
+                <div class="bg-white rounded-xl border border-slate-200 p-6 shadow-sm lg:col-span-6 flex flex-col justify-between">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+                        <h3 class="font-bold text-slate-800 text-base">Carga de Trabajo de Técnicos</h3>
+                        <i data-lucide="users" class="w-4 h-4 text-brand-500"></i>
+                    </div>
+                    <div class="flex-1 overflow-x-auto">
+                        <table class="w-full text-left text-xs border-collapse">
+                            <thead>
+                                <tr class="text-slate-400 font-bold border-b border-slate-100">
+                                    <th class="pb-3 pr-2">Personal</th>
+                                    <th class="pb-3 pr-2 text-center">Asignadas</th>
+                                    <th class="pb-3 text-right">Completadas</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dash-technicians-table-body" class="divide-y divide-slate-100">
+                                <!-- Filas inyectadas por JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
 
             <!-- VIEW: ALERTS TABLE -->
             <section id="view-alerts" class="space-y-2.5 -mt-3 sm:-mt-5 hidden">
@@ -399,7 +586,7 @@
                                 <!-- Chips dynamically inserted here -->
                             </div>
                             
-                            <input type="text" id="alerts-search-input" oninput="applyAlertsFilters()" onclick="event.stopPropagation(); showAlertsSearchDropdown();" placeholder="Buscar..." class="flex-1 bg-transparent border-none text-xs focus:outline-none placeholder-slate-400 min-w-[60px]">
+                            <input type="text" id="alerts-search-input" oninput="applyAlertsFilters()" onclick="event.stopPropagation(); showAlertsSearchDropdown();" placeholder="Buscar cliente, tarea, responsable, folio..." class="flex-1 bg-transparent border-none text-xs focus:outline-none placeholder-slate-400 min-w-[180px]">
                             
                             <button type="button" class="p-1 hover:bg-slate-100 rounded-md transition-colors shrink-0">
                                 <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
@@ -636,9 +823,9 @@
                         <table class="w-full text-left border-collapse text-xs">
                             <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
                                 <tr>
-                                    <th class="px-4 py-3">Nombre de la Plantilla</th>
-                                    <th class="px-4 py-3">Cliente</th>
-                                    <th class="px-4 py-3 text-center">Tareas</th>
+                                    <th class="px-4 py-3 text-left">Folio</th>
+                                    <th class="px-4 py-3 text-left">Nombre de la Plantilla</th>
+                                    <th class="px-4 py-3 text-left">Cliente</th>
                                     <th class="px-4 py-3 text-center">Fecha de Arranque</th>
                                     <th class="px-4 py-3 text-center">Creado por</th>
                                     <th class="px-4 py-3 text-right">Acciones</th>
@@ -1179,6 +1366,46 @@
                 </div>
             </section>
 
+            <!-- VIEW: CLIENTES (CATÁLOGO Y PORTAL) -->
+            <section id="view-clients" class="space-y-6 hidden">
+                <!-- Barra de acciones: Buscar y Registrar -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-1 items-center gap-3 w-full sm:w-auto">
+                        <div class="relative flex-1 max-w-md">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="clients-search-input" onkeyup="filterClientsTable()" placeholder="Buscar cliente por nombre, RFC o contacto..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
+                        </div>
+                    </div>
+                    <button onclick="openClientModal()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-md transition-all shrink-0">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Registrar Cliente</span>
+                    </button>
+                </div>
+
+                <!-- Tabla de clientes -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">Cliente / Razón Social</th>
+                                    <th class="px-6 py-3 font-semibold">RFC</th>
+                                    <th class="px-6 py-3 font-semibold">Contacto</th>
+                                    <th class="px-6 py-3 font-semibold">Condición Pago</th>
+                                    <th class="px-6 py-3 font-semibold">Tarifa / Desc.</th>
+                                    <th class="px-6 py-3 font-semibold">Moneda / IVA</th>
+                                    <th class="px-6 py-3 font-semibold text-center">Portal</th>
+                                    <th class="px-6 py-3 font-semibold text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clients-table-body" class="divide-y divide-slate-100">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- VIEW: DETALLE / CREACIÓN DE COTIZACIÓN -->
             <section id="view-sales-detail" class="space-y-6 hidden">
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
@@ -1234,9 +1461,8 @@
                             <div class="space-y-4">
                                 <div class="flex flex-col gap-1.5">
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cliente:</label>
-                                    <select id="sales-client-select" onchange="autoFillSalesAddresses()" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
-                                        <!-- Dinámico -->
-                                    </select>
+                                    <input type="text" id="sales-client-select" list="sales-clients-datalist" oninput="autoFillSalesAddresses()" placeholder="Escribe o selecciona un cliente..." class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                    <datalist id="sales-clients-datalist"></datalist>
                                 </div>
                                 <div class="flex flex-col gap-1.5">
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dirección de Facturación:</label>
@@ -1333,6 +1559,45 @@
                 </div>
             </section>
 
+            <!-- VISTA DE CONFIGURACIÓN -->
+            <section id="view-config" class="space-y-6 hidden h-full">
+                <div class="flex flex-col md:flex-row h-full min-h-[500px] bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden mx-4 my-4">
+                    <!-- Sidebar de Configuración -->
+                    <div class="w-full md:w-64 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-4 shrink-0">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Ajustes Generales</h3>
+                        <nav class="space-y-1">
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors">
+                                <i data-lucide="shield" class="w-4 h-4"></i>
+                                Permisos y Roles
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors opacity-50 cursor-not-allowed" title="Próximamente">
+                                <i data-lucide="building" class="w-4 h-4"></i>
+                                Empresa
+                            </a>
+                        </nav>
+                    </div>
+
+                    <!-- Área de Contenido -->
+                    <div class="flex-1 p-6 lg:p-8 overflow-y-auto">
+                        <div class="max-w-3xl">
+                            <h2 class="text-lg font-bold text-slate-800 mb-1">Permisos y Roles</h2>
+                            <p class="text-sm text-slate-500 mb-8">Configura las secciones visibles para cada rol en la plataforma.</p>
+
+                            <!-- Contenedor dinámico de roles (Tags) -->
+                            <div class="space-y-6" id="config-roles-container">
+                                <!-- Renderizado por app3.js -->
+                            </div>
+
+                            <div class="mt-10 pt-6 border-t border-slate-200 flex justify-end">
+                                <button onclick="saveConfigRoles()" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- VIEW: COMUNICACIONES (OMNICANAL) -->
             <section id="view-comm" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -1340,20 +1605,14 @@
                     <div class="lg:col-span-1 bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-6 flex flex-col h-auto lg:h-[600px] overflow-y-auto">
                         <!-- Canales -->
                         <div>
-                            <h3 class="font-bold text-slate-400 text-[10px] uppercase tracking-wider mb-3">Canales de Proyecto</h3>
-                            <ul class="space-y-1">
-                                <li>
-                                    <button onclick="openChannelChat('general')" id="btn-chan-general" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-bold flex items-center transition-all bg-brand-50 text-brand-600 border border-brand-100">
-                                        <i data-lucide="hash" class="w-4 h-4 mr-2"></i>
-                                        <span>general</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button onclick="openChannelChat('urgencias-campo')" id="btn-chan-urgencias-campo" class="w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all">
-                                        <i data-lucide="hash" class="w-4 h-4 mr-2"></i>
-                                        <span>urgencias-campo</span>
-                                    </button>
-                                </li>
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="font-bold text-slate-400 text-[10px] uppercase tracking-wider">Canales de Proyecto</h3>
+                                <button onclick="openChannelModal()" class="text-brand-500 hover:text-brand-700 p-0.5 rounded hover:bg-slate-100 transition-all flex items-center justify-center" title="Crear Canal de Chat">
+                                    <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+                                </button>
+                            </div>
+                            <ul id="comm-channel-list" class="space-y-1">
+                                <!-- Inyectado dinámicamente -->
                             </ul>
                         </div>
 
@@ -1396,15 +1655,7 @@
                 </div>
             </section>
 
-            <!-- VIEW: MOBILE SIMULATOR -->
-            <section id="view-mobile-sim" class="flex justify-center items-center py-2 sm:py-4 hidden w-full h-full">
-                <div id="mobile-phone-container" class="w-full sm:w-[360px] h-[calc(100vh-140px)] sm:h-[720px] bg-transparent sm:bg-slate-900 rounded-none sm:rounded-[40px] p-0 sm:p-4 shadow-none sm:shadow-2xl border-0 sm:border-4 border-slate-800 relative flex flex-col transition-all">
-                    <div class="w-24 h-4 bg-slate-800 rounded-full mx-auto mb-4 shrink-0 hidden sm:block"></div>
-                    <div id="mobile-screen-content" class="flex-1 bg-white rounded-none sm:rounded-[24px] overflow-hidden flex flex-col text-slate-800 relative border border-slate-150 sm:border-0 shadow-sm sm:shadow-none">
-                    </div>
-                    <div class="w-10 h-10 bg-slate-800 rounded-full mx-auto mt-4 cursor-pointer hover:bg-slate-700 transition-all shrink-0 hidden sm:block" onclick="resetMobileSimulator()" title="Resetear Móvil"></div>
-                </div>
-            </section>
+            <!-- VIEW: MOBILE SIMULATOR REMOVED -->
 
         </div>
     </main>
@@ -1521,6 +1772,14 @@
                 </div>
 
                 <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Situación Predeterminada (Aceptación):</label>
+                    <select id="catalog-modal-node-situation" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <option value="Aceptado">✅ Aceptado</option>
+                        <option value="No Aceptado" selected>⚠️ No Aceptado</option>
+                    </select>
+                </div>
+
+                <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block">Descripción / Observaciones:</label>
                     <textarea id="catalog-modal-node-obs" placeholder="Detalle o instrucción estándar de esta actividad..." rows="3" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500"></textarea>
                 </div>
@@ -1553,7 +1812,12 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block">Puesto / Rol:</label>
-                    <input type="text" id="emp-modal-role" placeholder="Ej. Técnico de Campo" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <select id="emp-modal-role" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <option value="Administrador">Administrador</option>
+                        <option value="Supervisor">Supervisor</option>
+                        <option value="Ingeniero">Ingeniero</option>
+                        <option value="Tecnico">Técnico</option>
+                    </select>
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-slate-500 uppercase block">Departamento:</label>
@@ -1582,11 +1846,177 @@
                         </div>
                     </div>
                 </div>
+                <div class="border-t border-slate-100 pt-2.5">
+                    <label class="text-[10px] font-bold text-brand-600 uppercase block mb-1">Acceso a la App Móvil (Login):</label>
+                    <div class="grid grid-cols-2 gap-3 bg-brand-50/50 p-3 rounded-lg border border-brand-100">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-500 uppercase block">Email / Usuario:</label>
+                            <input type="text" id="emp-modal-email" placeholder="Ej. juan@sonicbi.com" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-500 uppercase block">Contraseña:</label>
+                            <input type="password" id="emp-modal-password" placeholder="Establecer/Cambiar" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
                 <button onclick="closeEmployeeModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
                 <button id="employee-modal-submit-btn" onclick="saveEmployeeFromModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Registrar Empleado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Creación y Edición de Clientes (con Portal y Cotizador) -->
+    <div id="modal-client-editor" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-2xl w-[480px] space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5" id="client-modal-title">
+                    <i data-lucide="contact" class="w-4 h-4 text-brand-500"></i>
+                    Registrar Cliente
+                </h4>
+                <button onclick="closeClientModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3.5 text-xs max-h-[420px] overflow-y-auto pr-1">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Nombre / Razón Social *:</label>
+                    <input type="text" id="client-modal-name" placeholder="Ej. Corporativo Tiendas Norte S.A. de C.V." class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">RFC (México):</label>
+                        <input type="text" id="client-modal-rfc" placeholder="Ej. CTN260806AAA" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Persona de Contacto:</label>
+                        <input type="text" id="client-modal-contact" placeholder="Ej. Lic. Marco Antonio" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Teléfono / WhatsApp:</label>
+                        <input type="text" id="client-modal-phone" placeholder="Ej. 5512345678" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Email de Contacto:</label>
+                        <input type="email" id="client-modal-email" placeholder="Ej. contacto@tiendasnorte.com" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Dirección Completa:</label>
+                    <input type="text" id="client-modal-address" placeholder="Ej. Av. Central 456, Col. Norte, Monterrey, N.L." class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                </div>
+
+                <div class="border-t border-slate-100 pt-2.5">
+                    <label class="text-[10px] font-bold text-slate-600 uppercase block mb-1">Configuración del Cotizador ERP:</label>
+                    <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Condición de Pago:</label>
+                            <select id="client-modal-payment-terms" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                <option value="Contado">Pago de Contado</option>
+                                <option value="8 días">Crédito 8 días</option>
+                                <option value="15 días">Crédito 15 días</option>
+                                <option value="30 días">Crédito 30 días</option>
+                                <option value="60 días">Crédito 60 días</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Descuento (%) por defecto:</label>
+                            <input type="number" id="client-modal-discount" min="0" max="100" value="0" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Lista de Precios (Tarifa):</label>
+                            <select id="client-modal-price-list" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                <option value="General">Tarifa General (Normal)</option>
+                                <option value="VIP">Tarifa VIP (Clientes Especiales)</option>
+                                <option value="Distribuidor">Tarifa Distribuidor (Mayorista)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase block">Moneda / IVA Rate:</label>
+                            <div class="flex gap-1.5 mt-1">
+                                <select id="client-modal-currency" class="flex-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                    <option value="MXN">MXN ($)</option>
+                                    <option value="USD">USD ($)</option>
+                                </select>
+                                <select id="client-modal-iva" class="flex-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                    <option value="16">16% IVA</option>
+                                    <option value="8">8% Frontera</option>
+                                    <option value="0">0% Tasa</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-100 pt-2.5">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <input type="checkbox" id="client-modal-portal-enabled" onchange="togglePortalFields()" class="w-4 h-4 text-brand-600 border-slate-200 rounded focus:ring-brand-500">
+                        <label for="client-modal-portal-enabled" class="text-[10px] font-bold text-brand-600 uppercase cursor-pointer">Habilitar portal de cliente</label>
+                    </div>
+                    <div id="client-modal-portal-fields" class="grid grid-cols-2 gap-3 bg-brand-50/50 p-3 rounded-lg border border-brand-100 hidden">
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-500 uppercase block">Email / Usuario Portal:</label>
+                            <input type="email" id="client-modal-portal-email" placeholder="Ej. portal@tiendasnorte.com" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-500 uppercase block">Contraseña Portal:</label>
+                            <input type="password" id="client-modal-portal-password" placeholder="Establecer/Cambiar" class="w-full mt-1 p-2 text-xs border border-slate-200 rounded-lg bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button onclick="closeClientModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                <button id="client-modal-submit-btn" onclick="saveClientFromModal()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Registrar Cliente</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Creación y Edición de Canales de Chat (Omnicanal) -->
+    <div id="modal-channel-editor" class="fixed inset-0 bg-slate-900/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-2xl w-[450px] space-y-4">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+                <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-1.5" id="channel-modal-title">
+                    <i data-lucide="hash" class="w-4 h-4 text-brand-500"></i>
+                    Crear Canal de Chat
+                </h4>
+                <button onclick="closeChannelModal()" class="text-slate-400 hover:text-slate-600">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3.5 text-xs">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Nombre del Canal:</label>
+                    <div class="relative mt-1">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400 font-bold text-sm">#</span>
+                        <input type="text" id="chan-modal-name" placeholder="ej. avisos-campo" class="w-full pl-7 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Descripción / Propósito:</label>
+                    <textarea id="chan-modal-desc" placeholder="Describa el objetivo de este canal grupal..." class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs h-16 resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1.5">Integrar Empleados al Canal (Miembros):</label>
+                    <div id="chan-modal-members-container" class="max-h-40 overflow-y-auto border border-slate-200 rounded-lg p-2.5 space-y-1.5 bg-slate-50/50">
+                        <!-- Checkboxes inyectados dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                <button id="channel-modal-delete-btn" onclick="deleteChannelFromModal()" class="px-3 py-2 bg-rose-50 text-rose-600 border border-rose-100 hover:bg-rose-100 rounded-lg text-xs font-semibold transition-all hidden">Eliminar Canal</button>
+                <div class="flex items-center gap-2 ml-auto">
+                    <button onclick="closeChannelModal()" class="px-4 py-2 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-all">Cancelar</button>
+                    <button id="channel-modal-submit-btn" onclick="saveChannelFromModal()" class="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-semibold shadow-sm transition-all">Guardar Canal</button>
+                </div>
             </div>
         </div>
     </div>
@@ -1644,6 +2074,19 @@
                     <label class="text-[10px] font-bold text-slate-400 uppercase">Observaciones / Descripción:</label>
                     <textarea id="quick-task-obs" rows="2" placeholder="Notas sobre el estado..." class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none"></textarea>
                 </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Estado / Estado del Nodo:</label>
+                    <select id="quick-task-status" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-white focus:outline-none font-semibold text-slate-700">
+                        <!-- Cargado dinámicamente -->
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase">Situación (Aceptación):</label>
+                    <select id="quick-task-situation" class="w-full mt-1 p-2 border border-slate-200 rounded-lg bg-white focus:outline-none font-semibold text-slate-700">
+                        <option value="Aceptado">✅ Aceptado</option>
+                        <option value="No Aceptado">⚠️ No Aceptado</option>
+                    </select>
+                </div>
                 <div class="grid grid-cols-2 gap-2">
                     <div>
                         <label class="text-[10px] font-bold text-slate-400 uppercase">Urgencia:</label>
@@ -1693,10 +2136,10 @@
             </div>
 
             <!-- Cuerpo del Constructor (Grid responsivo) -->
-            <div class="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 overflow-y-auto lg:overflow-hidden">
+            <div class="flex-1 flex flex-col lg:flex-row gap-6 min-h-0 overflow-y-auto lg:overflow-auto">
                 
                 <!-- Columna 1: Parámetros del Proyecto (Ancho fijo en desktop) -->
-                <div class="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 flex flex-col gap-4 shrink-0 text-xs">
+                <div class="w-full lg:w-72 border-b lg:border-b-0 lg:border-r border-slate-200 pb-6 lg:pb-0 lg:pr-6 flex flex-col gap-4 shrink-0 text-xs lg:overflow-y-auto max-h-full scrollbar-thin">
                     <h5 class="font-bold text-slate-800 text-xs uppercase tracking-wider mb-1 flex items-center gap-1.5">
                         <i data-lucide="info" class="w-4 h-4 text-brand-500"></i>
                         Parámetros del Proyecto
@@ -1707,7 +2150,8 @@
                     </div>
                     <div>
                         <label class="text-[10px] font-bold text-slate-400 uppercase">Cliente:</label>
-                        <input type="text" id="new-template-client" value="Cliente General" class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <input type="text" id="new-template-client" list="process-clients-datalist" value="Cliente General" placeholder="Escribe o selecciona un cliente..." class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <datalist id="process-clients-datalist"></datalist>
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
@@ -1722,6 +2166,127 @@
                     <div>
                         <label class="text-[10px] font-bold text-slate-400 uppercase">Observaciones Generales:</label>
                         <textarea id="new-template-observations" rows="3" placeholder="Detalles de la planificación..." class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500"></textarea>
+                    </div>
+
+                    <!-- Programación y Recurrencia -->
+                    <div class="border-t border-slate-200 pt-3 mt-1">
+                        <h6 class="font-bold text-slate-800 text-[10px] uppercase tracking-wider mb-2 flex items-center gap-1">
+                            <i data-lucide="calendar-range" class="w-3.5 h-3.5 text-brand-500"></i>
+                            Programación y Recurrencia
+                        </h6>
+                        <div>
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Tipo de Recurrencia:</label>
+                            <select id="tpl-recurrence-type" onchange="toggleRecurrencePanels()" class="w-full mt-1 p-2 border border-slate-250 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs">
+                                <option value="disabled">🚫 Deshabilitada</option>
+                                <option value="weekly">📅 Días de la Semana</option>
+                                <option value="monthly">🗓️ Días del Mes</option>
+                                <option value="interval">⏱️ Por Intervalo</option>
+                                <option value="specific">⏰ Fecha y Hora Única</option>
+                            </select>
+                        </div>
+
+                        <!-- Panel: Semanal -->
+                        <div id="panel-recurrence-weekly" class="mt-3 space-y-2 hidden">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Selecciona días y hora:</label>
+                            <div class="flex flex-wrap gap-1">
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="1" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Lu</div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="2" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Ma</div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="3" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Mi</div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="4" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Ju</div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="5" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Vi</div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="6" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Sa</div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="checkbox" name="weekly-day" value="0" class="sr-only peer">
+                                    <div class="w-6 h-6 rounded-full border border-slate-200 flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white peer-checked:border-brand-500 hover:bg-slate-100 transition-colors">Do</div>
+                                </label>
+                            </div>
+                            <input type="time" id="recurrence-weekly-time" value="09:00" class="w-full p-2 border border-slate-250 rounded-lg bg-slate-50 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+
+                        <!-- Panel: Mensual -->
+                        <div id="panel-recurrence-monthly" class="mt-3 space-y-2 hidden">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Selecciona días del mes y hora:</label>
+                            <div class="grid grid-cols-7 gap-1 max-h-[110px] overflow-y-auto p-1 border border-slate-200 rounded-lg bg-slate-50">
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="1" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">1</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="2" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">2</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="3" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">3</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="4" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">4</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="5" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">5</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="6" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">6</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="7" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">7</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="8" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">8</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="9" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">9</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="10" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">10</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="11" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">11</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="12" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">12</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="13" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">13</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="14" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">14</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="15" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">15</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="16" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">16</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="17" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">17</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="18" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">18</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="19" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">19</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="20" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">20</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="21" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">21</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="22" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">22</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="23" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">23</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="24" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">24</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="25" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">25</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="26" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">26</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="27" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">27</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="28" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">28</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="29" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">29</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="30" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">30</div></label>
+                                <label class="relative cursor-pointer"><input type="checkbox" name="monthly-day" value="31" class="sr-only peer"><div class="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-bold text-slate-600 peer-checked:bg-brand-500 peer-checked:text-white hover:bg-slate-200">31</div></label>
+                            </div>
+                            <input type="time" id="recurrence-monthly-time" value="09:00" class="w-full p-2 border border-slate-250 rounded-lg bg-slate-50 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+
+                        <!-- Panel: Intervalo -->
+                        <div id="panel-recurrence-interval" class="mt-3 space-y-2 hidden">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Establecer Intervalo de repetición:</label>
+                            <div class="grid grid-cols-3 gap-1.5">
+                                <div>
+                                    <label class="text-[8px] font-semibold text-slate-400 uppercase">Días</label>
+                                    <input type="number" id="recurrence-interval-days" min="0" value="0" class="w-full mt-0.5 p-1.5 border border-slate-250 rounded-lg bg-slate-50 text-center font-bold text-xs focus:ring-1 focus:ring-brand-500">
+                                </div>
+                                <div>
+                                    <label class="text-[8px] font-semibold text-slate-400 uppercase">Horas</label>
+                                    <input type="number" id="recurrence-interval-hours" min="0" value="0" class="w-full mt-0.5 p-1.5 border border-slate-250 rounded-lg bg-slate-50 text-center font-bold text-xs focus:ring-1 focus:ring-brand-500">
+                                </div>
+                                <div>
+                                    <label class="text-[8px] font-semibold text-slate-400 uppercase">Minutos</label>
+                                    <input type="number" id="recurrence-interval-minutes" min="0" value="10" class="w-full mt-0.5 p-1.5 border border-slate-250 rounded-lg bg-slate-50 text-center font-bold text-xs focus:ring-1 focus:ring-brand-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Panel: Específica -->
+                        <div id="panel-recurrence-specific" class="mt-3 space-y-2 hidden">
+                            <label class="text-[9px] font-bold text-slate-400 uppercase">Fecha y Hora Única:</label>
+                            <div class="grid grid-cols-2 gap-1.5">
+                                <input type="date" id="recurrence-specific-date" class="w-full p-2 border border-slate-250 rounded-lg bg-slate-50 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                <input type="time" id="recurrence-specific-time" value="09:00" class="w-full p-2 border border-slate-250 rounded-lg bg-slate-50 text-[11px] font-mono focus:outline-none focus:ring-1 focus:ring-brand-500">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1750,7 +2315,7 @@
                 </div>
 
                 <!-- Columna 4: Propiedades del Nodo Seleccionado (Ancho fijo en desktop) -->
-                <div class="w-full lg:w-64 border-t lg:border-t-0 lg:pl-2 pt-6 lg:pt-0 flex flex-col justify-between shrink-0" id="node-properties-panel">
+                <div class="w-full lg:w-72 border-t lg:border-t-0 lg:pl-2 pt-6 lg:pt-0 flex flex-col shrink-0 lg:overflow-y-auto scrollbar-thin max-h-full pb-2" id="node-properties-panel">
                     <!-- Propiedades del nodo inyectadas dinámicamente -->
                 </div>
 
@@ -1880,6 +2445,27 @@
         </div>
     </div>
     
+    <!-- Modal de Evidencias Fotográficas y Firma -->
+    <div id="evidence-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col transform scale-95 transition-transform duration-300 relative">
+            <div class="px-5 py-4 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2"><i data-lucide="image" class="w-4 h-4 text-brand-500"></i> Evidencias y Firma del Cliente</h3>
+                    <p class="text-xs text-slate-500 mt-1" id="evidence-modal-subtitle">Fotografías y firmas adjuntas a la tarea completada.</p>
+                </div>
+                <button onclick="closeEvidenceModal()" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 text-slate-400 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            <div class="p-5 overflow-y-auto max-h-[70vh] bg-slate-50 space-y-6" id="evidence-modal-body">
+                <!-- Se inyectan las fotos y firma por JS -->
+            </div>
+            <div class="px-5 py-3 border-t border-slate-100 bg-white flex justify-end">
+                <button onclick="closeEvidenceModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-xs transition-colors">Cerrar Visor</button>
+            </div>
+        </div>
+    </div>
+    
     <!-- Tarjeta flotante de Guía del Tour Simulado -->
     <div id="tour-guide-card" class="fixed bottom-6 right-6 w-96 bg-white border border-brand-200 rounded-2xl shadow-2xl p-5 z-[100] hidden flex flex-col space-y-3.5 transition-all duration-300">
         <div class="flex items-center justify-between">
@@ -1936,6 +2522,6 @@
     </div>
 
     <!-- Script de lógica de la demo -->
-    <script src="app3.js"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="app3.js?v=3.4"></script></body>
 </html>

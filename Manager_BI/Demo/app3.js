@@ -1,146 +1,16 @@
 // Datos de las plantillas y flujos de procesos de la demo (ordenados por más nuevos primero)
-let templatesData = [
-    {
-        id: "microwave",
-        name: "Proyecto: Instalación Enlaces B2B",
-        type: "gantt",
-        createdDate: "2026-07-12",
-        startDate: "2026-07-06",
-        startTime: "09:00",
-        client: "Inmobiliaria Norte",
-        generalObservations: "Implementación de enlace troncal secundario para redundancia de oficinas principales.",
-        createdBy: "Capturista Backoffice",
-        tasks: [
-            { id: 101, name: "1. Planificación de Sitios", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "06 Jul - 08 Jul", description: "Reunión de kickoff y planos", assigned: "Lic. Ana Gómez (Comercial)" },
-            { id: 102, name: "2. Levantamiento Físico de Obra", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 2, timeRemaining: "Finalizado", dateRange: "08 Jul - 10 Jul", description: "Mediciones físicas de campo", assigned: "Tec. Juan Pérez (Campo)" },
-            { id: 103, name: "3. Elaboración de Cotización", duration: 2, daysText: "2 días", status: "Vencido", color: "bg-red-500 border border-red-300 text-white", startDay: 4, timeRemaining: "Vencido hace 2 días", dateRange: "10 Jul - 12 Jul", description: "Cotización de fibra óptica y cableado de oficinas", assigned: "Lic. Ana Gómez (Comercial)" },
-            { id: 104, name: "4. Montaje de Mástiles y Antenas", duration: 3, daysText: "3 días", status: "Pendiente", color: "bg-slate-200 border border-slate-350 text-slate-700", startDay: 6, timeRemaining: "En espera", dateRange: "12 Jul - 15 Jul", description: "Montaje exterior torre", assigned: "Tec. Pedro López (Soporte)" }
-        ],
-        activities: [
-            { author: "OdooBot", date: "12 de julio de 2026", relativeTime: "hace 6 días", description: "Plantilla creada" },
-            { author: "Mitchell Admin", date: "15 de julio de 2026", relativeTime: "hace 3 días", description: "Etapa cambiada", details: "Pendiente → En Proceso" },
-            { author: "Mitchell Admin", date: "15 de julio de 2026", relativeTime: "hace 3 días", description: "Tarea modificada", details: "3. Elaboración de Cotización: Asignado a Lic. Ana Gómez" }
-        ]
-    },
-    {
-        id: "fiber",
-        name: "Proyecto: Fibra Óptica HFC - Zona 1",
-        type: "gantt",
-        createdDate: "2026-07-10",
-        startDate: "2026-07-08",
-        startTime: "08:00",
-        client: "Corporativo Calzapato",
-        generalObservations: "Tendido de fibra en postes públicos autorizados por el municipio.",
-        createdBy: "Capturista Backoffice",
-        tasks: [
-            { id: 201, name: "1. Planificación y Venta", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "08 Jul - 10 Jul", description: "Cierre comercial de fibra", assigned: "Lic. Ana Gómez (Comercial)" },
-            { id: 202, name: "2. Diagnóstico en Campo", duration: 3, daysText: "3 días", status: "Por vencer", color: "bg-amber-500 border border-amber-300 text-white", startDay: 2, timeRemaining: "1 día restante", dateRange: "10 Jul - 13 Jul", description: "Diagnóstico de enlace microondas punto a punto", assigned: "Tec. Juan Pérez (Campo)" },
-            { id: 203, name: "3. Tendido de Fibra", duration: 5, daysText: "5 días", status: "Pendiente", color: "bg-slate-200 border border-slate-350 text-slate-700", startDay: 5, timeRemaining: "En espera", dateRange: "13 Jul - 18 Jul", description: "Instalación física fibra", assigned: "Ing. Josué (Redes)" }
-        ],
-        activities: [
-            { author: "OdooBot", date: "10 de julio de 2026", relativeTime: "hace 8 días", description: "Plantilla creada" },
-            { author: "Mitchell Admin", date: "11 de julio de 2026", relativeTime: "hace 7 días", description: "Etapa cambiada", details: "En proceso → En pausa" }
-        ]
-    },
-    {
-        id: "camera_support",
-        name: "Soporte: Fallo en Cámara Exterior",
-        type: "crm",
-        createdDate: "2026-07-05",
-        startDate: "2026-07-05",
-        startTime: "10:00",
-        client: "Residencial Jardines",
-        generalObservations: "Revisión preventiva por reincidencia analítica de cableado.",
-        createdBy: "Capturista Backoffice",
-        tasks: [
-            { id: 301, name: "1. Reporte Inicial de Falla", duration: 1, daysText: "1 día", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "05 Jul - 06 Jul", description: "Cliente reporta falla de imagen", assigned: "Capturista (Backoffice)" },
-            { id: 302, name: "2. Asignación de Técnico", duration: 1, daysText: "1 día", status: "Completado", color: "bg-brand-500 text-white", startDay: 1, timeRemaining: "Finalizado", dateRange: "06 Jul - 07 Jul", description: "Técnico programado para visita", assigned: "Capturista (Backoffice)" },
-            { id: 303, name: "3. Soporte de Cámara Exterior", duration: 2, daysText: "2 días", status: "Reincidencia Potencial", color: "bg-accent-500 text-white animate-pulse", startDay: 2, timeRemaining: "12 horas restantes", dateRange: "07 Jul - 09 Jul", description: "Fallo repetitivo en cámara de jardín central", assigned: "Tec. Pedro López (Soporte)" }
-        ],
-        activities: [
-            { author: "OdooBot", date: "05 de julio de 2026", relativeTime: "hace 13 días", description: "Plantilla creada" },
-            { author: "Mitchell Admin", date: "06 de julio de 2026", relativeTime: "hace 12 días", description: "Tarea añadida", details: "3. Soporte de Cámara Exterior" }
-        ]
-    },
-    {
-        id: "gps_integration",
-        name: "Proyecto: Telemetría y GPS Vehicular",
-        type: "gantt",
-        createdDate: "2026-07-02",
-        startDate: "2026-07-02",
-        startTime: "09:30",
-        client: "Logística Express",
-        generalObservations: "Calibración del módulo de telemetría y sensores de temperatura integrados.",
-        createdBy: "Capturista Backoffice",
-        tasks: [
-            { id: 401, name: "1. Planificación GPS", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "02 Jul - 04 Jul", description: "Planificación de rutas", assigned: "Lic. Ana Gómez (Comercial)" },
-            { id: 402, name: "2. Configuración de Servidores", duration: 3, daysText: "3 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 2, timeRemaining: "Finalizado", dateRange: "04 Jul - 07 Jul", description: "Instalación servidores central", assigned: "Ing. Sofía Reyes (Senior)" },
-            { id: 403, name: "3. Instalación de Terminales GPS", duration: 4, daysText: "4 días", status: "Por vencer", color: "bg-amber-500 border border-amber-300 text-white", startDay: 5, timeRemaining: "2 días restantes", dateRange: "07 Jul - 11 Jul", description: "Instalación hardware", assigned: "Tec. Juan Pérez (Campo)" },
-            { id: 404, name: "4. Pruebas de Ruta y Calibración", duration: 2, daysText: "2 días", status: "Pendiente", color: "bg-slate-200 border border-slate-350 text-slate-700", startDay: 9, timeRemaining: "En espera", dateRange: "11 Jul - 13 Jul", description: "Calibración en vivo", assigned: "Ing. Carlos Mendoza (Especialista)" }
-        ],
-        activities: [
-            { author: "OdooBot", date: "02 de julio de 2026", relativeTime: "hace 16 días", description: "Plantilla creada" }
-        ]
-    }
-];
+// Datos de las plantillas y flujos de procesos de la demo (ordenados por más nuevos primero)
+let templatesData = [];
 
 // Alertas iniciales
-let alertsData = [
-    {
-        id: 103,
-        activity: "Elaboración de Cotización",
-        client: "Inmobiliaria Norte (Nuevo)",
-        assigned: "Lic. Ana Gómez (Comercial)",
-        description: "Cotización de fibra óptica y cableado de oficinas",
-        startFin: "08 Jul - 10 Jul",
-        timeRemaining: "Vencido hace 2 días",
-        status: "Vencido",
-        badgeColor: "bg-red-100 text-red-800",
-        templateId: "microwave"
-    },
-    {
-        id: 202,
-        activity: "Diagnóstico en Campo",
-        client: "Corporativo Calzapato (Recurrente)",
-        assigned: "Tec. Juan Pérez (Campo)",
-        description: "Diagnóstico de enlace microondas punto a punto",
-        startFin: "10 Jul - 13 Jul",
-        timeRemaining: "1 día restante",
-        status: "Por vencer",
-        badgeColor: "bg-amber-100 text-amber-800",
-        templateId: "fiber"
-    },
-    {
-        id: 303,
-        activity: "Soporte de Cámara Exterior",
-        client: "Residencial Jardines (Recurrente)",
-        assigned: "Tec. Pedro López (Soporte)",
-        description: "Fallo repetitivo en cámara de jardín central",
-        startFin: "11 Jul - 12 Jul",
-        timeRemaining: "12 horas restantes",
-        status: "Reincidencia Potencial",
-        badgeColor: "bg-accent-500 text-white animate-pulse",
-        templateId: "camera_support"
-    }
-];
+let alertsData = [];
 
 // --- DATOS RELACIONALES: DEPARTAMENTOS Y PERSONAL ---
-let departmentsList = [
-    { name: "Comercial", manager: "Lic. Ana Gómez" },
-    { name: "Ingeniería de Redes", manager: "Ing. Josué" },
-    { name: "Soporte y Campo", manager: "Ing. Carlos Mendoza" },
-    { name: "Backoffice", manager: "Capturista (Backoffice)" }
-];
+let departmentsList = [];
 
-let employeesList = [
-    { name: "Lic. Ana Gómez", role: "Comercial", department: "Comercial", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-    { name: "Tec. Juan Pérez", role: "Campo", department: "Soporte y Campo", timeIn: "08:30", lunchOut: "13:30", lunchIn: "14:30", timeOut: "17:30", workHours: 8 },
-    { name: "Ing. Josué", role: "Redes", department: "Ingeniería de Redes", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-    { name: "Tec. Pedro López", role: "Soporte", department: "Soporte y Campo", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-    { name: "Ing. Carlos Mendoza", role: "Especialista", department: "Soporte y Campo", timeIn: "08:00", lunchOut: "13:00", lunchIn: "14:00", timeOut: "17:00", workHours: 8 },
-    { name: "Ing. Sofía Reyes", role: "Senior", department: "Soporte y Campo", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-    { name: "Capturista (Backoffice)", role: "Backoffice", department: "Backoffice", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 }
-];
+let employeesList = [];
+let channelsList = [];
+let clientsList = [];
 
 // Catálogo dinámico de especialistas sincronizado
 let specialistsCatalog = [];
@@ -158,24 +28,21 @@ let statusesList = [
     "Completado"
 ];
 
-let selectedTemplateId = "microwave";
+let selectedTemplateId = null;
 let activeFilter = 'all';
 let currentMobileScreen = 'list'; 
-let opexSavedValue = 450.00;
+let opexSavedValue = 0.00;
 let highlightedTaskId = null;
 let reassigningAlertId = null;
 
 // Variables de estado del Simulador Móvil
-let currentMobileTech = "Tec. Juan Pérez";
+let currentMobileTech = "Técnico de Campo";
 let mobileFilterActive = "Hoy"; // 'Hoy', 'Mañana', 'Semana'
 let mobileDetailsTab = "details"; // 'details', 'falla'
 let selectedMobileTaskId = null;
 let selectedMobileTemplateId = null;
 let mobileIsMenuOpen = false;
-let mobileChatMessages = [
-    { sender: "Backoffice", text: "Hola Juan, ¿puedes verificar el cableado subterráneo primero?" },
-    { sender: "Técnico", text: "Entendido, estoy por iniciar el diagnóstico de continuidad." }
-];
+let mobileChatMessages = [];
 let mobileTimerInterval = null;
 let mobileTimerSeconds = 0;
 let isTemplateExecutionPaused = false;
@@ -183,7 +50,7 @@ let activeTemplateElapsedSeconds = 0;
 
 // Variables de estado para el buscador de Odoo y paginación
 let tplListCurrentPage = 0;
-const tplListPageSize = 5;
+const tplListPageSize = 50;
 let odooFavorites = [];
 
 let nodesListCurrentPage = 0;
@@ -202,11 +69,17 @@ let alertsListCurrentPage = 0;
 const alertsListPageSize = 20;
 let alertsFavorites = [];
 
-let notifications = [
-    { id: 1, title: "Nueva plantilla creada: PL-0003 (Instalación de Fibra)", time: "hace 5 minutos", read: false, type: "create" },
-    { id: 2, title: "SLA Vencido: Tarea 'Elaboración de Cotización'", time: "hace 10 minutos", read: false, type: "vencido" },
-    { id: 3, title: "Tec. Juan Pérez aceptó la tarea 'Diagnóstico en Campo'", time: "hace 15 minutos", read: true, type: "confirm" }
-];
+let notifications = [];
+
+// Si hay token JWT, limpiar el estado local simulado anterior para forzar la sincronización con el servidor real
+if (localStorage.getItem('sonicbi_token')) {
+    localStorage.removeItem('bpms-state-sync');
+    localStorage.removeItem('odoo_favorites');
+    localStorage.removeItem('nodes_favorites');
+    localStorage.removeItem('depts_favorites');
+    localStorage.removeItem('emps_favorites');
+    localStorage.removeItem('sales-orders-sync');
+}
 
 // Cargar estado inicial desde localStorage si ya existe, de lo contrario sincronizarlo
 try {
@@ -292,28 +165,259 @@ let editingEmpIndex = null;
 // Edición Rápida (Gantt)
 let quickEditingTaskId = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    syncSpecialistsCatalog();
+async function cargarDatosDesdeBackend() {
+    const token = localStorage.getItem('sonicbi_token');
+    if (!token) return;
+
+    try {
+        // Cargar Catálogos
+        const catRes = await fetch('/api/bpm/catalogs', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (catRes.ok) {
+            const catalogs = await catRes.json();
+            employeesList = catalogs.employees || [];
+            departmentsList = catalogs.departments || [];
+            nodeLibraryList = catalogs.nodes || [];
+            if (catalogs.statuses && Array.isArray(catalogs.statuses)) {
+                catalogs.statuses.forEach(st => {
+                    if (st && !statusesList.includes(st)) statusesList.push(st);
+                });
+            }
+        }
+
+        // Cargar Plantillas
+        const tplRes = await fetch('/api/bpm/templates', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (tplRes.ok) {
+            templatesData = await tplRes.json();
+        }
+
+        // Cargar Notificaciones
+        const notifRes = await fetch('/api/comms/notifications', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (notifRes.ok) {
+            notifications = await notifRes.json();
+        }
+
+        // Cargar Canales de Chat
+        const channelsRes = await fetch('/api/comms/channels', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (channelsRes.ok) {
+            channelsList = await channelsRes.json();
+        }
+
+        // Cargar Clientes
+        const clientsRes = await fetch('/api/bpm/clients', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (clientsRes.ok) {
+            clientsList = await clientsRes.json();
+            syncSalesClientsCatalog();
+        }
+        syncStatusesWithCatalog();
+        syncSpecialistsCatalog();
+        renderPrioritariasAlerts();
+        applyAlertsFilters();
+        applyOdooFilters();
+        applyNodesFilters();
+        applyDeptsFilters();
+        applyEmpsFilters();
+        initDropdowns();
+        renderNotifications();
+        renderMobileScreen();
+        
+        // Re-renderizar chat sidebar dinámico
+        renderCommChannels();
+        renderCommDMs();
+        
+        if (selectedTemplateId) {
+            loadTemplate(selectedTemplateId);
+        }
+        
+    } catch (e) {
+        console.error("Error al cargar datos desde el backend:", e);
+    }
+}
+
+let socket = null;
+function iniciarWebSocket() {
+    const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    socket = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);
+
+    socket.onmessage = async (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            console.log("WebSocket evento recibido:", data);
+            
+            await cargarDatosDesdeBackend();
+
+            // Auto-desplegar la campanita de notificaciones al recibir un nuevo ticket/alerta
+            if (data.event === 'notification_added') {
+                const notif = data.notification;
+                if (notif && typeof showSalesNotification === 'function') {
+                    showSalesNotification(notif.title, "info");
+                }
+                const dropdownMenu = document.getElementById("notifications-dropdown-menu");
+                if (dropdownMenu) {
+                    dropdownMenu.classList.remove("hidden");
+                }
+            }
+
+            // Reactividad en caliente para el chat del administrador
+            if (data.event === 'chat_message' && data.message) {
+                const msg = data.message;
+                const currentUserName = localStorage.getItem('sonicbi_usuario') ? JSON.parse(localStorage.getItem('sonicbi_usuario')).nombre : 'Mitchell Admin';
+                
+                let isMatch = false;
+                if (activeChatTarget) {
+                    if (activeChatTarget.type === 'channel' && msg.chatType === 'channel') {
+                        isMatch = activeChatTarget.name.toLowerCase() === msg.chatTarget.toLowerCase();
+                    } else if (activeChatTarget.type === 'dm' && msg.chatType === 'dm') {
+                        const targetClean = activeChatTarget.name.trim().toLowerCase();
+                        const msgTargetClean = msg.chatTarget.trim().toLowerCase();
+                        const msgSenderClean = msg.sender.trim().toLowerCase();
+                        isMatch = targetClean === msgTargetClean || targetClean === msgSenderClean;
+                    }
+                }
+                
+                if (isMatch) {
+                    const token = localStorage.getItem('sonicbi_token');
+                    fetch(`/api/comms/chat/history?chatType=${activeChatTarget.type}&chatTarget=${encodeURIComponent(activeChatTarget.name)}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    })
+                    .then(res => res.json())
+                    .then(messages => {
+                        renderChatHistory(messages);
+                    });
+                } else if (msg.sender !== currentUserName && !msg.sender.includes(currentUserName)) {
+                    showSalesNotification(`Nuevo mensaje de @${msg.sender} en ${msg.chatType === 'channel' ? '#' : '@'}${msg.chatTarget}: "${msg.text}"`, "info");
+                }
+            }
+        } catch (e) {
+            console.error("Error en mensaje WebSocket:", e);
+        }
+    };
+
+    socket.onclose = () => {
+        console.log("WebSocket cerrado. Reintentando en 3s...");
+        setTimeout(iniciarWebSocket, 3000);
+    };
+}
+
+// ==========================================
+// VISUALIZADOR DE EVIDENCIAS Y FIRMA
+// ==========================================
+
+window.openEvidenceModal = function(taskId) {
+    console.log('[Evidence] openEvidenceModal called with taskId:', taskId, 'type:', typeof taskId);
+    console.log('[Evidence] templatesData length:', templatesData ? templatesData.length : 'undefined');
+    
+    if (!templatesData || templatesData.length === 0) {
+        console.warn('[Evidence] templatesData is empty or undefined');
+        return;
+    }
+    
+    let task = null;
+    for (let tpl of templatesData) {
+        if (tpl.tasks) {
+            task = tpl.tasks.find(t => String(t.id) === String(taskId));
+            if (task) {
+                console.log('[Evidence] Found task:', task.name, 'evidencePhotos:', task.evidencePhotos ? task.evidencePhotos.length : 0, 'signature:', !!task.clientSignature);
+                break;
+            }
+        }
+    }
+    
+    if (!task) {
+        console.warn('[Evidence] Task not found for id:', taskId);
+        return;
+    }
+
+    const modal = document.getElementById('evidence-modal');
+    const body = document.getElementById('evidence-modal-body');
+    const subtitle = document.getElementById('evidence-modal-subtitle');
+    
+    if (!modal || !body) {
+        console.warn('[Evidence] Modal elements not found in DOM');
+        return;
+    }
+
+    subtitle.textContent = `Evidencias de la tarea: ${task.name}`;
+    
+    let html = "";
+    
+    const evidencePhotos = task.evidencePhotos || [];
+    if (evidencePhotos.length > 0) {
+        html += `<h4 class="font-bold text-slate-700 text-xs mb-3 border-b border-slate-200 pb-2">Fotografías (${evidencePhotos.length})</h4>`;
+        html += `<div class="grid grid-cols-2 md:grid-cols-3 gap-3">`;
+        evidencePhotos.forEach((photoBase64, idx) => {
+            html += `
+                <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm flex items-center justify-center p-1">
+                    <img src="${photoBase64}" class="w-full h-auto max-h-48 object-contain rounded" alt="Evidencia ${idx+1}"/>
+                </div>
+            `;
+        });
+        html += `</div>`;
+    } else {
+        html += `<p class="text-xs text-slate-500 italic">No hay fotografías registradas.</p>`;
+    }
+
+    if (task.clientSignature) {
+        html += `<h4 class="font-bold text-slate-700 text-xs mb-3 mt-6 border-b border-slate-200 pb-2">Firma de Conformidad</h4>`;
+        html += `
+            <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm p-4 flex justify-center h-48">
+                <img src="${task.clientSignature}" class="h-full w-auto object-contain" alt="Firma del Cliente"/>
+            </div>
+        `;
+    }
+
+    body.innerHTML = html;
+
+    modal.classList.remove('hidden');
+    void modal.offsetWidth;
+    modal.classList.remove('opacity-0');
+    modal.querySelector('.transform').classList.remove('scale-95');
+    
+    console.log('[Evidence] Modal opened successfully');
+};
+
+window.closeEvidenceModal = function() {
+    const modal = document.getElementById('evidence-modal');
+    if (!modal) return;
+    
+    modal.classList.add('opacity-0');
+    modal.querySelector('.transform').classList.add('scale-95');
+    
+    setTimeout(() => {
+        modal.classList.add('hidden');
+        document.getElementById('evidence-modal-body').innerHTML = '';
+    }, 300);
+};
+
+document.addEventListener("DOMContentLoaded", async () => {
+    // Iniciar carga asíncrona de datos
+    await cargarDatosDesdeBackend();
+    
+    // Iniciar lógica de roles y permisos
+    await initRBAC();
+    
+    // Conectar WebSocket
+    iniciarWebSocket();
+
     lucide.createIcons();
     updateTimeDisplay();
-    renderPrioritariasAlerts();
     initAlertsFavorites();
-    applyAlertsFilters();
     initOdooFavorites();
-    applyOdooFilters();
     initNodesFavorites();
-    applyNodesFilters();
     initDeptsFavorites();
-    applyDeptsFilters();
     initEmpsFavorites();
-    applyEmpsFilters();
-    loadTemplate(selectedTemplateId);
-    initDropdowns();
     startMobileGlobalClock();
-    renderMobileScreen();
     initSalesView();
     initComm();
-    renderNotifications();
     
     // Escuchar cambios de storage para sincronizar multi-ventana
     window.addEventListener("storage", handleStorageEventSync);
@@ -338,14 +442,17 @@ function updateTimeDisplay() {
 
 // Alternar tabs y controlar visibilidad del Submenú de BPM (Nodos, Departamentos, Personal)
 function switchTab(tabId) {
-    const sections = ['view-dashboard', 'view-alerts', 'view-bpmn', 'view-bpmn-designer', 'view-catalog-nodes', 'view-departments', 'view-personal', 'view-mobile-sim', 'view-sales', 'view-sales-detail', 'view-comm'];
+    const sections = ['view-loading', 'view-dashboard', 'view-alerts', 'view-bpmn', 'view-bpmn-designer', 'view-catalog-nodes', 'view-departments', 'view-personal', 'view-sales', 'view-sales-detail', 'view-clients', 'view-comm', 'view-config'];
     sections.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     });
 
     const targetSection = document.getElementById(`view-${tabId}`);
-    if (targetSection) targetSection.classList.remove('hidden');
+    if (targetSection) {
+        targetSection.classList.remove('hidden');
+        targetSection.style.display = '';
+    }
 
     document.querySelectorAll(".nav-link").forEach(btn => {
         btn.classList.remove("bg-brand-50", "text-brand-500");
@@ -391,6 +498,24 @@ function switchTab(tabId) {
             activeBtn.classList.add("bg-brand-50", "text-brand-500");
             activeBtn.classList.remove("text-slate-600");
         }
+        
+        if (tabId === 'clients') {
+            const parentBtn = document.getElementById('btn-sales');
+            if (parentBtn) {
+                parentBtn.classList.add("bg-brand-50", "text-brand-500");
+                parentBtn.classList.remove("text-slate-600");
+            }
+            renderClientsView();
+        }
+        
+        // Cargar datos especiales si es view-config
+        if (tabId === 'config' && typeof loadAllRolePermissions === 'function') {
+            loadAllRolePermissions();
+        }
+
+        if (tabId === 'dashboard') {
+            renderDashboard();
+        }
     }
 
     const viewTitle = document.getElementById("view-title");
@@ -405,12 +530,12 @@ function switchTab(tabId) {
         'catalog-nodes': 'Biblioteca de tareas y actividades estandarizadas',
         'departments': 'Gestión de áreas y departamentos del proyecto',
         'personal': 'Administración de especialistas y técnicos de campo',
-        'mobile-sim': 'Consola móvil interactiva para técnicos y especialistas',
         'sales': 'Seguimiento de cotizaciones, presupuestos y órdenes de venta',
         'sales-detail': 'Edición y creación de cotizaciones de cliente',
-        'comm': 'Centro de comunicaciones unificado (Omnicanal) con técnicos de campo'
+        'clients': 'Catálogo de clientes, condiciones comerciales y accesos al portal',
+        'comm': 'Centro de comunicaciones unificado (Omnicanal) con técnicos de campo',
+        'config': 'Ajustes globales y roles del sistema'
     };
-
     if (viewTitle) {
         const titles = {
             'dashboard': 'Dashboard',
@@ -420,12 +545,12 @@ function switchTab(tabId) {
             'catalog-nodes': 'Nodos', 
             'departments': 'Departamentos',
             'personal': 'Personal',
-            'mobile-sim': 'Simulador Técnico',
             'sales': 'Ventas - Cotizaciones',
             'sales-detail': 'Ventas - Cotización Detalle',
-            'comm': 'Comunicaciones'
+            'clients': 'Ventas - Clientes',
+            'comm': 'Comunicaciones',
+            'config': 'Configuración'
         };
-        
         viewTitle.innerText = titles[tabId] || 'Manager Project';
         if (viewSubtitle) {
             viewSubtitle.classList.remove('hidden');
@@ -473,17 +598,20 @@ function closeMobileSidebarIfOpen() {
 
 // Navegación bidireccional desde alertas al Diseñador de Flujos (BPM)
 function navigateToTaskBpm(templateId, taskId) {
-    switchTab('bpmn');
+    // 1. Marcar la tarea a resaltar ANTES de cargar la plantilla
     highlightedTaskId = taskId;
-    loadTemplate(templateId);
-    
-    // Auto-scroll suave para centrar la fila de la tarea resaltada en el listado
+    // 2. Setear la plantilla activa
+    selectedTemplateId = templateId;
+    // 3. switchTab('bpmn-designer') internamente llama loadTemplate(selectedTemplateId),
+    //    lo que desplegará la plantilla con todas sus tareas ya resaltadas
+    switchTab('bpmn-designer');
+    // 4. Scroll suave hacia la fila resaltada
     setTimeout(() => {
         const rowEl = document.querySelector(".border-l-brand-500");
         if (rowEl) {
             rowEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
-    }, 150);
+    }, 300);
 }
 
 // Alertas prioritarias
@@ -530,6 +658,327 @@ function renderPrioritariasAlerts() {
         `;
     });
     lucide.createIcons();
+    renderDashboard();
+}
+
+function renderDashboard() {
+    // 1. Recopilar todas las tareas de templates y alertas
+    let allTasks = [];
+    const addedIds = new Set();
+    
+    // De templatesData
+    templatesData.forEach(tpl => {
+        const tplFolio = getTemplateFolio ? getTemplateFolio(tpl) : (tpl.id || "");
+        const folioVal = getFolioNumericValue ? getFolioNumericValue(tplFolio) : 0;
+        if (tpl.tasks && Array.isArray(tpl.tasks)) {
+            tpl.tasks.forEach(t => {
+                if (!addedIds.has(t.id)) {
+                    addedIds.add(t.id);
+                    
+                    // SLA remaining calculation in seconds
+                    let timeRemainingStr = t.timeRemaining || "En espera";
+                    let remainingSecs = 0;
+                    if (t.status !== 'Completado') {
+                        const elapsed = getTaskElapsedTimeInSeconds ? getTaskElapsedTimeInSeconds(tpl, t) : 0;
+                        remainingSecs = ((t.duration || 1) * 24 * 60 * 60) - elapsed;
+                        timeRemainingStr = formatRemainingTime ? formatRemainingTime(remainingSecs, elapsed > 0) : timeRemainingStr;
+                    } else {
+                        timeRemainingStr = "Finalizado";
+                    }
+
+                    allTasks.push({
+                        id: t.id,
+                        name: t.name,
+                        templateName: tpl.name,
+                        templateFolio: tplFolio,
+                        folioValue: folioVal,
+                        client: tpl.client || "Cliente General",
+                        assigned: t.assigned || "Sin Asignar",
+                        description: t.description || t.observaciones || "Sin descripción",
+                        status: t.status === 'Creado' ? 'Pendiente' : t.status,
+                        timeRemaining: timeRemainingStr,
+                        remainingSecs: remainingSecs,
+                        urgencia: t.urgencia || 'Media',
+                        templateId: tpl.id
+                    });
+                }
+            });
+        }
+    });
+
+    // De alertsData (por si hay alertas huérfanas o iniciales sueltas)
+    if (alertsData && Array.isArray(alertsData)) {
+        alertsData.forEach(a => {
+            if (!addedIds.has(a.id)) {
+                addedIds.add(a.id);
+                allTasks.push({
+                    id: a.id,
+                    name: a.activity,
+                    templateName: a.templateName,
+                    templateFolio: a.templateFolio,
+                    folioValue: a.folioValue || (getFolioNumericValue ? getFolioNumericValue(a.templateFolio) : 0),
+                    client: a.client || "Cliente General",
+                    assigned: a.assigned || "Sin Asignar",
+                    description: a.description || "Sin descripción",
+                    status: a.status,
+                    timeRemaining: a.timeRemaining,
+                    remainingSecs: a.status === 'Vencido' ? -1 : 999999,
+                    urgencia: a.urgencia || 'Media',
+                    templateId: a.templateId
+                });
+            }
+        });
+    }
+
+    // 2. Calcular estadísticas (Top row)
+    const openTasks = allTasks.filter(t => t.status !== 'Completado');
+    const pendingTasks = allTasks.filter(t => t.status === 'Pendiente' || t.status === 'Creado');
+    const dueTodayTasks = allTasks.filter(t => t.status !== 'Completado' && t.remainingSecs > 0 && t.remainingSecs <= 24 * 60 * 60);
+    const overdueTasks = allTasks.filter(t => t.status === 'Vencido' || (t.status !== 'Completado' && t.remainingSecs <= 0));
+    const warningTasks = allTasks.filter(t => t.status === 'Por vencer');
+    const criticalTasks = allTasks.filter(t => t.status === 'Vencido' || t.status === 'Reincidencia Potencial' || (t.status !== 'Completado' && t.remainingSecs <= 0));
+
+    // Inyectar contadores en cabecera
+    const eOpen = document.getElementById("dash-stat-open");
+    const ePending = document.getElementById("dash-stat-pending");
+    const eDueToday = document.getElementById("dash-stat-duetoday");
+    const eOverdue = document.getElementById("dash-stat-overdue");
+    const eWarning = document.getElementById("dash-alert-warning");
+    const eCritical = document.getElementById("dash-alert-critical");
+
+    if (eOpen) eOpen.textContent = openTasks.length;
+    if (ePending) ePending.textContent = pendingTasks.length;
+    if (eDueToday) eDueToday.textContent = dueTodayTasks.length;
+    if (eOverdue) eOverdue.textContent = overdueTasks.length;
+    if (eWarning) eWarning.textContent = warningTasks.length;
+    if (eCritical) eCritical.textContent = criticalTasks.length;
+
+    // 3. Cumplimiento de SLA general
+    const totalCount = allTasks.length || 1;
+    const compliantCount = allTasks.length - overdueTasks.length;
+    const compliancePercent = Math.round((compliantCount / totalCount) * 100);
+
+    const eCompPercent = document.getElementById("dash-compliance-percent");
+    const eCompPercentVal = document.getElementById("dash-compliance-percent-val");
+    const eCompRatio = document.getElementById("dash-compliance-ratio");
+    const eCompProgress = document.getElementById("dash-compliance-progress-bar");
+
+    if (eCompPercent) eCompPercent.textContent = `${compliancePercent}%`;
+    if (eCompPercentVal) eCompPercentVal.textContent = `${compliancePercent}%`;
+    if (eCompRatio) eCompRatio.textContent = `${compliantCount} de ${allTasks.length} tareas`;
+    if (eCompProgress) eCompProgress.style.width = `${compliancePercent}%`;
+
+    // Procesos Completados
+    const totalTpls = templatesData.length;
+    const completedTpls = templatesData.filter(tpl => tpl.tasks && tpl.tasks.length > 0 && tpl.tasks.every(tk => tk.status === 'Completado')).length;
+    const processPercent = totalTpls > 0 ? Math.round((completedTpls / totalTpls) * 100) : 0;
+
+    const eProcPercent = document.getElementById("dash-process-percent");
+    const eProcRatio = document.getElementById("dash-process-ratio");
+    const eProcProgress = document.getElementById("dash-process-progress-bar");
+
+    if (eProcPercent) eProcPercent.textContent = `${processPercent}%`;
+    if (eProcRatio) eProcRatio.textContent = `${completedTpls} de ${totalTpls} procesos`;
+    if (eProcProgress) eProcProgress.style.width = `${processPercent}%`;
+
+    // 4. Indicadores circulares (Gauges)
+    // Gauge 1: SLA Cumplido
+    const p1 = compliancePercent;
+    const g1 = document.getElementById("dash-gauge-1");
+    const gVal1 = document.getElementById("dash-gauge-val-1");
+    if (g1) g1.style.strokeDashoffset = 163 - (163 * p1 / 100);
+    if (gVal1) gVal1.textContent = `${p1}%`;
+
+    // Gauge 2: Plantillas en Proceso
+    const activeTpls = templatesData.filter(tpl => !tpl.isPaused && tpl.tasks && tpl.tasks.some(tk => tk.status !== 'Completado')).length;
+    const p2 = Math.round((activeTpls / (totalTpls || 1)) * 100);
+    const g2 = document.getElementById("dash-gauge-2");
+    const gVal2 = document.getElementById("dash-gauge-val-2");
+    if (g2) g2.style.strokeDashoffset = 163 - (163 * p2 / 100);
+    if (gVal2) gVal2.textContent = `${p2}%`;
+
+    // Gauge 3: Por Vencer
+    const p3 = Math.round((warningTasks.length / totalCount) * 100);
+    const g3 = document.getElementById("dash-gauge-3");
+    const gVal3 = document.getElementById("dash-gauge-val-3");
+    if (g3) g3.style.strokeDashoffset = 163 - (163 * p3 / 100);
+    if (gVal3) gVal3.textContent = `${p3}%`;
+
+    // Gauge 4: Vencidas
+    const p4 = Math.round((overdueTasks.length / totalCount) * 100);
+    const g4 = document.getElementById("dash-gauge-4");
+    const gVal4 = document.getElementById("dash-gauge-val-4");
+    if (g4) g4.style.strokeDashoffset = 163 - (163 * p4 / 100);
+    if (gVal4) gVal4.textContent = `${p4}%`;
+
+    // 5. Tareas Críticas y Vencidas (Tabla)
+    const criticalList = allTasks.filter(t => t.status === 'Vencido' || t.status === 'Por vencer' || t.status === 'Reincidencia Potencial' || t.remainingSecs <= 0);
+    criticalList.sort((a, b) => {
+        const severity = { 'Vencido': 3, 'Reincidencia Potencial': 2, 'Por vencer': 1 };
+        return (severity[b.status] || 0) - (severity[a.status] || 0) || a.remainingSecs - b.remainingSecs;
+    });
+
+    const topCritical = criticalList.slice(0, 5);
+    const eCritCount = document.getElementById("dash-critical-count");
+    if (eCritCount) eCritCount.textContent = criticalList.length;
+
+    const criticalTableBody = document.getElementById("dash-critical-table-body");
+    if (criticalTableBody) {
+        criticalTableBody.innerHTML = "";
+        if (topCritical.length === 0) {
+            criticalTableBody.innerHTML = `
+                <tr>
+                    <td colspan="4" class="py-4 text-center text-slate-400 italic">No hay tareas críticas ni vencidas.</td>
+                </tr>
+            `;
+        } else {
+            topCritical.forEach(t => {
+                const techName = t.assigned || "Sin Asignar";
+                const initials = techName.split(" ").map(w => w[0]).join("").substring(0, 2).toUpperCase();
+                
+                let priorityBadge = "";
+                if (t.urgencia === 'Alta' || t.status === 'Vencido') {
+                    priorityBadge = `<span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-150">Alta</span>`;
+                } else if (t.urgencia === 'Media' || t.status === 'Por vencer') {
+                    priorityBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-semibold border border-amber-150">Media</span>`;
+                } else {
+                    priorityBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-50 text-slate-600 border border-slate-200">Baja</span>`;
+                }
+
+                let slaClass = "text-slate-655 font-semibold";
+                if (t.status === 'Vencido' || t.remainingSecs <= 0) {
+                    slaClass = "text-rose-600 font-bold animate-pulse";
+                } else if (t.status === 'Por vencer') {
+                    slaClass = "text-amber-600 font-semibold";
+                }
+
+                criticalTableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0">
+                        <td class="py-3 pr-2">
+                            <div class="font-bold text-slate-800">
+                                <button onclick="navigateToTaskBpm('${t.templateId}', ${t.id})" class="text-left font-bold text-brand-500 hover:text-brand-700 hover:underline focus:outline-none transition-all">
+                                    ${t.name}
+                                </button>
+                            </div>
+                            <div class="text-[10px] text-slate-400 font-medium">${t.templateName} (${t.client})</div>
+                        </td>
+                        <td class="py-3 pr-2">
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-5 h-5 rounded-full bg-brand-500 text-white flex items-center justify-center text-[8px] font-bold shadow-sm">
+                                    ${initials}
+                                </div>
+                                <span class="text-slate-600 truncate max-w-[80px]">${techName.split(" ")[0]}</span>
+                            </div>
+                        </td>
+                        <td class="py-3 pr-2 text-center">${priorityBadge}</td>
+                        <td class="py-3 text-right ${slaClass}">${t.timeRemaining}</td>
+                    </tr>
+                `;
+            });
+        }
+    }
+
+    // 6. Alertas Recientes (Lista)
+    const recentAlertsList = document.getElementById("dash-recent-alerts-list");
+    if (recentAlertsList) {
+        recentAlertsList.innerHTML = "";
+        const topNotifs = notifications ? notifications.slice(0, 5) : [];
+        if (topNotifs.length === 0) {
+            recentAlertsList.innerHTML = `<p class="text-xs text-slate-400 italic py-4 text-center">No hay alertas ni actividades recientes.</p>`;
+        } else {
+            topNotifs.forEach(n => {
+                let badgeType = "Warning";
+                let badgeClass = "bg-amber-50 text-amber-700 border border-amber-250";
+                if (n.type === 'vencido') {
+                    badgeType = "Critical";
+                    badgeClass = "bg-rose-50 text-rose-700 border border-rose-250 animate-pulse font-bold";
+                } else if (n.type === 'completado' || n.type === 'confirm') {
+                    badgeType = "Info";
+                    badgeClass = "bg-blue-50 text-blue-700 border border-blue-250";
+                }
+
+                recentAlertsList.innerHTML += `
+                    <div class="flex items-start justify-between gap-3 p-3 bg-slate-50 rounded-lg border border-slate-100 hover:bg-slate-100/50 transition-colors">
+                        <p class="text-xs text-slate-700 leading-relaxed flex-1">${n.title}</p>
+                        <span class="px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider shrink-0 ${badgeClass}">${badgeType}</span>
+                    </div>
+                `;
+            });
+        }
+    }
+
+    // 7. Carga de Trabajo de Técnicos (Tabla)
+    const techTableBody = document.getElementById("dash-technicians-table-body");
+    if (techTableBody) {
+        techTableBody.innerHTML = "";
+        const workload = {};
+        
+        if (employeesList && Array.isArray(employeesList)) {
+            employeesList.forEach(e => {
+                workload[e.name] = { active: 0, completed: 0, role: e.role || "Técnico" };
+            });
+        }
+        workload["Sin Asignar"] = { active: 0, completed: 0, role: "N/A" };
+        
+        allTasks.forEach(t => {
+            let assigned = t.assigned || "Sin Asignar";
+            if (assigned.includes(" (")) {
+                assigned = assigned.split(" (")[0];
+            }
+            if (!workload[assigned]) {
+                workload[assigned] = { active: 0, completed: 0, role: "Técnico" };
+            }
+            if (t.status === 'Completado') {
+                workload[assigned].completed++;
+            } else {
+                workload[assigned].active++;
+            }
+        });
+
+        if (workload["Sin Asignar"].active === 0 && workload["Sin Asignar"].completed === 0) {
+            delete workload["Sin Asignar"];
+        }
+
+        const workloadArray = Object.keys(workload).map(name => ({
+            name: name,
+            role: workload[name].role,
+            active: workload[name].active,
+            completed: workload[name].completed
+        }));
+        
+        workloadArray.sort((a, b) => b.active - a.active || b.completed - a.completed);
+
+        if (workloadArray.length === 0) {
+            techTableBody.innerHTML = `
+                <tr>
+                    <td colspan="3" class="py-4 text-center text-slate-400 italic">No hay datos de personal técnico.</td>
+                </tr>
+            `;
+        } else {
+            workloadArray.forEach(tech => {
+                techTableBody.innerHTML += `
+                    <tr class="hover:bg-slate-50/50 transition-colors border-b border-slate-100 last:border-0">
+                        <td class="py-3 pr-2 flex items-center gap-2">
+                            <div class="w-7 h-7 rounded-full bg-slate-100 text-slate-655 flex items-center justify-center font-bold text-xs shadow-sm border border-slate-200/50">
+                                <i data-lucide="user" class="w-3.5 h-3.5"></i>
+                            </div>
+                            <div>
+                                <div class="font-bold text-slate-800">${tech.name}</div>
+                                <div class="text-[10px] text-slate-400 font-medium">${tech.role}</div>
+                            </div>
+                        </td>
+                        <td class="py-3 pr-2 text-center text-slate-700 font-bold">${tech.active}</td>
+                        <td class="py-3 text-right text-emerald-600 font-bold">${tech.completed}</td>
+                    </tr>
+                `;
+            });
+        }
+    }
+
+    // Dibujar los iconos Lucide
+    if (lucide && lucide.createIcons) {
+        lucide.createIcons();
+    }
 }
 
 // Alertas de tabla
@@ -649,6 +1098,12 @@ function removeAlertsTag(actionId) {
     applyAlertsFilters();
 }
 
+function getFolioNumericValue(folioStr) {
+    if (!folioStr) return 0;
+    const match = String(folioStr).match(/\d+/);
+    return match ? parseInt(match[0], 10) : 0;
+}
+
 function applyAlertsFilters() {
     const searchInp = document.getElementById("alerts-search-input");
     const searchText = searchInp ? searchInp.value.trim().toLowerCase() : "";
@@ -713,6 +1168,8 @@ function applyAlertsFilters() {
     const addedIds = new Set();
     
     templatesData.forEach(tpl => {
+        const tplFolio = getTemplateFolio(tpl);
+        const folioVal = getFolioNumericValue(tplFolio);
         tpl.tasks.forEach(t => {
             if (!addedIds.has(t.id)) {
                 addedIds.add(t.id);
@@ -733,6 +1190,9 @@ function applyAlertsFilters() {
                 sourceData.push({
                     id: t.id,
                     activity: t.name,
+                    templateName: tpl.name,
+                    templateFolio: tplFolio,
+                    folioValue: folioVal,
                     client: tpl.client || "Cliente General",
                     assigned: t.assigned || "Sin Asignar",
                     description: t.description || t.observaciones || "Sin descripción",
@@ -750,11 +1210,17 @@ function applyAlertsFilters() {
     alertsData.forEach(a => {
         if (!addedIds.has(a.id)) {
             addedIds.add(a.id);
+            if (a.folioValue === undefined) {
+                a.folioValue = getFolioNumericValue(a.templateFolio);
+            }
             sourceData.push(a);
         }
     });
 
-    // 2. Calcular SLA en caliente para tareas no completadas
+    // 2. Ordenar por número de Folio de mayor a menor (el folio último/más alto va primero)
+    sourceData.sort((a, b) => (b.folioValue || 0) - (a.folioValue || 0));
+
+    // 3. Calcular SLA en caliente para tareas no completadas
     sourceData.forEach(item => {
         if (item.status === 'Completado') {
             item.timeRemaining = "Finalizado";
@@ -769,11 +1235,13 @@ function applyAlertsFilters() {
             const remaining = (task.duration * 24 * 60 * 60) - elapsed;
             item.timeRemaining = formatRemainingTime(remaining, elapsed > 0);
             
-            if (task.status !== 'Reincidencia Potencial') {
-                const totalDuration = task.duration * 24 * 60 * 60;
+            if (!tpl.isPaused && task.status !== 'Reincidencia Potencial' && task.status !== 'Creado' && task.status !== 'Completado') {
+                const totalDuration = (task.duration || 1) * 24 * 60 * 60;
+                const tplFolio = getTemplateFolio(tpl);
+                const clientName = tpl.client || "Cliente General";
                 if (remaining <= 0) {
                     if (task.status !== 'Vencido') {
-                        addNotification(`SLA Excedido (Vencido): Tarea "${task.name.replace(/^\d+\.\s*/, "")}" en plantilla "${tpl.name}"`, 'vencido', { templateId: tpl.id });
+                        addNotification(`SLA Excedido (Vencido): Tarea "${task.name.replace(/^\d+\.\s*/, "")}" en plantilla [${tplFolio}] "${tpl.name}" (Cliente: ${clientName})`, 'vencido', { templateId: tpl.id });
                     }
                     task.status = 'Vencido';
                     task.color = 'bg-red-500 border border-red-300 text-white';
@@ -781,28 +1249,23 @@ function applyAlertsFilters() {
                     item.badgeColor = "bg-red-105 text-red-800 border border-red-200 animate-pulse font-bold";
                 } else if (remaining / totalDuration <= 0.25 && elapsed > 0) {
                     if (task.status !== 'Por vencer') {
-                        addNotification(`SLA Por vencer: Tarea "${task.name.replace(/^\d+\.\s*/, "")}" en plantilla "${tpl.name}"`, 'porvencer', { templateId: tpl.id });
+                        addNotification(`SLA Por vencer: Tarea "${task.name.replace(/^\d+\.\s*/, "")}" en plantilla [${tplFolio}] "${tpl.name}" (Cliente: ${clientName})`, 'porvencer', { templateId: tpl.id });
                     }
                     task.status = 'Por vencer';
                     task.color = 'bg-amber-500 border border-amber-300 text-white';
                     item.status = 'Por vencer';
                     item.badgeColor = "bg-amber-100 text-amber-850 border border-amber-200";
-                } else if (elapsed > 0) {
+                } else if (elapsed > 0 && task.status === 'Pendiente') {
                     task.status = 'En Proceso';
                     task.color = 'bg-blue-500 text-white';
                     item.status = 'En Proceso';
                     item.badgeColor = "bg-blue-100 text-blue-800 border border-blue-200";
-                } else {
-                    task.status = 'Pendiente';
-                    task.color = 'bg-slate-200 border border-slate-350 text-slate-700';
-                    item.status = 'Pendiente';
-                    item.badgeColor = "bg-slate-100 text-slate-600 border border-slate-200";
                 }
             }
         }
     });
     
-    // 3. Filtrar
+    // 4. Filtrar por texto (cliente, tarea, responsable, folio, plantilla)
     let filtered = sourceData.filter(alert => {
         if (searchText) {
             const query = searchText.toLowerCase();
@@ -810,7 +1273,9 @@ function applyAlertsFilters() {
             const cliMatch = (alert.client || "").toLowerCase().includes(query);
             const assMatch = (alert.assigned || "").toLowerCase().includes(query);
             const descMatch = (alert.description || "").toLowerCase().includes(query);
-            if (!actMatch && !cliMatch && !assMatch && !descMatch) return false;
+            const tplMatch = (alert.templateName || "").toLowerCase().includes(query);
+            const folioMatch = (alert.templateFolio || "").toLowerCase().includes(query);
+            if (!actMatch && !cliMatch && !assMatch && !descMatch && !tplMatch && !folioMatch) return false;
         }
         
         if (chkVencido || chkPorVencer || chkReincidencia) {
@@ -823,7 +1288,7 @@ function applyAlertsFilters() {
         return true;
     });
     
-    // 4. Paginación
+    // 5. Paginación
     const totalCount = filtered.length;
     const maxPage = Math.max(0, Math.ceil(totalCount / alertsListPageSize) - 1);
     if (alertsListCurrentPage > maxPage) alertsListCurrentPage = maxPage;
@@ -862,12 +1327,17 @@ function navigateAlertsList(direction) {
     const addedIds = new Set();
     
     templatesData.forEach(tpl => {
+        const tplFolio = getTemplateFolio(tpl);
+        const folioVal = getFolioNumericValue(tplFolio);
         tpl.tasks.forEach(t => {
             if (!addedIds.has(t.id)) {
                 addedIds.add(t.id);
                 sourceData.push({
                     id: t.id,
                     activity: t.name,
+                    templateName: tpl.name,
+                    templateFolio: tplFolio,
+                    folioValue: folioVal,
                     client: tpl.client || "Cliente General",
                     assigned: t.assigned || "Sin Asignar",
                     description: t.description || t.observaciones || "Sin descripción",
@@ -881,9 +1351,14 @@ function navigateAlertsList(direction) {
     alertsData.forEach(a => {
         if (!addedIds.has(a.id)) {
             addedIds.add(a.id);
+            if (a.folioValue === undefined) {
+                a.folioValue = getFolioNumericValue(a.templateFolio);
+            }
             sourceData.push(a);
         }
     });
+
+    sourceData.sort((a, b) => (b.folioValue || 0) - (a.folioValue || 0));
 
     let filtered = sourceData.filter(alert => {
         if (searchText) {
@@ -891,7 +1366,10 @@ function navigateAlertsList(direction) {
             const actMatch = (alert.activity || "").toLowerCase().includes(query);
             const cliMatch = (alert.client || "").toLowerCase().includes(query);
             const assMatch = (alert.assigned || "").toLowerCase().includes(query);
-            if (!actMatch && !cliMatch && !assMatch) return false;
+            const descMatch = (alert.description || "").toLowerCase().includes(query);
+            const tplMatch = (alert.templateName || "").toLowerCase().includes(query);
+            const folioMatch = (alert.templateFolio || "").toLowerCase().includes(query);
+            if (!actMatch && !cliMatch && !assMatch && !descMatch && !tplMatch && !folioMatch) return false;
         }
         if (chkVencido || chkPorVencer || chkReincidencia) {
             let match = false;
@@ -923,13 +1401,17 @@ function renderAlertsListTableContent(alerts, groupBy) {
     tbody.innerHTML = "";
     
     const getRowHtml = (alert) => {
+        const folioBadge = alert.templateFolio ? `<span class="bg-brand-50 text-brand-700 border border-brand-200 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold shrink-0">${alert.templateFolio}</span>` : "";
+        const tplNameHtml = alert.templateName ? `<div class="text-[11px] text-slate-600 font-medium mt-0.5 flex items-center gap-1.5 flex-wrap"><span class="text-slate-700 font-semibold">${alert.templateName}</span>${folioBadge}</div>` : "";
+
         return `
             <tr class="hover:bg-slate-50 transition-colors text-sm text-slate-650 border-b border-slate-100">
                 <td class="px-6 py-4 font-semibold">
                     <button onclick="navigateToTaskBpm('${alert.templateId}', ${alert.id})" class="text-left font-bold text-brand-500 hover:text-brand-700 hover:underline focus:outline-none transition-all">
                         ${alert.activity}
                     </button>
-                    <div class="text-[11px] text-slate-450 font-normal mt-1 leading-normal max-w-[380px] break-words">
+                    ${tplNameHtml}
+                    <div class="text-[11px] text-slate-450 font-normal mt-0.5 leading-normal max-w-[380px] break-words">
                         ${alert.description || "Sin descripción"}
                     </div>
                 </td>
@@ -1051,16 +1533,32 @@ function confirmReasign() {
     
     // 2. Actualizar en templatesData (Gantt)
     let foundTemplate = null;
+    let foundTask = null;
     templatesData.forEach(tpl => {
         const task = tpl.tasks.find(tk => tk.id === reassigningAlertId);
         if (task) {
             task.assigned = newAssigned;
+            task.status = "Verificado";
             foundTemplate = tpl;
+            foundTask = task;
         }
     });
 
-    if (foundTemplate) {
-        loadTemplate(foundTemplate.id);
+    if (foundTemplate && foundTask) {
+        const token = localStorage.getItem('sonicbi_token');
+        fetch(`/api/bpm/tasks/${foundTask.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(foundTask)
+        })
+        .then(res => {
+            if (res.ok) {
+                cargarDatosDesdeBackend();
+            }
+        });
     }
     
     closeReasignModal();
@@ -1072,89 +1570,18 @@ function confirmReasign() {
 function sendBuzzToTech(techName, taskName, event) {
     if (event) event.stopPropagation();
     
-    // 1. Emitir evento a localStorage para sincronizar otras ventanas/pestañas
-    try {
-        localStorage.setItem("mobile-buzz-trigger", JSON.stringify({
+    // Emitir por WebSocket al backend para transmitir al celular físico
+    if (typeof socket !== 'undefined' && socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            event: 'buzz_tech',
             techName: techName,
-            taskName: taskName,
-            timestamp: Date.now()
+            taskName: taskName
         }));
-    } catch (e) {
-        console.warn("No se pudo escribir el disparador del zumbido en localStorage:", e);
-    }
-    
-    // 2. Ejecutar localmente en esta misma ventana
-    executeLocalBuzz(techName, taskName);
-}
-
-function executeLocalBuzz(techName, taskName) {
-    // 1. Sincronizar el simulador móvil para apuntar a este técnico
-    const matchingTech = ["Tec. Juan Pérez", "Tec. Pedro López", "Ing. Josué", "Ing. Sofía Reyes", "Ing. Carlos Mendoza"].find(t => techName.startsWith(t));
-    if (matchingTech) {
-        currentMobileTech = matchingTech;
-        renderMobileScreen();
-    }
-
-    // 2. Sacudir físicamente el simulador (MSN Messenger Shake)
-    const phone = document.getElementById("mobile-phone-container");
-    if (phone) {
-        phone.classList.remove("animate-shake");
-        void phone.offsetWidth; // forzar reflow
-        phone.classList.add("animate-shake");
-        
-        // Limpiar la clase de animación al finalizar para evitar re-disparos al cambiar de pestañas
-        phone.addEventListener("animationend", function handler() {
-            phone.classList.remove("animate-shake");
-            phone.removeEventListener("animationend", handler);
-        });
-    }
-
-    // 3. Agregar mensaje en el chat móvil
-    mobileChatMessages.push({
-        sender: "Central de Operaciones",
-        text: `🚨 [ALERTA DE SLA] Administrador te ha enviado un ZUMBIDO manual para urgir la tarea: "${taskName.replace(/^\d+\.\s*/, "")}".`
-    });
-
-    // 4. Inyectar overlay de zumbido en el móvil
-    const screenContent = document.getElementById("mobile-screen-content");
-    if (screenContent) {
-        // Remover overlay anterior si existiera
-        const oldOverlay = document.getElementById("mobile-buzz-overlay");
-        if (oldOverlay) oldOverlay.remove();
-
-        const buzzOverlay = document.createElement("div");
-        buzzOverlay.id = "mobile-buzz-overlay";
-        buzzOverlay.className = "absolute inset-0 bg-red-700 z-[100] flex flex-col justify-between p-5 text-white text-center animate-fade-in";
-        buzzOverlay.innerHTML = `
-            <div class="flex-1 flex flex-col items-center justify-center space-y-3">
-                <div class="w-12 h-12 bg-white text-red-600 rounded-full flex items-center justify-center shadow-lg animate-bounce">
-                    <i data-lucide="bell" class="w-6 h-6 text-red-600 animate-pulse"></i>
-                </div>
-                <h5 class="font-bold text-xs uppercase tracking-wider">¡ZUMBIDO DE LA CENTRAL!</h5>
-                <p class="text-[9px] opacity-90 max-w-[85%] mx-auto leading-normal">El administrador solicita tu atención inmediata en la actividad:</p>
-                <div class="bg-white/20 px-3.5 py-2.5 rounded-xl font-bold text-[10px] uppercase tracking-wide max-w-[85%] break-words">
-                    ${taskName.replace(/^\d+\.\s*/, "")}
-                </div>
-            </div>
-            <div class="pb-6 w-full px-2">
-                <button onclick="document.getElementById('mobile-buzz-overlay').remove()" class="w-full py-2.5 bg-white hover:bg-red-50 text-red-700 rounded-xl text-[10px] font-bold shadow-md active:scale-95 transition-all uppercase tracking-wider">
-                    Atendiendo Reporte
-                </button>
-            </div>
-        `;
-        screenContent.appendChild(buzzOverlay);
-        lucide.createIcons();
-    }
-
-    // 5. Reproducir el sonido MP3 real de zumbido de MSN Messenger
-    try {
-        const buzzAudio = new Audio("./zumbido.mp3");
-        buzzAudio.volume = 0.8;
-        buzzAudio.play().catch(err => {
-            console.warn("La reproducción automática del audio fue bloqueada por el navegador:", err);
-        });
-    } catch (e) {
-        console.warn("No se pudo iniciar la reproducción del sonido de zumbido:", e);
+        if (typeof showSalesNotification === 'function') {
+            showSalesNotification(`Zumbido de alerta enviado al dispositivo móvil de: ${techName}`, "success");
+        }
+    } else {
+        alert("El WebSocket no está conectado. El zumbido no se pudo transmitir.");
     }
 }
 
@@ -1526,7 +1953,7 @@ function selectTaskFromCatalog(templateId, taskId) {
 
 // Formateador de horas decimales a formato "Xhrs Ymin"
 function formatHoursToHHMM(hoursDecimal) {
-    if (hoursDecimal <= 0) return "0hrs 0min";
+    if (isNaN(hoursDecimal) || hoursDecimal === null || hoursDecimal === undefined || hoursDecimal <= 0) return "0hrs 0min";
     const hours = Math.floor(hoursDecimal);
     const minutes = Math.round((hoursDecimal - hours) * 60);
     if (minutes === 60) {
@@ -2478,15 +2905,18 @@ function applyOdooFilters() {
         }
         
         const tasksCount = template.tasks ? template.tasks.length : 0;
+        const lastTask = tasksCount > 0 ? template.tasks[tasksCount - 1] : null;
+        const isLastTaskCompleted = lastTask && lastTask.status === "Completado";
         const completedTasksCount = template.tasks ? template.tasks.filter(t => t.status === "Completado").length : 0;
+        const isTerminada = (tasksCount > 0 && completedTasksCount === tasksCount) || isLastTaskCompleted;
         const hasVencidas = template.tasks ? template.tasks.some(t => t.status === "Vencido" || t.status === "Reincidencia Potencial") : false;
         
         let matchesStatus = true;
         if (chkProceso || chkPausa || chkTerminada || chkRetraso) {
             matchesStatus = false;
-            if (chkProceso && (tasksCount > 0 && completedTasksCount < tasksCount && !template.isPaused)) matchesStatus = true;
+            if (chkProceso && (!isTerminada && !template.isPaused)) matchesStatus = true;
             if (chkPausa && template.isPaused) matchesStatus = true;
-            if (chkTerminada && (tasksCount > 0 && completedTasksCount === tasksCount)) matchesStatus = true;
+            if (chkTerminada && isTerminada) matchesStatus = true;
             if (chkRetraso && hasVencidas) matchesStatus = true;
         }
         
@@ -2529,15 +2959,18 @@ function navigateTemplatesList(direction) {
         }
         
         const tasksCount = template.tasks ? template.tasks.length : 0;
+        const lastTask = tasksCount > 0 ? template.tasks[tasksCount - 1] : null;
+        const isLastTaskCompleted = lastTask && lastTask.status === "Completado";
         const completedTasksCount = template.tasks ? template.tasks.filter(t => t.status === "Completado").length : 0;
+        const isTerminada = (tasksCount > 0 && completedTasksCount === tasksCount) || isLastTaskCompleted;
         const hasVencidas = template.tasks ? template.tasks.some(t => t.status === "Vencido" || t.status === "Reincidencia Potencial") : false;
         
         let matchesStatus = true;
         if (chkProceso || chkPausa || chkTerminada || chkRetraso) {
             matchesStatus = false;
-            if (chkProceso && (tasksCount > 0 && completedTasksCount < tasksCount && !template.isPaused)) matchesStatus = true;
+            if (chkProceso && (!isTerminada && !template.isPaused)) matchesStatus = true;
             if (chkPausa && template.isPaused) matchesStatus = true;
-            if (chkTerminada && (tasksCount > 0 && completedTasksCount === tasksCount)) matchesStatus = true;
+            if (chkTerminada && isTerminada) matchesStatus = true;
             if (chkRetraso && hasVencidas) matchesStatus = true;
         }
         
@@ -2563,17 +2996,21 @@ function renderTemplatesListTableContent(templates, groupBy) {
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    const getRowHtml = (template) => {
+    const getRowHtml = (template, isGrouped = false) => {
         const tasksCount = template.tasks ? template.tasks.length : 0;
         const startDateVal = template.startDate || "Sin fecha";
         const startTimeVal = template.startTime || "";
         const formattedStart = `${startDateVal} ${startTimeVal}`.trim();
         
         const completedTasksCount = template.tasks ? template.tasks.filter(t => t.status === "Completado").length : 0;
+        const lastTask = tasksCount > 0 ? template.tasks[tasksCount - 1] : null;
+        const isLastTaskCompleted = lastTask && lastTask.status === "Completado";
+        const isTerminada = (tasksCount > 0 && completedTasksCount === tasksCount) || isLastTaskCompleted;
+
         let tplStatusText = "En Proceso";
         let tplStatusClass = "bg-blue-50 text-blue-700 border-blue-150";
         
-        if (tasksCount > 0 && completedTasksCount === tasksCount) {
+        if (isTerminada) {
             tplStatusText = "Terminada";
             tplStatusClass = "bg-emerald-50 text-emerald-700 border-emerald-150";
         } else if (template.isPaused) {
@@ -2602,8 +3039,13 @@ function renderTemplatesListTableContent(templates, groupBy) {
             `;
         }
 
+        const tplFolio = getTemplateFolio(template);
+
         return `
-            <tr class="hover:bg-slate-50 transition-colors cursor-pointer" onclick="selectTemplateAndOpenDesigner('${template.id}')">
+            <tr class="hover:bg-slate-50 transition-colors cursor-pointer ${isGrouped ? 'bg-slate-50/20' : ''}" onclick="selectTemplateAndOpenDesigner('${template.id}')">
+                <td class="px-4 py-3 font-mono font-bold text-xs text-brand-600 shrink-0 ${isGrouped ? 'pl-8' : ''}">
+                    ${isGrouped ? '<span class="text-slate-400 font-semibold mr-1">↳</span>' : ''}${tplFolio}
+                </td>
                 <td class="px-4 py-3">
                     <div class="flex items-center gap-2">
                         <i data-lucide="layers" class="w-4 h-4 text-brand-500 shrink-0"></i>
@@ -2613,20 +3055,19 @@ function renderTemplatesListTableContent(templates, groupBy) {
                                 <span class="px-1.5 py-0.2 text-[8px] font-bold rounded border ${tplStatusClass}">${tplStatusText}</span>
                                 ${warningIconsHTML}
                             </div>
-                            <span class="text-[10px] text-slate-400 truncate max-w-[340px] block" title="${template.generalObservations || ''}">${template.generalObservations || 'Sin observaciones'}</span>
+                            <span class="text-[10px] text-slate-500 truncate max-w-[340px] block" title="${template.generalObservations || ''}">${template.generalObservations || 'Sin observaciones'}</span>
+                            <div class="text-[10px] text-slate-400 font-semibold mt-0.5 flex items-center gap-1">
+                                <i data-lucide="check-square" class="w-3 h-3 text-slate-400"></i> ${tasksCount} tareas
+                            </div>
                         </div>
                     </div>
                 </td>
                 <td class="px-4 py-3">
                     <span class="font-semibold text-slate-700 text-xs">${template.client || 'Sin Especificar'}</span>
                 </td>
-                <td class="px-4 py-3 text-center font-semibold text-xs text-slate-600">${tasksCount} tareas</td>
                 <td class="px-4 py-3 text-center font-mono text-[11px] text-slate-600 font-bold">${formattedStart}</td>
                 <td class="px-4 py-3 text-center text-slate-500 text-xs">${template.createdBy || 'Capturista'}</td>
                 <td class="px-4 py-3 text-right" onclick="event.stopPropagation()">
-                    <button onclick="selectTemplateAndOpenDesigner('${template.id}')" class="text-brand-500 hover:text-brand-700 hover:underline font-bold uppercase text-[10px] tracking-wider transition-all mr-3">
-                        Modelar
-                    </button>
                     <button onclick="deleteTemplate('${template.id}')" class="text-red-500 hover:text-red-700 hover:underline font-bold uppercase text-[10px] tracking-wider transition-all">
                         Eliminar
                     </button>
@@ -2660,15 +3101,15 @@ function renderTemplatesListTableContent(templates, groupBy) {
             const groupTemplates = groups[key];
             const groupHeaderLabel = groupBy === 'client' ? `Cliente: ${key}` : `Creado por: ${key}`;
             tbody.innerHTML += `
-                <tr class="bg-slate-50/70 border-y border-slate-200/60 font-semibold text-slate-700 select-none">
+                <tr class="bg-brand-50/60 border-y border-brand-100/70 font-bold text-brand-700 select-none">
                     <td colspan="6" class="px-4 py-2.5 text-xs flex items-center gap-1.5">
-                        <i data-lucide="folder-open" class="w-3.5 h-3.5 text-brand-500"></i>
-                        <span>${groupHeaderLabel} <span class="text-slate-400 font-normal">(${groupTemplates.length} plantillas)</span></span>
+                        <i data-lucide="folder-open" class="w-3.5 h-3.5 text-brand-600"></i>
+                        <span>${groupHeaderLabel} <span class="text-brand-600/80 font-semibold">(${groupTemplates.length} plantillas)</span></span>
                     </td>
                 </tr>
             `;
             groupTemplates.forEach(t => {
-                tbody.innerHTML += getRowHtml(t);
+                tbody.innerHTML += getRowHtml(t, true);
             });
         });
     }
@@ -2681,22 +3122,39 @@ function selectTemplateAndOpenDesigner(templateId) {
     switchTab('bpmn-designer');
 }
 
-function deleteTemplate(templateId) {
+async function deleteTemplate(templateId) {
     if (!confirm("¿Está seguro de que desea eliminar esta plantilla de proceso y todas sus tareas?")) return;
-    const idx = templatesData.findIndex(t => t.id === templateId);
-    if (idx !== -1) {
-        templatesData.splice(idx, 1);
-        if (selectedTemplateId === templateId) {
-            selectedTemplateId = templatesData.length > 0 ? templatesData[0].id : null;
-        }
-        syncStateToStorage();
-        renderTemplatesListView();
-        if (selectedTemplateId) {
-            loadTemplate(selectedTemplateId);
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch(`/api/bpm/templates/${templateId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            const idx = templatesData.findIndex(t => t.id === templateId);
+            if (idx !== -1) {
+                templatesData.splice(idx, 1);
+                if (selectedTemplateId === templateId) {
+                    selectedTemplateId = templatesData.length > 0 ? templatesData[0].id : null;
+                }
+                syncStateToStorage();
+                renderTemplatesListView();
+                if (selectedTemplateId) {
+                    loadTemplate(selectedTemplateId);
+                } else {
+                    const activeTplLabel = document.getElementById("active-template-name-label");
+                    if (activeTplLabel) activeTplLabel.innerText = "Sin Plantillas";
+                }
+            }
+            alert("Plantilla eliminada exitosamente.");
         } else {
-            const activeTplLabel = document.getElementById("active-template-name-label");
-            if (activeTplLabel) activeTplLabel.innerText = "Sin Plantillas";
+            alert("Error al eliminar la plantilla de la base de datos.");
         }
+    } catch (e) {
+        console.error("Error al borrar plantilla:", e);
+        alert("Error de conexión al eliminar la plantilla.");
     }
 }
 
@@ -2711,10 +3169,12 @@ function renderTemplateStatusStepbar() {
     }
 
     const totalTasks = template.tasks ? template.tasks.length : 0;
+    const lastTask = totalTasks > 0 ? template.tasks[totalTasks - 1] : null;
+    const isLastTaskCompleted = lastTask && lastTask.status === "Completado";
     const completedTasksCount = template.tasks ? template.tasks.filter(t => t.status === "Completado").length : 0;
 
     let currentState = "proceso";
-    if (totalTasks > 0 && completedTasksCount === totalTasks) {
+    if ((totalTasks > 0 && completedTasksCount === totalTasks) || isLastTaskCompleted) {
         currentState = "terminada";
     } else if (template.isPaused) {
         currentState = "pausa";
@@ -2764,9 +3224,17 @@ function changeTemplateStatusStep(newState) {
 
     if (newState === 'pausa') {
         template.isPaused = true;
+        if (!template.pausedAt) {
+            template.pausedAt = Date.now();
+        }
         isTemplateExecutionPaused = true;
         logTemplateActivity(template.id, "Etapa cambiada", `${getLabel(oldStateId)} → ${getLabel(newState)}`);
     } else if (newState === 'proceso') {
+        if (template.pausedAt) {
+            const pausedDuration = Date.now() - template.pausedAt;
+            template.accumulatedPausedMs = (template.accumulatedPausedMs || 0) + pausedDuration;
+            template.pausedAt = null;
+        }
         template.isPaused = false;
         isTemplateExecutionPaused = false;
         logTemplateActivity(template.id, "Etapa cambiada", `${getLabel(oldStateId)} → ${getLabel(newState)}`);
@@ -2779,11 +3247,25 @@ function changeTemplateStatusStep(newState) {
             });
             template.isPaused = false;
             isTemplateExecutionPaused = false;
+            // Desactivar totalmente la recurrencia
+            template.recurrenceType = 'disabled';
+            template.nextExecution = null;
             logTemplateActivity(template.id, "Etapa cambiada", `${getLabel(oldStateId)} → ${getLabel(newState)}`);
         } else {
             return;
         }
     }
+
+    // Persistir el cambio de pausa / estado al servidor
+    const token = localStorage.getItem('sonicbi_token');
+    fetch(`/api/bpm/templates/${template.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(template)
+    }).catch(e => console.error("Error al persistir estado de plantilla desde Kanban:", e));
 
     loadTemplate(selectedTemplateId);
     renderMobileScreen();
@@ -2792,12 +3274,44 @@ function changeTemplateStatusStep(newState) {
 
 function getTemplateFolio(template) {
     if (!template) return "";
+    if (template.code && template.code.startsWith("PL-")) return template.code;
     if (!template.folio) {
         const idx = templatesData.findIndex(t => t.id === template.id);
         const num = idx !== -1 ? templatesData.length - idx : 1;
         template.folio = "PL-" + String(num).padStart(4, '0');
+        template.code = template.folio;
     }
     return template.folio;
+}
+
+function checkAndFinishTemplateIfLastTaskCompleted(template) {
+    if (!template || !template.tasks || template.tasks.length === 0) return false;
+    
+    const lastTask = template.tasks[template.tasks.length - 1];
+    const isLastTaskCompleted = (lastTask && lastTask.status === 'Completado');
+    const allTasksCompleted = template.tasks.every(t => t.status === 'Completado');
+    
+    if (isLastTaskCompleted || allTasksCompleted) {
+        const oldStateLabel = template.isPaused ? "En Pausa" : "En Proceso";
+        template.isPaused = false;
+        
+        logTemplateActivity(template.id, "Etapa cambiada", `${oldStateLabel} → Terminada (Última tarea completada)`);
+        
+        const token = localStorage.getItem('sonicbi_token');
+        fetch(`/api/bpm/templates/${template.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(template)
+        }).catch(e => console.error("Error al actualizar plantilla a Terminada:", e));
+        
+        const tplFolio = getTemplateFolio(template);
+        addNotification(`Proceso Finalizado: La plantilla [${tplFolio}] "${template.name}" ha pasado automáticamente a estado Terminada.`, 'completado', { templateId: template.id });
+        return true;
+    }
+    return false;
 }
 
 function navigateTemplate(direction) {
@@ -2818,11 +3332,74 @@ function navigateTemplate(direction) {
     loadTemplate(selectedTemplateId);
 }
 
+async function persistCustomStatus(statusName) {
+    if (!statusName || typeof statusName !== 'string') return;
+    const nameTrimmed = statusName.trim();
+    if (!nameTrimmed) return;
+
+    if (!statusesList.includes(nameTrimmed)) {
+        statusesList.push(nameTrimmed);
+    }
+    try {
+        localStorage.setItem("sonicbi_custom_statuses", JSON.stringify(statusesList));
+    } catch(e) {}
+
+    const token = localStorage.getItem('sonicbi_token');
+    if (!token) return;
+
+    try {
+        await fetch('/api/bpm/statuses', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ name: nameTrimmed })
+        });
+    } catch(e) {
+        console.error("Error al persistir estado personalizado en backend:", e);
+    }
+}
+
+function syncStatusesWithCatalog() {
+    try {
+        const saved = localStorage.getItem("sonicbi_custom_statuses");
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (Array.isArray(parsed)) {
+                parsed.forEach(st => {
+                    if (st && !statusesList.includes(st)) statusesList.push(st);
+                });
+            }
+        }
+    } catch(e) {}
+
+    if (Array.isArray(nodeLibraryList)) {
+        nodeLibraryList.forEach(n => {
+            if (n.status && !statusesList.includes(n.status)) {
+                statusesList.push(n.status);
+            }
+        });
+    }
+
+    if (Array.isArray(templatesData)) {
+        templatesData.forEach(tpl => {
+            if (Array.isArray(tpl.tasks)) {
+                tpl.tasks.forEach(tk => {
+                    if (tk.status && !statusesList.includes(tk.status)) {
+                        statusesList.push(tk.status);
+                    }
+                });
+            }
+        });
+    }
+}
+
 function openCatalogNodeModal(index = null) {
     editingCatalogNodeIndex = index;
-    
     const titleEl = document.getElementById("catalog-node-modal-title");
     const submitBtn = document.getElementById("catalog-node-modal-submit-btn");
+
     const nameInput = document.getElementById("catalog-modal-node-name");
     const assignedSelect = document.getElementById("catalog-modal-node-assigned");
     const timevalInput = document.getElementById("catalog-modal-node-timeval");
@@ -2830,9 +3407,12 @@ function openCatalogNodeModal(index = null) {
     const statusSelect = document.getElementById("catalog-modal-node-status");
     const obsTextarea = document.getElementById("catalog-modal-node-obs");
 
+    const situationSelect = document.getElementById("catalog-modal-node-situation");
+
     if (!titleEl || !nameInput || !assignedSelect || !timevalInput || !unitSelect || !statusSelect || !obsTextarea) return;
 
     syncSpecialistsCatalog();
+    syncStatusesWithCatalog();
 
     assignedSelect.innerHTML = specialistsCatalog.map(spec => {
         return `<option value="${spec}">${spec}</option>`;
@@ -2847,10 +3427,11 @@ function openCatalogNodeModal(index = null) {
         titleEl.innerText = "Editar Nodo Estándar: " + node.name;
         submitBtn.innerText = "Actualizar Nodo";
         nameInput.value = node.name;
-        assignedSelect.value = node.assigned;
-        timevalInput.value = node.timeVal;
-        unitSelect.value = node.unit;
-        statusSelect.value = node.status;
+        assignedSelect.value = node.assigned || "Sin Asignar";
+        timevalInput.value = node.timeVal || "1";
+        unitSelect.value = node.unit || "dia";
+        statusSelect.value = node.status || "Pendiente";
+        if (situationSelect) situationSelect.value = node.situacion || "No Aceptado";
         obsTextarea.value = node.observaciones || "";
     } else {
         titleEl.innerText = "Crear Nodo Estándar";
@@ -2860,6 +3441,7 @@ function openCatalogNodeModal(index = null) {
         timevalInput.value = "1";
         unitSelect.value = "dia";
         statusSelect.value = "Pendiente";
+        if (situationSelect) situationSelect.value = "Aceptado";
         obsTextarea.value = "";
     }
 
@@ -2871,12 +3453,13 @@ function closeCatalogNodeModal() {
     document.getElementById("modal-catalog-node-editor").classList.add("hidden");
 }
 
-function saveCatalogNodeFromModal() {
+async function saveCatalogNodeFromModal() {
     const nameVal = document.getElementById("catalog-modal-node-name").value.trim();
     const assignedVal = document.getElementById("catalog-modal-node-assigned").value;
     const timevalVal = parseFloat(document.getElementById("catalog-modal-node-timeval").value) || 1;
     const unitVal = document.getElementById("catalog-modal-node-unit").value;
     const statusVal = document.getElementById("catalog-modal-node-status").value;
+    const situationVal = document.getElementById("catalog-modal-node-situation") ? document.getElementById("catalog-modal-node-situation").value : "No Aceptado";
     const obsVal = document.getElementById("catalog-modal-node-obs").value.trim();
 
     if (!nameVal) {
@@ -2907,38 +3490,108 @@ function saveCatalogNodeFromModal() {
         }
     }
 
-    const targetNode = {
+    let durationInDays = timevalVal;
+    if (unitVal === 'hora') {
+        durationInDays = timevalVal / 24;
+    } else if (unitVal === 'min') {
+        durationInDays = timevalVal / (24 * 60);
+    }
+
+    let nodeId = null;
+    if (editingCatalogNodeIndex !== null) {
+        nodeId = nodeLibraryList[editingCatalogNodeIndex].id;
+    }
+
+    const payload = {
+        id: nodeId,
         name: nameVal,
-        assigned: SandyValue(assignedVal),
+        category: 'General',
+        icon: 'file-text',
+        duration: durationInDays,
+        description: obsVal,
+        assigned: assignedVal,
         timeVal: timevalVal,
         unit: unitVal,
         status: statusVal,
-        observaciones: obsVal
+        situacion: situationVal
     };
 
-    if (editingCatalogNodeIndex !== null) {
-        nodeLibraryList[editingCatalogNodeIndex] = targetNode;
-        alert(`Nodo "${nameVal}" actualizado exitosamente.`);
-    } else {
-        nodeLibraryList.push(targetNode);
-        alert(`"${nameVal}" guardado exitosamente en el catálogo con sus propiedades predeterminadas.`);
-    }
+    const token = localStorage.getItem('sonicbi_token');
 
-    closeCatalogNodeModal();
-    renderCatalogNodesView();
-    syncStateToStorage();
+    try {
+        const response = await fetch('/api/bpm/nodes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const resData = await response.json();
+            
+            const targetNode = {
+                id: resData.id || nodeId,
+                name: nameVal,
+                assigned: assignedVal,
+                timeVal: timevalVal,
+                unit: unitVal,
+                status: statusVal,
+                situacion: situationVal,
+                observaciones: obsVal
+            };
+
+            if (editingCatalogNodeIndex !== null) {
+                nodeLibraryList[editingCatalogNodeIndex] = targetNode;
+                alert(`Nodo "${nameVal}" actualizado exitosamente.`);
+            } else {
+                nodeLibraryList.push(targetNode);
+                alert(`"${nameVal}" guardado exitosamente en el catálogo con sus propiedades predeterminadas.`);
+            }
+
+            if (statusVal) {
+                persistCustomStatus(statusVal);
+            }
+
+            closeCatalogNodeModal();
+            renderCatalogNodesView();
+            syncStateToStorage();
+        } else {
+            alert("Error al guardar el nodo en la base de datos.");
+        }
+    } catch (e) {
+        console.error("Error al persistir nodo:", e);
+        alert("Error de conexión al guardar el nodo.");
+    }
 }
 
-function deleteCatalogNode(index) {
-    if (confirm(`¿Está seguro de que desea eliminar "${nodeLibraryList[index].name}" del catálogo?`)) {
-        if (editingCatalogNodeIndex === index) {
-            closeCatalogNodeModal();
-        } else if (editingCatalogNodeIndex !== null && editingCatalogNodeIndex > index) {
-            editingCatalogNodeIndex--;
+async function deleteCatalogNode(index) {
+    const node = nodeLibraryList[index];
+    if (confirm(`¿Está seguro de que desea eliminar "${node.name}" del catálogo?`)) {
+        const token = localStorage.getItem('sonicbi_token');
+        try {
+            const response = await fetch(`/api/bpm/nodes/${node.id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                if (editingCatalogNodeIndex === index) {
+                    closeCatalogNodeModal();
+                } else if (editingCatalogNodeIndex !== null && editingCatalogNodeIndex > index) {
+                    editingCatalogNodeIndex--;
+                }
+                nodeLibraryList.splice(index, 1);
+                renderCatalogNodesView();
+                syncStateToStorage();
+            } else {
+                alert("Error al eliminar el nodo de la base de datos.");
+            }
+        } catch (e) {
+            console.error("Error al borrar nodo:", e);
+            alert("Error de conexión al eliminar el nodo.");
         }
-        nodeLibraryList.splice(index, 1);
-        renderCatalogNodesView();
-        syncStateToStorage();
     }
 }
 
@@ -2952,9 +3605,7 @@ function addCatalogModalQuickStatus() {
         return;
     }
 
-    if (!statusesList.includes(name)) {
-        statusesList.push(name);
-    }
+    persistCustomStatus(name);
 
     const statusSelect = document.getElementById("catalog-modal-node-status");
     if (statusSelect) {
@@ -2964,7 +3615,7 @@ function addCatalogModalQuickStatus() {
     }
 
     input.value = "";
-    alert(`Estado "${name}" añadido y seleccionado.`);
+    alert(`Estado "${name}" añadido, seleccionado y guardado en la base de datos.`);
 }
 
 // --- VISTA Y MODALES: GESTIÓN DE DEPARTAMENTOS ---
@@ -3333,7 +3984,7 @@ function closeDeptModal() {
     document.getElementById("modal-dept-editor").classList.add("hidden");
 }
 
-function saveDeptFromModal() {
+async function saveDeptFromModal() {
     const nameVal = document.getElementById("dept-modal-name").value.trim();
     const managerVal = document.getElementById("dept-modal-manager").value;
 
@@ -3361,58 +4012,110 @@ function saveDeptFromModal() {
         checkedEmployees.push(chk.value);
     });
 
-    const targetDept = { name: nameVal, manager: managerVal };
-
+    let deptId = null;
+    let oldDeptName = null;
     if (editingDeptIndex !== null) {
-        const oldName = departmentsList[editingDeptIndex].name;
-        
-        employeesList.forEach(emp => {
-            if (emp.department === oldName) {
-                emp.department = nameVal;
-            }
-        });
-
-        employeesList.forEach(emp => {
-            const isChecked = checkedEmployees.includes(emp.name);
-            if (isChecked) {
-                emp.department = nameVal;
-            } else if (emp.department === nameVal) {
-                emp.department = "Sin Asignar";
-            }
-        });
-
-        departmentsList[editingDeptIndex] = targetDept;
-        alert(`Departamento "${nameVal}" actualizado exitosamente.`);
-    } else {
-        departmentsList.push(targetDept);
-        employeesList.forEach(emp => {
-            if (checkedEmployees.includes(emp.name)) {
-                emp.department = nameVal;
-            }
-        });
-        alert(`Departamento "${nameVal}" creado exitosamente.`);
+        deptId = departmentsList[editingDeptIndex].id;
+        oldDeptName = departmentsList[editingDeptIndex].name;
     }
 
-    closeDeptModal();
-    renderDepartmentsView();
-    if (!document.getElementById("view-personal").classList.contains("hidden")) {
-        renderPersonalView();
+    const payload = {
+        id: deptId,
+        name: nameVal,
+        manager: managerVal,
+        members: checkedEmployees,
+        oldName: oldDeptName,
+        color: 'border-slate-200 text-slate-700 bg-slate-50'
+    };
+
+    const token = localStorage.getItem('sonicbi_token');
+
+    try {
+        const response = await fetch('/api/bpm/departments', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const resData = await response.json();
+            const targetDept = { id: resData.id, name: nameVal, manager: managerVal };
+
+            if (editingDeptIndex !== null) {
+                const oldName = departmentsList[editingDeptIndex].name;
+                
+                employeesList.forEach(emp => {
+                    if (emp.department === oldName) {
+                        emp.department = nameVal;
+                    }
+                });
+
+                employeesList.forEach(emp => {
+                    const isChecked = checkedEmployees.includes(emp.name);
+                    if (isChecked) {
+                        emp.department = nameVal;
+                    } else if (emp.department === nameVal) {
+                        emp.department = "Sin Asignar";
+                    }
+                });
+
+                departmentsList[editingDeptIndex] = targetDept;
+                alert(`Departamento "${nameVal}" actualizado exitosamente.`);
+            } else {
+                departmentsList.push(targetDept);
+                employeesList.forEach(emp => {
+                    if (checkedEmployees.includes(emp.name)) {
+                        emp.department = nameVal;
+                    }
+                });
+                alert(`Departamento "${nameVal}" creado exitosamente.`);
+            }
+
+            closeDeptModal();
+            renderDepartmentsView();
+            if (!document.getElementById("view-personal").classList.contains("hidden")) {
+                renderPersonalView();
+            }
+            syncStateToStorage();
+        } else {
+            alert("Error al guardar el departamento en la base de datos.");
+        }
+    } catch (e) {
+        console.error("Error al persistir departamento:", e);
+        alert("Error de conexión al guardar el departamento.");
     }
-    syncStateToStorage();
 }
 
-function deleteDepartment(index) {
+async function deleteDepartment(index) {
     const dept = departmentsList[index];
     if (confirm(`¿Está seguro de que desea eliminar el departamento "${dept.name}"? Los empleados asignados a este departamento quedarán sin asignación.`)) {
-        employeesList.forEach(emp => {
-            if (emp.department === dept.name) {
-                emp.department = "Sin Asignar";
-            }
-        });
+        const token = localStorage.getItem('sonicbi_token');
+        try {
+            const response = await fetch(`/api/bpm/departments/${dept.id || dept.name.toLowerCase()}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-        departmentsList.splice(index, 1);
-        renderDepartmentsView();
-        syncStateToStorage();
+            if (response.ok) {
+                employeesList.forEach(emp => {
+                    if (emp.department === dept.name) {
+                        emp.department = "Sin Asignar";
+                    }
+                });
+
+                departmentsList.splice(index, 1);
+                renderDepartmentsView();
+                syncStateToStorage();
+            } else {
+                alert("Error al eliminar el departamento de la base de datos.");
+            }
+        } catch (e) {
+            console.error("Error al borrar departamento:", e);
+            alert("Error de conexión al eliminar el departamento.");
+        }
     }
 }
 
@@ -3829,7 +4532,7 @@ function renderEmpsListTableContent(emps, groupBy) {
     lucide.createIcons();
 }
 
-function openEmployeeModal(index = null) {
+async function openEmployeeModal(index = null) {
     editingEmpIndex = index;
     
     const titleEl = document.getElementById("employee-modal-title");
@@ -3845,6 +4548,22 @@ function openEmployeeModal(index = null) {
 
     if (!titleEl || !nameInput || !roleInput || !deptSelect || !timeInInput) return;
 
+    // Cargar roles dinámicos del backend
+    try {
+        const response = await fetch('/api/roles/permisos');
+        if (response.ok) {
+            const data = await response.json();
+            const roles = Object.keys(data).sort((a, b) => {
+                if (a === 'Administrador') return -1;
+                if (b === 'Administrador') return 1;
+                return a.localeCompare(b);
+            });
+            roleInput.innerHTML = roles.map(r => `<option value="${r}">${r}</option>`).join('');
+        }
+    } catch(e) {
+        console.error('Error cargando roles dinámicos en personal:', e);
+    }
+
     deptSelect.innerHTML = `<option value="Sin Asignar">Sin Asignar</option>` + departmentsList.map(d => {
         return `<option value="${d.name}">${d.name}</option>`;
     }).join('');
@@ -3854,8 +4573,11 @@ function openEmployeeModal(index = null) {
         titleEl.innerText = "Editar Personal: " + emp.name;
         submitBtn.innerText = "Actualizar Empleado";
         nameInput.value = emp.name;
-        roleInput.value = emp.role;
-        deptSelect.value = emp.department;
+        roleInput.value = emp.role || "Administrador";
+        deptSelect.value = emp.department || "Sin Asignar";
+        
+        document.getElementById("emp-modal-email").value = emp.email || "";
+        document.getElementById("emp-modal-password").value = "";
         
         timeInInput.value = emp.timeIn || "09:00";
         lunchOutInput.value = emp.lunchOut || "14:00";
@@ -3867,6 +4589,9 @@ function openEmployeeModal(index = null) {
         nameInput.value = "";
         roleInput.value = "";
         deptSelect.value = "Sin Asignar";
+        
+        document.getElementById("emp-modal-email").value = "";
+        document.getElementById("emp-modal-password").value = "";
         
         timeInInput.value = "09:00";
         lunchOutInput.value = "14:00";
@@ -3882,11 +4607,14 @@ function closeEmployeeModal() {
     document.getElementById("modal-employee-editor").classList.add("hidden");
 }
 
-function saveEmployeeFromModal() {
+async function saveEmployeeFromModal() {
     const nameVal = document.getElementById("emp-modal-name").value.trim();
     const roleVal = document.getElementById("emp-modal-role").value.trim();
     const deptVal = document.getElementById("emp-modal-dept").value;
     
+    const emailVal = document.getElementById("emp-modal-email").value.trim();
+    const passwordVal = document.getElementById("emp-modal-password").value.trim();
+
     const timeInVal = document.getElementById("emp-modal-time-in").value;
     const lunchOutVal = document.getElementById("emp-modal-time-lunch-out").value;
     const lunchInVal = document.getElementById("emp-modal-time-lunch-in").value;
@@ -3911,44 +4639,98 @@ function saveEmployeeFromModal() {
         }
     }
 
-    const calculatedHours = calculateWorkingHours(timeInVal, lunchOutVal, lunchInVal, timeOutVal);
-    const targetEmp = { 
-        name: nameVal, 
-        role: roleVal, 
-        department: deptVal, 
-        timeIn: timeInVal,
-        lunchOut: lunchOutVal,
-        lunchIn: lunchInVal,
-        timeOut: timeOutVal,
-        workHours: calculatedHours 
-    };
-
+    let empId = null;
     if (editingEmpIndex !== null) {
-        employeesList[editingEmpIndex] = targetEmp;
-        alert(`Empleado "${nameVal}" actualizado exitosamente.`);
-    } else {
-        employeesList.push(targetEmp);
-        alert(`Empleado "${nameVal}" registrado exitosamente.`);
+        empId = employeesList[editingEmpIndex].id;
     }
 
-    syncSpecialistsCatalog();
-    closeEmployeeModal();
-    renderPersonalView();
-    syncStateToStorage();
+    const payload = {
+        id: empId,
+        name: nameVal,
+        role: roleVal,
+        department: deptVal,
+        email: emailVal,
+        password: passwordVal,
+        status: 'Activo'
+    };
+
+    const token = localStorage.getItem('sonicbi_token');
+
+    try {
+        const response = await fetch('/api/bpm/employees', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const resData = await response.json();
+            const calculatedHours = calculateWorkingHours(timeInVal, lunchOutVal, lunchInVal, timeOutVal);
+            
+            const targetEmp = { 
+                id: resData.id,
+                name: nameVal, 
+                role: roleVal, 
+                department: deptVal, 
+                email: emailVal,
+                timeIn: timeInVal,
+                lunchOut: lunchOutVal,
+                lunchIn: lunchInVal,
+                timeOut: timeOutVal,
+                workHours: calculatedHours 
+            };
+
+            if (editingEmpIndex !== null) {
+                employeesList[editingEmpIndex] = targetEmp;
+                alert(`Empleado "${nameVal}" actualizado exitosamente.`);
+            } else {
+                employeesList.push(targetEmp);
+                alert(`Empleado "${nameVal}" registrado exitosamente.`);
+            }
+
+            syncSpecialistsCatalog();
+            closeEmployeeModal();
+            renderPersonalView();
+            syncStateToStorage();
+        } else {
+            alert("Error al guardar el empleado en la base de datos.");
+        }
+    } catch (e) {
+        console.error("Error al persistir empleado:", e);
+        alert("Error de conexión al guardar el empleado.");
+    }
 }
 
-function deleteEmployee(index) {
+async function deleteEmployee(index) {
     const emp = employeesList[index];
     if (confirm(`¿Está seguro de que desea eliminar a "${emp.name}" del personal?`)) {
-        if (editingEmpIndex === index) {
-            closeEmployeeModal();
-        } else if (editingEmpIndex !== null && editingEmpIndex > index) {
-            editingEmpIndex--;
+        const token = localStorage.getItem('sonicbi_token');
+        try {
+            const response = await fetch(`/api/bpm/employees/${emp.id || emp.name}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (response.ok) {
+                if (editingEmpIndex === index) {
+                    closeEmployeeModal();
+                } else if (editingEmpIndex !== null && editingEmpIndex > index) {
+                    editingEmpIndex--;
+                }
+                employeesList.splice(index, 1);
+                syncSpecialistsCatalog();
+                renderPersonalView();
+                syncStateToStorage();
+            } else {
+                alert("Error al eliminar el empleado de la base de datos.");
+            }
+        } catch (e) {
+            console.error("Error al borrar empleado:", e);
+            alert("Error de conexión al eliminar el empleado.");
         }
-        employeesList.splice(index, 1);
-        syncSpecialistsCatalog();
-        renderPersonalView();
-        syncStateToStorage();
     }
 }
 
@@ -3992,6 +4774,25 @@ function renderLibraryNodesList() {
     lucide.createIcons();
 }
 
+function toggleRecurrencePanels() {
+    const type = document.getElementById("tpl-recurrence-type").value;
+    
+    document.getElementById("panel-recurrence-weekly").classList.add("hidden");
+    document.getElementById("panel-recurrence-monthly").classList.add("hidden");
+    document.getElementById("panel-recurrence-interval").classList.add("hidden");
+    document.getElementById("panel-recurrence-specific").classList.add("hidden");
+    
+    if (type === "weekly") {
+        document.getElementById("panel-recurrence-weekly").classList.remove("hidden");
+    } else if (type === "monthly") {
+        document.getElementById("panel-recurrence-monthly").classList.remove("hidden");
+    } else if (type === "interval") {
+        document.getElementById("panel-recurrence-interval").classList.remove("hidden");
+    } else if (type === "specific") {
+        document.getElementById("panel-recurrence-specific").classList.remove("hidden");
+    }
+}
+
 function openCreateTemplateModal() {
     isBuilderEditMode = false;
     editingTemplateId = null;
@@ -4003,9 +4804,25 @@ function openCreateTemplateModal() {
     document.getElementById("new-template-observations").value = "";
     document.getElementById("custom-node-name-input").value = "";
 
+    // Resetear recurrencia
+    document.getElementById("tpl-recurrence-type").value = "disabled";
+    document.querySelectorAll("input[name='weekly-day']").forEach(cb => cb.checked = false);
+    document.querySelectorAll("input[name='monthly-day']").forEach(cb => cb.checked = false);
+    document.getElementById("recurrence-weekly-time").value = "09:00";
+    document.getElementById("recurrence-monthly-time").value = "09:00";
+    document.getElementById("recurrence-interval-days").value = 0;
+    document.getElementById("recurrence-interval-hours").value = 0;
+    document.getElementById("recurrence-interval-minutes").value = 10;
+    document.getElementById("recurrence-specific-date").value = "";
+    document.getElementById("recurrence-specific-time").value = "09:00";
+    toggleRecurrencePanels();
+
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
-    const currentTimeStr = now.toTimeString().split(' ')[0].substring(0, 5);
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
+    const currentTimeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
     document.getElementById("new-template-start-date").value = today;
     document.getElementById("new-template-start-time").value = currentTimeStr;
     
@@ -4036,19 +4853,68 @@ function openEditActiveTemplateModal() {
     document.getElementById("modal-create-template").classList.remove("hidden");
     document.getElementById("custom-node-name-input").value = "";
 
-    constructorAddedNodes = template.tasks.map((task, idx) => {
+    // Cargar recurrencia en el formulario
+    const recType = template.recurrenceType || 'disabled';
+    document.getElementById("tpl-recurrence-type").value = recType;
+    
+    // Resetear todos los inputs de recurrencia
+    document.querySelectorAll("input[name='weekly-day']").forEach(cb => cb.checked = false);
+    document.querySelectorAll("input[name='monthly-day']").forEach(cb => cb.checked = false);
+    document.getElementById("recurrence-weekly-time").value = "09:00";
+    document.getElementById("recurrence-monthly-time").value = "09:00";
+    document.getElementById("recurrence-interval-days").value = 0;
+    document.getElementById("recurrence-interval-hours").value = 0;
+    document.getElementById("recurrence-interval-minutes").value = 10;
+    document.getElementById("recurrence-specific-date").value = "";
+    document.getElementById("recurrence-specific-time").value = "09:00";
+
+    if (recType !== 'disabled' && template.recurrenceData) {
+        try {
+            const data = typeof template.recurrenceData === 'string' ? JSON.parse(template.recurrenceData) : template.recurrenceData;
+            if (recType === 'weekly') {
+                if (data.days) {
+                    data.days.forEach(d => {
+                        const cb = document.querySelector(`input[name='weekly-day'][value='${d}']`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+                if (data.time) document.getElementById("recurrence-weekly-time").value = data.time;
+            } else if (recType === 'monthly') {
+                if (data.days) {
+                    data.days.forEach(d => {
+                        const cb = document.querySelector(`input[name='monthly-day'][value='${d}']`);
+                        if (cb) cb.checked = true;
+                    });
+                }
+                if (data.time) document.getElementById("recurrence-monthly-time").value = data.time;
+            } else if (recType === 'interval') {
+                if (data.days) document.getElementById("recurrence-interval-days").value = data.days;
+                if (data.hours) document.getElementById("recurrence-interval-hours").value = data.hours;
+                if (data.minutes) document.getElementById("recurrence-interval-minutes").value = data.minutes;
+            } else if (recType === 'specific') {
+                if (data.date) document.getElementById("recurrence-specific-date").value = data.date;
+                if (data.time) document.getElementById("recurrence-specific-time").value = data.time;
+            }
+        } catch(e) {
+            console.error("Error al parsear recurrenceData al cargar modal:", e);
+        }
+    }
+    toggleRecurrencePanels();
+
+    constructorAddedNodes = (template.tasks || []).map((task, idx) => {
         let unit = "dia";
         let val = task.duration;
+        const daysTextSafe = task.daysText || "";
         
-        if (task.daysText.includes("min")) {
+        if (daysTextSafe.includes("min")) {
             unit = "min";
-            val = parseInt(task.daysText) || 30;
-        } else if (task.daysText.includes("hora")) {
+            val = parseInt(daysTextSafe) || 30;
+        } else if (daysTextSafe.includes("hora")) {
             unit = "hora";
-            val = parseInt(task.daysText) || 1;
+            val = parseInt(daysTextSafe) || 1;
         } else {
             unit = "dia";
-            val = parseInt(task.daysText) || task.duration;
+            val = parseInt(daysTextSafe) || task.duration || 1;
         }
 
         return {
@@ -4058,13 +4924,14 @@ function openEditActiveTemplateModal() {
             timeVal: val,
             unit: unit,
             status: task.status || "Pendiente",
-            duration: task.duration,
-            durationText: task.daysText,
+            duration: task.duration || 1,
+            durationText: daysTextSafe || "1 día",
             observaciones: task.description || "",
             urgencia: task.urgencia || "Media",
             ubicacion: task.ubicacion || "",
             actionStartDate: task.actionStartDate || "",
-            actionStartTime: task.actionStartTime || ""
+            actionStartTime: task.actionStartTime || "",
+            subtasks: Array.isArray(task.subtasks) ? task.subtasks : []
         };
     });
 
@@ -4112,7 +4979,8 @@ function addNewCustomNodeToLibrary() {
 function addStandardNodeToSequence(nodeName) {
     const nodeId = Date.now() + Math.random();
     
-    const defNode = nodeLibraryList.find(n => n.name === nodeName) || {
+    const targetNameClean = (nodeName || "").trim().toLowerCase();
+    const defNode = nodeLibraryList.find(n => (n.name || "").trim().toLowerCase() === targetNameClean) || {
         name: nodeName,
         assigned: "Sin Asignar",
         timeVal: 1,
@@ -4121,29 +4989,35 @@ function addStandardNodeToSequence(nodeName) {
         observaciones: ""
     };
 
+    const timeVal = parseFloat(defNode.timeVal) || 1;
+    const unit = defNode.unit || "dia";
+
     let daysEquiv = 1;
     let durationText = "1 día";
-    if (defNode.unit === 'min') {
-        daysEquiv = defNode.timeVal / 1440; 
-        durationText = defNode.timeVal + "min";
-    } else if (defNode.unit === 'hora') {
-        daysEquiv = defNode.timeVal / 24;
-        durationText = defNode.timeVal + " " + (defNode.timeVal == 1 ? "hora" : "horas");
+    if (unit === 'min') {
+        daysEquiv = timeVal / 1440; 
+        durationText = timeVal + "min";
+    } else if (unit === 'hora') {
+        daysEquiv = timeVal / 24;
+        durationText = timeVal + " " + (timeVal == 1 ? "hora" : "horas");
     } else {
-        daysEquiv = defNode.timeVal;
-        durationText = defNode.timeVal + " " + (defNode.timeVal == 1 ? "día" : "días");
+        daysEquiv = timeVal;
+        durationText = timeVal + " " + (timeVal == 1 ? "día" : "días");
     }
+
+    const defaultSit = defNode.situacion || ((defNode.name && defNode.name.toLowerCase().includes('reporte inicial')) ? "Aceptado" : "No Aceptado");
 
     constructorAddedNodes.push({
         id: nodeId,
         name: defNode.name,
-        assigned: defNode.assigned,
-        timeVal: defNode.timeVal,
-        unit: defNode.unit,
-        status: defNode.status,
+        assigned: defNode.assigned || "Sin Asignar",
+        timeVal: timeVal,
+        unit: unit,
+        status: defNode.status || "Pendiente",
+        situacion: defaultSit,
         duration: daysEquiv,
         durationText: durationText,
-        observaciones: defNode.observaciones,
+        observaciones: defNode.observaciones || "",
         urgencia: "Media",
         ubicacion: "",
         actionStartDate: "",
@@ -4202,6 +5076,15 @@ function updateSelectedNodeProperty(field, value) {
         node[field] = value;
     }
 
+    if (field === 'status' && value) {
+        if (!statusesList.includes(value)) {
+            statusesList.push(value);
+            try {
+                localStorage.setItem("sonicbi_custom_statuses", JSON.stringify(statusesList));
+            } catch(e) {}
+        }
+    }
+
     let daysEquiv = 1;
     if (node.unit === 'min') {
         daysEquiv = node.timeVal / 1440; 
@@ -4256,9 +5139,10 @@ function renderVisualSequenceCanvasOnly() {
                 </div>
                 <div>
                     <h5 class="font-bold text-slate-800 text-xs truncate" id="canvas-node-name-${node.id}">${node.name}</h5>
-                    <div class="flex items-center gap-1.5 mt-0.5 text-[9px] text-slate-500 font-semibold">
-                        <span class="bg-brand-50 text-brand-600 px-1.5 py-0.2 rounded truncate max-w-[90px]" title="${node.assigned}">${node.assigned}</span>
+                    <div class="flex items-center gap-1 mt-0.5 text-[9px] text-slate-500 font-semibold flex-wrap">
+                        <span class="bg-brand-50 text-brand-600 px-1.5 py-0.2 rounded truncate max-w-[85px]" title="${node.assigned}">${node.assigned}</span>
                         <span class="bg-slate-100 text-slate-600 px-1 py-0.2 rounded font-mono">${node.durationText}</span>
+                        <span class="bg-indigo-50 text-indigo-600 border border-indigo-200/60 px-1 py-0.2 rounded font-bold truncate max-w-[85px]" title="Estado del nodo: ${node.status}">${node.status || 'Pendiente'}</span>
                     </div>
                 </div>
             </div>
@@ -4420,7 +5304,7 @@ function renderPropertiesPanel() {
     }
 
     panel.innerHTML = `
-        <div class="space-y-3.5 flex-1 text-xs">
+        <div class="space-y-3.5 text-xs w-full">
             ${alertHtml}
             <div>
                 <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Nombre del Nodo:</label>
@@ -4485,10 +5369,56 @@ function renderPropertiesPanel() {
             </div>
 
             <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase block">Estado Inicial:</label>
-                <select onchange="updateSelectedNodeProperty('status', this.value)" class="w-full mt-1 p-2 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Estado del Nodo / Estado Inicial:</label>
+                <select onchange="updateSelectedNodeProperty('status', this.value); renderPropertiesPanel();" class="w-full mt-1 p-2 border border-slate-300 rounded-lg text-xs bg-white font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-brand-500">
                     ${statusOptions}
                 </select>
+            </div>
+
+            <div>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Situación (Aceptación):</label>
+                <select onchange="updateSelectedNodeProperty('situacion', this.value); renderPropertiesPanel();" class="w-full mt-1 p-2 border border-slate-300 rounded-lg text-xs bg-white font-semibold text-slate-800 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                    <option value="Aceptado" ${node.situacion === 'Aceptado' ? 'selected' : ''}>✅ Aceptado</option>
+                    <option value="No Aceptado" ${(node.situacion === 'No Aceptado' || !node.situacion) ? 'selected' : ''}>⚠️ No Aceptado</option>
+                </select>
+            </div>
+
+            <!-- ===== SECCIÓN SUBTAREAS OBLIGATORIAS ===== -->
+            <div class="border border-brand-100 rounded-xl bg-brand-50/40 p-3 space-y-2">
+                <div class="flex items-center gap-1.5 mb-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-brand-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+                    <label class="text-[10px] font-bold text-brand-600 uppercase tracking-wider">Subtareas Obligatorias del Técnico</label>
+                    <span class="ml-auto text-[9px] bg-brand-100 text-brand-600 px-1.5 py-0.5 rounded-full font-bold">${(node.subtasks || []).length}</span>
+                </div>
+
+                <!-- Lista de subtareas -->
+                <div id="builder-subtasks-list" class="space-y-1.5">
+                    ${(node.subtasks || []).length === 0 
+                        ? `<p class="text-[10px] text-slate-400 italic text-center py-1">Sin subtareas. Agrega las que el técnico debe verificar.</p>`
+                        : (node.subtasks || []).map((st, idx) => `
+                            <div class="flex items-center gap-1.5 bg-white border border-slate-200 rounded-lg px-2 py-1.5 group">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 text-brand-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+                                <span class="flex-1 text-[11px] text-slate-700 leading-tight">${st.text}</span>
+                                <button onclick="removeBuilderSubtask(${idx})" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition-all shrink-0" title="Eliminar">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+                        `).join('')
+                    }
+                </div>
+
+                <!-- Input para nueva subtarea -->
+                <div class="flex gap-1.5 mt-1">
+                    <input type="text" id="builder-new-subtask-input"
+                        placeholder="Ej. Verificar voltaje 12V..."
+                        onkeydown="if(event.key==='Enter'){event.preventDefault();addBuilderSubtask();}"
+                        class="flex-1 p-2 border border-slate-200 rounded-lg text-[11px] bg-white focus:outline-none focus:ring-1 focus:ring-brand-500 placeholder-slate-400">
+                    <button onclick="addBuilderSubtask()"
+                        class="px-3 py-1.5 bg-brand-500 hover:bg-brand-600 text-white rounded-lg text-xs font-bold transition-all shadow-sm flex items-center gap-1 shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Agregar
+                    </button>
+                </div>
             </div>
         </div>
         
@@ -4500,7 +5430,36 @@ function renderPropertiesPanel() {
     lucide.createIcons();
 }
 
-function saveNewTemplate() {
+// Agregar subtarea al nodo actualmente seleccionado en el constructor
+function addBuilderSubtask() {
+    const input = document.getElementById('builder-new-subtask-input');
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+
+    const node = constructorAddedNodes.find(n => n.id === selectedConstructorNodeId);
+    if (!node) return;
+
+    if (!Array.isArray(node.subtasks)) node.subtasks = [];
+    node.subtasks.push({ id: Date.now(), text: text, done: false });
+    input.value = '';
+    renderPropertiesPanel();
+    // Re-enfocar el input después de re-render
+    setTimeout(() => {
+        const inp = document.getElementById('builder-new-subtask-input');
+        if (inp) inp.focus();
+    }, 50);
+}
+
+// Eliminar una subtarea por índice del nodo actualmente seleccionado
+function removeBuilderSubtask(idx) {
+    const node = constructorAddedNodes.find(n => n.id === selectedConstructorNodeId);
+    if (!node || !Array.isArray(node.subtasks)) return;
+    node.subtasks.splice(idx, 1);
+    renderPropertiesPanel();
+}
+
+async function saveNewTemplate() {
     const nameInput = document.getElementById("new-template-name");
     const clientInput = document.getElementById("new-template-client");
     const obsInput = document.getElementById("new-template-observations");
@@ -4535,7 +5494,11 @@ function saveNewTemplate() {
         } else if (n.status === "Por vencer") {
             barColor = "bg-amber-500 border border-amber-300 text-white";
         } else if (n.status === "Vencido") {
-            barColor = "bg-accent-500 text-white";
+            barColor = "bg-red-500 border border-red-300 text-white";
+        } else if (n.status === "Reincidencia Potencial") {
+            barColor = "bg-accent-500 text-white animate-pulse";
+        } else if (n.status === "Completado" || n.status === "Creado") {
+            barColor = "bg-brand-500 text-white";
         }
 
         let startDayVal = currentStartDay;
@@ -4554,67 +5517,144 @@ function saveNewTemplate() {
             actTime = `${pad(taskStart.getHours())}:${pad(taskStart.getMinutes())}`;
         }
 
+        const cleanName = (n.name || "").replace(/^\d+\.\s*/, "");
         const task = {
             id: isBuilderEditMode ? n.id : (index + 500),
-            name: `${index + 1}. ${n.name}`,
+            name: `${index + 1}. ${cleanName}`,
             duration: n.duration,
             daysText: n.durationText,
-            status: n.status,
+            status: n.status || "Pendiente",
             color: barColor,
             startDay: startDayVal,
-            timeRemaining: n.status === "Creado" ? "Finalizado" : "En espera",
+            timeRemaining: (n.status === "Creado" || n.status === "Completado") ? "Finalizado" : "En espera",
             dateRange: "Fecha de ejecución",
             client: client, 
             description: n.observaciones,
-            assigned: n.assigned,
+            assigned: n.assigned || "Sin Asignar",
             urgencia: n.urgencia || "Media",
             ubicacion: n.ubicacion || "Ubicación del cliente",
             actionStartDate: actDate,
-            actionStartTime: actTime
+            actionStartTime: actTime,
+            situacion: n.situacion || "No Aceptado",
+            acceptedByTech: (n.situacion === 'Aceptado') ? 1 : 0,
+            subtasks: Array.isArray(n.subtasks) ? n.subtasks : []
         };
         currentStartDay = startDayVal + n.duration;
         return task;
     });
 
-    if (isBuilderEditMode && editingTemplateId) {
-        const idx = templatesData.findIndex(t => t.id === editingTemplateId);
-        if (idx !== -1) {
-            templatesData[idx].name = name;
-            templatesData[idx].client = client;
-            templatesData[idx].generalObservations = observations;
-            templatesData[idx].startDate = startDate;
-            templatesData[idx].startTime = startTime;
-            templatesData[idx].tasks = mappedTasks;
-            logTemplateActivity(editingTemplateId, "Plantilla modificada", "Se actualizaron propiedades o tareas en el Modelador Visual.");
-        }
-        alert("Plantilla actualizada en el BPMS.");
-    } else {
-        const tplId = "custom_" + Date.now();
-        const newTemplate = {
-            id: tplId,
-            name: name,
-            type: "gantt",
-            createdDate: new Date().toISOString().split('T')[0],
-            startDate: startDate,
-            startTime: startTime,
-            client: client,
-            generalObservations: observations,
-            createdBy: "Capturista Backoffice",
-            tasks: mappedTasks,
-            activities: []
-        };
-        templatesData.unshift(newTemplate);
-        logTemplateActivity(tplId, "Plantilla creada", "Se generó la estructura operativa inicial.");
-        addNotification(`Nueva plantilla creada: "${name}"`, 'create', { templateId: tplId });
-        alert("Nueva plantilla guardada en el BPMS.");
+    // Extraer datos de recurrencia
+    const recurrenceType = document.getElementById("tpl-recurrence-type").value;
+    let recurrenceData = {};
+    
+    if (recurrenceType === 'weekly') {
+        const days = [];
+        document.querySelectorAll("input[name='weekly-day']:checked").forEach(cb => {
+            days.push(parseInt(cb.value));
+        });
+        const time = document.getElementById("recurrence-weekly-time").value;
+        recurrenceData = { days, time };
+    } else if (recurrenceType === 'monthly') {
+        const days = [];
+        document.querySelectorAll("input[name='monthly-day']:checked").forEach(cb => {
+            days.push(parseInt(cb.value));
+        });
+        const time = document.getElementById("recurrence-monthly-time").value;
+        recurrenceData = { days, time };
+    } else if (recurrenceType === 'interval') {
+        const days = parseInt(document.getElementById("recurrence-interval-days").value) || 0;
+        const hours = parseInt(document.getElementById("recurrence-interval-hours").value) || 0;
+        const minutes = parseInt(document.getElementById("recurrence-interval-minutes").value) || 0;
+        recurrenceData = { days, hours, minutes };
+    } else if (recurrenceType === 'specific') {
+        const date = document.getElementById("recurrence-specific-date").value;
+        const time = document.getElementById("recurrence-specific-time").value;
+        recurrenceData = { date, time };
     }
 
-    closeCreateTemplateModal();
-    highlightedTaskId = null;
-    syncStateToStorage();
-    const targetTplId = isBuilderEditMode ? editingTemplateId : templatesData[0].id;
-    selectedTemplateId = targetTplId;
-    switchTab('bpmn-designer');
+    const recurrenceDataStr = JSON.stringify(recurrenceData);
+
+    const token = localStorage.getItem('sonicbi_token');
+    let tplId = isBuilderEditMode ? editingTemplateId : ("custom_" + Date.now());
+
+    try {
+        if (isBuilderEditMode && editingTemplateId) {
+            const idx = templatesData.findIndex(t => t.id === editingTemplateId);
+            if (idx !== -1) {
+                const updatedTpl = {
+                    name: name,
+                    client: client,
+                    generalObservations: observations,
+                    startDate: startDate,
+                    startTime: startTime,
+                    tasks: mappedTasks,
+                    recurrenceType: recurrenceType,
+                    recurrenceData: recurrenceDataStr
+                };
+
+                const res = await fetch(`/api/bpm/templates/${editingTemplateId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(updatedTpl)
+                });
+
+                if (res.ok) {
+                    alert("Plantilla actualizada en el BPMS.");
+                    await cargarDatosDesdeBackend();
+                } else {
+                    alert("Error al actualizar la plantilla.");
+                    return;
+                }
+            }
+        } else {
+            const newTemplate = {
+                id: tplId,
+                name: name,
+                type: "gantt",
+                createdDate: new Date().toISOString().split('T')[0],
+                startDate: startDate,
+                startTime: startTime,
+                client: client,
+                generalObservations: observations,
+                createdBy: "Capturista Backoffice",
+                tasks: mappedTasks,
+                activities: [],
+                recurrenceType: recurrenceType,
+                recurrenceData: recurrenceDataStr
+            };
+
+            const res = await fetch('/api/bpm/templates', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newTemplate)
+            });
+
+            if (res.ok) {
+                alert("Nueva plantilla guardada en el BPMS.");
+                await cargarDatosDesdeBackend();
+            } else {
+                alert("Error al guardar la plantilla.");
+                return;
+            }
+        }
+
+        closeCreateTemplateModal();
+        highlightedTaskId = null;
+        syncStateToStorage();
+        
+        selectedTemplateId = tplId;
+        loadTemplate(selectedTemplateId);
+        switchTab('bpmn-designer');
+    } catch (e) {
+        console.error("Error al guardar plantilla:", e);
+        alert("Error de conexión al guardar la plantilla.");
+    }
 }
 
 // --- EDICIÓN RÁPIDA DE NODO DESDE GANTT ---
@@ -4685,20 +5725,29 @@ function openQuickEditTaskModal(taskId) {
     
     let unit = "dia";
     let val = task.duration;
-    if (task.daysText.includes("min")) {
+    const daysTextSafe = task.daysText || "";
+    if (daysTextSafe.includes("min")) {
         unit = "min";
-        val = parseInt(task.daysText) || 30;
-    } else if (task.daysText.includes("hora")) {
+        val = parseInt(daysTextSafe) || 30;
+    } else if (daysTextSafe.includes("hora")) {
         unit = "hora";
-        val = parseInt(task.daysText) || 1;
+        val = parseInt(daysTextSafe) || 1;
     } else {
         unit = "dia";
-        val = parseInt(task.daysText) || task.duration;
+        val = parseInt(daysTextSafe) || task.duration || 1;
     }
 
     document.getElementById("quick-task-duration").value = val;
     document.getElementById("quick-task-unit").value = unit;
     document.getElementById("quick-task-obs").value = task.description || "";
+
+    syncStatusesWithCatalog();
+    const statusSelect = document.getElementById("quick-task-status");
+    if (statusSelect) {
+        statusSelect.innerHTML = statusesList.map(st => {
+            return `<option value="${st}" ${task.status === st ? 'selected' : ''}>${st}</option>`;
+        }).join('');
+    }
 
     // Cargar fecha y hora de inicio de acción (o pre-completar con la fecha programada)
     let actDate = task.actionStartDate;
@@ -4721,6 +5770,11 @@ function openQuickEditTaskModal(taskId) {
     document.getElementById("quick-task-start-time").value = actTime || "";
     document.getElementById("quick-task-urgency").value = task.urgencia || "Media";
     document.getElementById("quick-task-location").value = task.ubicacion || "";
+    
+    const situationSelect = document.getElementById("quick-task-situation");
+    if (situationSelect) {
+        situationSelect.value = (task.acceptedByTech === 1 || task.situacion === 'Aceptado') ? 'Aceptado' : 'No Aceptado';
+    }
 
     document.getElementById("modal-quick-edit-task").classList.remove("hidden");
     checkQuickEditOverload();
@@ -4743,6 +5797,8 @@ function saveQuickEditTask() {
     const timeVal = parseFloat(document.getElementById("quick-task-duration").value) || 1;
     const unitVal = document.getElementById("quick-task-unit").value;
     const obsVal = document.getElementById("quick-task-obs").value.trim();
+    const statusVal = document.getElementById("quick-task-status") ? document.getElementById("quick-task-status").value : task.status;
+    const situationVal = document.getElementById("quick-task-situation") ? document.getElementById("quick-task-situation").value : "No Aceptado";
 
     if (!newNameVal) {
         alert("El nombre de la tarea no puede estar vacío.");
@@ -4755,8 +5811,27 @@ function saveQuickEditTask() {
     task.name = prefix + newNameVal;
     task.assigned = assignedVal;
     task.description = obsVal;
+    task.status = statusVal;
+    task.situacion = situationVal;
+    task.acceptedByTech = (situationVal === 'Aceptado') ? 1 : 0;
     task.urgencia = document.getElementById("quick-task-urgency").value;
     task.ubicacion = document.getElementById("quick-task-location").value.trim();
+
+    if (statusVal) {
+        persistCustomStatus(statusVal);
+    }
+
+    if (statusVal === "Completado" || statusVal === "Creado") {
+        task.color = "bg-brand-500 text-white";
+    } else if (statusVal === "Vencido") {
+        task.color = "bg-red-500 border border-red-300 text-white";
+    } else if (statusVal === "Por vencer") {
+        task.color = "bg-amber-500 border border-amber-300 text-white";
+    } else if (statusVal === "Reincidencia Potencial") {
+        task.color = "bg-accent-500 text-white animate-pulse";
+    } else {
+        task.color = "bg-slate-200 border border-slate-350 text-slate-700";
+    }
 
     let daysEquiv = 1;
     let durationText = "1 día";
@@ -4785,8 +5860,33 @@ function saveQuickEditTask() {
         task.startDay = diffMs / (1000 * 60 * 60 * 24);
     }
 
+    if (statusVal === "Completado") {
+        checkAndFinishTemplateIfLastTaskCompleted(template);
+    }
+
     closeQuickEditTaskModal();
     logTemplateActivity(template.id, "Tarea modificada", `${task.name}: Propiedades actualizadas.`);
+    
+    // Persistir el cambio de la tarea individual al servidor backend
+    const token = localStorage.getItem('sonicbi_token');
+    fetch(`/api/bpm/tasks/${task.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(task)
+    })
+    .then(async (res) => {
+        if (res.ok) {
+            console.log("Edición rápida de tarea sincronizada con el servidor.");
+            await cargarDatosDesdeBackend();
+        } else {
+            console.error("Error al sincronizar edición rápida de tarea.");
+        }
+    })
+    .catch(e => console.error("Error de red al guardar edición rápida de tarea:", e));
+
     loadTemplate(selectedTemplateId);
     initDropdowns();
     renderAlertsTable();
@@ -4820,11 +5920,26 @@ function formatDateRange(start, end) {
     return `${startStr} - ${endStr}`;
 }
 
-function toggleTemplatePauseState() {
+async function toggleTemplatePauseState() {
     isTemplateExecutionPaused = !isTemplateExecutionPaused;
     const template = templatesData.find(t => t.id === selectedTemplateId);
     if (template) {
         template.isPaused = isTemplateExecutionPaused;
+        
+        // Persistir al backend
+        const token = localStorage.getItem('sonicbi_token');
+        try {
+            await fetch(`/api/bpm/templates/${template.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(template)
+            });
+        } catch(e) {
+            console.error("Error al persistir estado de pausa de plantilla:", e);
+        }
     }
     loadTemplate(selectedTemplateId);
     renderMobileScreen();
@@ -4912,9 +6027,24 @@ function loadTemplate(templateId) {
     renderTemplateStatusStepbar();
 
     // Calcular rangos de fechas dinámicas basados en el startDay individual de cada tarea
-    const tplStart = new Date(`${startDateVal}T${startTimeVal}`);
+    const startDateParts = (template.startDate || "2026-07-12").split("-");
+    const startTimeParts = (template.startTime || "09:00").split(":");
+    const tplStart = new Date(
+        parseInt(startDateParts[0], 10),
+        parseInt(startDateParts[1], 10) - 1,
+        parseInt(startDateParts[2], 10),
+        parseInt(startTimeParts[0], 10),
+        parseInt(startTimeParts[1], 10)
+    );
     template.tasks.forEach(task => {
-        const taskStart = new Date(tplStart.getTime() + task.startDay * 24 * 60 * 60 * 1000);
+        let taskStart = null;
+        if (task.actionStartDate && task.actionStartTime) {
+            const dp = task.actionStartDate.split("-");
+            const tp = task.actionStartTime.split(":");
+            taskStart = new Date(parseInt(dp[0], 10), parseInt(dp[1], 10) - 1, parseInt(dp[2], 10), parseInt(tp[0], 10), parseInt(tp[1], 10));
+        } else {
+            taskStart = new Date(tplStart.getTime() + (task.startDay || 0) * 24 * 60 * 60 * 1000);
+        }
         const taskEnd = new Date(taskStart.getTime() + task.duration * 24 * 60 * 60 * 1000);
         task.dateRange = formatDateRange(taskStart, taskEnd);
         task.programmedStart = taskStart.toLocaleString('es-ES', { 
@@ -4998,7 +6128,7 @@ function loadTemplate(templateId) {
     let svgLinesHTML = "";
 
     template.tasks.forEach((task, index) => {
-        if (task.status !== "Completado" && task.status !== "Reincidencia Potencial") {
+        if (task.status !== "Completado" && task.status !== "Reincidencia Potencial" && task.status !== "Creado") {
             const elapsed = getTaskElapsedTimeInSeconds(template, task);
             if (elapsed > 0) {
                 const totalDuration = task.duration * 24 * 60 * 60;
@@ -5013,7 +6143,7 @@ function loadTemplate(templateId) {
                 } else if (remaining / totalDuration <= 0.25) {
                     newStatus = "Por vencer";
                     newColor = "bg-amber-500 border border-amber-300 text-white";
-                } else {
+                } else if (task.status === "Pendiente") {
                     newStatus = "En Proceso";
                     newColor = "bg-blue-500 text-white";
                 }
@@ -5044,10 +6174,10 @@ function loadTemplate(templateId) {
         let acceptedBadgeHTML = "";
         if (task.assigned && task.assigned !== "Sin Asignar") {
             if (task.status !== 'Completado') {
-                if (task.acceptedByTech) {
-                    acceptedBadgeHTML = `<span class="text-[8px] bg-emerald-55 text-emerald-700 border border-emerald-100 rounded px-1 font-bold shrink-0 flex items-center gap-0.5" title="Tarea visualizada y aceptada por el técnico">✔️ Aceptado</span>`;
+                if (task.acceptedByTech || task.situacion === 'Aceptado') {
+                    acceptedBadgeHTML = `<span class="text-[9px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded px-1.5 py-0.5 font-bold shrink-0 flex items-center gap-0.5" title="Tarea aceptada por el personal asignado">✅ Aceptado</span>`;
                 } else {
-                    acceptedBadgeHTML = `<span class="text-[8px] bg-amber-50 text-amber-600 border border-amber-100 rounded px-1 font-bold shrink-0 flex items-center gap-0.5 animate-pulse" title="El técnico no ha aceptado esta tarea en su móvil">⚠️ No Aceptado</span>`;
+                    acceptedBadgeHTML = `<span class="text-[9px] bg-amber-50 text-amber-700 border border-amber-200/80 rounded px-1.5 py-0.5 font-bold shrink-0 flex items-center gap-0.5" title="Tarea pendiente de aceptación por el personal">⚠️ No Aceptado</span>`;
                 }
             }
         }
@@ -5057,7 +6187,9 @@ function loadTemplate(templateId) {
         const remaining = totalDuration - elapsed;
         
         let remainingRealText = "";
-        if (task.status === 'Completado') {
+        if (template.isPaused) {
+            remainingRealText = "Pausado (SLA Congelado)";
+        } else if (task.status === 'Completado' || task.status === 'Creado') {
             remainingRealText = "Finalizado";
         } else {
             remainingRealText = formatRemainingTime(remaining, elapsed > 0);
@@ -5065,12 +6197,35 @@ function loadTemplate(templateId) {
 
         let trackingMetadataHTML = "";
         if (task.assigned && task.assigned !== "Sin Asignar") {
+            const hasEvidences = task.evidencePhotos && task.evidencePhotos.length > 0;
+            const hasSignature = !!task.clientSignature;
+            
+            let evidenceHTML = "";
+            if (hasEvidences || hasSignature) {
+                let iconsHTML = "";
+                if (hasEvidences) {
+                    for(let i=0; i < task.evidencePhotos.length; i++) {
+                        iconsHTML += `<span onclick="event.stopPropagation(); openEvidenceModal(${task.id})" class="text-[10px] bg-slate-50 hover:bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded border border-slate-200 transition-colors inline-flex items-center gap-1 shadow-sm cursor-pointer select-none" title="Ver foto ${i+1}" style="cursor:pointer;">📷</span> `;
+                    }
+                }
+                if (hasSignature) {
+                    iconsHTML += `<span onclick="event.stopPropagation(); openEvidenceModal(${task.id})" class="text-[10px] bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded border border-emerald-200 transition-colors inline-flex items-center gap-1 shadow-sm cursor-pointer select-none" title="Ver Firma" style="cursor:pointer;">✍️ Firma</span>`;
+                }
+                
+                evidenceHTML = `
+                    <div class="mt-1 flex items-center gap-1.5 flex-wrap">
+                        ${iconsHTML}
+                    </div>
+                `;
+            }
+
             trackingMetadataHTML = `
                 <div class="mt-1.5 pl-3 border-l border-slate-200 text-[9px] text-slate-500 space-y-0.5 leading-normal shrink-0">
                     <div><strong class="text-slate-400">📅 Planificado:</strong> ${task.programmedStart || 'Por definir'}</div>
                     <div><strong class="text-slate-400">📱 Aceptación:</strong> ${task.acceptedTime ? `Aceptado el ${task.acceptedTime}` : 'Pendiente de aceptar en móvil'}</div>
                     ${task.status === 'Completado' ? `<div><strong class="text-slate-400">✅ Finalización:</strong> ${task.completedTime || 'Fecha no registrada'}</div>` : ''}
-                    <div><strong class="text-slate-400">⏱️ SLA Restante:</strong> <span id="gantt-sla-display-${task.id}" class="${remaining <= 0 && task.status !== 'Completado' ? 'text-red-650 font-bold animate-pulse' : 'font-semibold text-slate-600'}">${remainingRealText}</span></div>
+                    <div><strong class="text-slate-400">⏱️ SLA Restante:</strong> <span id="gantt-sla-display-${task.id}" class="${remaining <= 0 && task.status !== 'Completado' && task.status !== 'Creado' ? 'text-red-650 font-bold animate-pulse' : 'font-semibold text-slate-600'}">${remainingRealText}</span></div>
+                    ${evidenceHTML}
                 </div>
             `;
         } else {
@@ -5197,49 +6352,103 @@ document.addEventListener("click", (e) => {
 function getTaskElapsedTimeInSeconds(tpl, task) {
     if (task.status === 'Completado') return 0;
     
-    const startDateVal = tpl.startDate || "2026-07-12";
-    const startTimeVal = tpl.startTime || "09:00";
+    let taskStart = null;
+    if (task.actionStartDate && task.actionStartTime) {
+        const dateParts = task.actionStartDate.split("-");
+        const timeParts = task.actionStartTime.split(":");
+        taskStart = new Date(
+            parseInt(dateParts[0], 10),
+            parseInt(dateParts[1], 10) - 1,
+            parseInt(dateParts[2], 10),
+            parseInt(timeParts[0], 10),
+            parseInt(timeParts[1], 10)
+        );
+    } else {
+        const startDateVal = tpl.startDate || "2026-07-12";
+        const startTimeVal = tpl.startTime || "09:00";
+        const dateParts = startDateVal.split("-");
+        const timeParts = startTimeVal.split(":");
+        const tplStart = new Date(
+            parseInt(dateParts[0], 10),
+            parseInt(dateParts[1], 10) - 1,
+            parseInt(dateParts[2], 10),
+            parseInt(timeParts[0], 10),
+            parseInt(timeParts[1], 10)
+        );
+        taskStart = new Date(tplStart.getTime() + ((task.startDay || 0) * 24 * 60 * 60 * 1000));
+    }
     
-    const dateParts = startDateVal.split("-");
-    const timeParts = startTimeVal.split(":");
-    const year = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1;
-    const day = parseInt(dateParts[2], 10);
-    const hours = timeParts[0] ? parseInt(timeParts[0], 10) : 9;
-    const minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+    if (isNaN(taskStart.getTime())) return 0;
+
+    let nowMs = Date.now();
+    if (tpl.isPaused) {
+        if (!tpl.pausedAt) {
+            tpl.pausedAt = nowMs;
+        }
+        nowMs = tpl.pausedAt;
+    }
+    if (tpl.accumulatedPausedMs) {
+        nowMs -= tpl.accumulatedPausedMs;
+    }
     
-    const tplStart = new Date(year, month, day, hours, minutes, 0, 0);
-    
-    // task start offset
-    const taskStart = new Date(tplStart.getTime() + (task.startDay * 24 * 60 * 60 * 1000));
-    const now = new Date();
-    
-    if (now < taskStart) {
+    if (nowMs < taskStart.getTime()) {
         return 0; // Tarea no ha arrancado en el cronograma
     }
     
-    return Math.floor((now.getTime() - taskStart.getTime()) / 1000);
+    return Math.floor((nowMs - taskStart.getTime()) / 1000);
 }
 
 function getTemplateElapsedTimeInSeconds(tpl) {
+    if (!tpl) return 0;
+    
+    const tasksCount = tpl.tasks ? tpl.tasks.length : 0;
+    const lastTask = tasksCount > 0 ? tpl.tasks[tasksCount - 1] : null;
+    const isLastTaskCompleted = lastTask && lastTask.status === "Completado";
+    const completedTasksCount = tpl.tasks ? tpl.tasks.filter(t => t.status === "Completado").length : 0;
+    const isTerminada = (tasksCount > 0 && completedTasksCount === tasksCount) || isLastTaskCompleted;
+
+    if (tpl.finalElapsedSeconds !== undefined && tpl.finalElapsedSeconds !== null) {
+        return tpl.finalElapsedSeconds;
+    }
+
     const startDateVal = tpl.startDate || "2026-07-06";
     const startTimeVal = tpl.startTime || "09:00";
-    
     const dateParts = startDateVal.split("-");
     const timeParts = startTimeVal.split(":");
-    const year = parseInt(dateParts[0], 10);
-    const month = parseInt(dateParts[1], 10) - 1;
-    const day = parseInt(dateParts[2], 10);
-    const hours = timeParts[0] ? parseInt(timeParts[0], 10) : 9;
-    const minutes = timeParts[1] ? parseInt(timeParts[1], 10) : 0;
+    const tplStart = new Date(
+        parseInt(dateParts[0], 10),
+        parseInt(dateParts[1], 10) - 1,
+        parseInt(dateParts[2], 10),
+        parseInt(timeParts[0], 10),
+        parseInt(timeParts[1], 10)
+    );
+    let endMs = Date.now();
     
-    const tplStart = new Date(year, month, day, hours, minutes, 0, 0);
-    const now = new Date();
-    
-    if (now < tplStart) {
+    if (isTerminada) {
+        if (!tpl.finishedAt) {
+            tpl.finishedAt = Date.now();
+        }
+        endMs = tpl.finishedAt;
+    } else if (tpl.isPaused) {
+        if (!tpl.pausedAt) {
+            tpl.pausedAt = Date.now();
+        }
+        endMs = tpl.pausedAt;
+    }
+
+    if (tpl.accumulatedPausedMs) {
+        endMs -= tpl.accumulatedPausedMs;
+    }
+
+    if (endMs < tplStart.getTime()) {
         return 0;
     }
-    return Math.floor((now.getTime() - tplStart.getTime()) / 1000);
+
+    const totalSecs = Math.floor((endMs - tplStart.getTime()) / 1000);
+    if (isTerminada) {
+        tpl.finalElapsedSeconds = totalSecs;
+    }
+    return totalSecs;
 }
 
 function formatStopwatchTime(totalSeconds) {
@@ -5322,13 +6531,11 @@ function startMobileGlobalClock() {
         }
         
         // 2. Reloj del Administrador (Tiempo transcurrido general del proyecto en el Gantt)
-        if (!isTemplateExecutionPaused && selectedTemplateId) {
+        if (selectedTemplateId) {
             const tpl = templatesData.find(t => t.id === selectedTemplateId);
             if (tpl) {
                 const elapsedTpl = getTemplateElapsedTimeInSeconds(tpl);
-                if (elapsedTpl > 0) {
-                    activeTemplateElapsedSeconds++;
-                }
+                activeTemplateElapsedSeconds = elapsedTpl;
                 const elapsedLabel = document.getElementById("gantt-elapsed-time-label");
                 if (elapsedLabel) {
                     elapsedLabel.innerText = "Tiempo Consumido: " + formatStopwatchTime(activeTemplateElapsedSeconds);
@@ -5340,10 +6547,10 @@ function startMobileGlobalClock() {
         let statusChanged = false;
         templatesData.forEach(tpl => {
             tpl.tasks.forEach(tk => {
-                if (tk.status !== 'Completado' && tk.status !== 'Reincidencia Potencial') {
+                if (tk.status !== 'Completado' && tk.status !== 'Reincidencia Potencial' && tk.status !== 'Creado') {
                     const elapsed = getTaskElapsedTimeInSeconds(tpl, tk);
                     if (elapsed > 0) {
-                        const totalDuration = tk.duration * 24 * 60 * 60;
+                        const totalDuration = (tk.duration || 1) * 24 * 60 * 60;
                         const remaining = totalDuration - elapsed;
                         
                         let newStatus = tk.status;
@@ -5355,7 +6562,7 @@ function startMobileGlobalClock() {
                         } else if (remaining / totalDuration <= 0.25) {
                             newStatus = 'Por vencer';
                             newColor = 'bg-amber-500 border border-amber-300 text-white';
-                        } else {
+                        } else if (tk.status === 'Pendiente') {
                             newStatus = 'En Proceso';
                             newColor = 'bg-blue-500 text-white';
                         }
@@ -5390,16 +6597,20 @@ function startMobileGlobalClock() {
                         const remaining = totalDuration - elapsed;
                         
                         let text = "";
-                        if (tk.status === 'Completado') {
+                        if (tpl.isPaused) {
+                            text = "Pausado (SLA Congelado)";
+                        } else if (tk.status === 'Completado' || tk.status === 'Creado') {
                             text = "Finalizado";
                         } else {
                             text = formatRemainingTime(remaining, elapsed > 0);
                         }
                         slaEl.innerText = text;
                         
-                        if (remaining <= 0 && tk.status !== 'Completado') {
+                        if (tpl.isPaused) {
+                            slaEl.className = "text-amber-700 font-bold";
+                        } else if (remaining <= 0 && tk.status !== 'Completado' && tk.status !== 'Creado') {
                             slaEl.className = "text-red-650 font-bold animate-pulse";
-                        } else if (tk.status !== 'Completado') {
+                        } else {
                             slaEl.className = "font-semibold text-slate-600";
                         }
                     }
@@ -5776,9 +6987,9 @@ function renderMobileScreen() {
             let statusColor = "bg-blue-100 text-blue-805 border border-blue-200";
             const elapsedReal = getTaskElapsedTimeInSeconds(tpl, task);
             
-            if (task.status === 'Completado') {
-                statusText = "Completado";
-                statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-250";
+            if (task.status === 'Completado' || task.status === 'Creado') {
+                statusText = task.status === 'Creado' ? "Creado" : "Completado";
+                statusColor = task.status === 'Creado' ? "bg-brand-100 text-brand-800 border border-brand-250" : "bg-emerald-100 text-emerald-800 border border-emerald-250";
             } else if (elapsedReal === 0) {
                 statusText = "En Espera";
                 statusColor = "bg-slate-100 text-slate-500 border border-slate-200";
@@ -6351,6 +7562,8 @@ function completeMobileTicket() {
                         nextTask.status = "Por vencer";
                         nextTask.color = "bg-amber-500 border border-amber-350 text-white animate-pulse";
                     }
+                } else if (currentIdx === template.tasks.length - 1) {
+                    checkAndFinishTemplateIfLastTaskCompleted(template);
                 }
             }
             loadTemplate(template.id);
@@ -6393,284 +7606,12 @@ function resetMobileSimulator() {
 // Reiniciar datos
 function resetDemoData() {
     endAutoSimulationTour(false);
-    alertsData = [
-        {
-            id: 103,
-            activity: "Elaboración de Cotización",
-            client: "Inmobiliaria Norte (Nuevo)",
-            assigned: "Lic. Ana Gómez (Comercial)",
-            description: "Cotización de fibra óptica y cableado de oficinas",
-            startFin: "08 Jul - 10 Jul",
-            timeRemaining: "Vencido hace 2 días",
-            status: "Vencido",
-            badgeColor: "bg-red-100 text-red-800",
-            templateId: "microwave"
-        },
-        {
-            id: 202,
-            activity: "Diagnóstico en Campo",
-            client: "Corporativo Calzapato (Recurrente)",
-            assigned: "Tec. Juan Pérez (Campo)",
-            description: "Diagnóstico de enlace microondas punto a punto",
-            startFin: "10 Jul - 13 Jul",
-            timeRemaining: "1 día restante",
-            status: "Por vencer",
-            badgeColor: "bg-amber-100 text-amber-800",
-            templateId: "fiber"
-        },
-        {
-            id: 303,
-            activity: "Soporte de Cámara Exterior",
-            client: "Residencial Jardines (Recurrente)",
-            assigned: "Tec. Pedro López (Soporte)",
-            description: "Fallo repetitivo en cámara de jardín central",
-            startFin: "11 Jul - 12 Jul",
-            timeRemaining: "12 horas restantes",
-            status: "Reincidencia Potencial",
-            badgeColor: "bg-accent-500 text-white animate-pulse",
-            templateId: "camera_support"
-        }
-    ];
-
-    templatesData = [
-        {
-            id: "microwave",
-            name: "Proyecto: Instalación Enlaces B2B",
-            type: "gantt",
-            createdDate: "2026-07-12",
-            startDate: "2026-07-06",
-            startTime: "09:00",
-            client: "Inmobiliaria Norte",
-            generalObservations: "Implementación de enlace troncal secundario para redundancia de oficinas principales.",
-            createdBy: "Capturista Backoffice",
-            tasks: [
-                { id: 101, name: "1. Planificación de Sitios", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "06 Jul - 08 Jul", description: "Reunión de kickoff y planos", assigned: "Lic. Ana Gómez (Comercial)" },
-                { id: 102, name: "2. Levantamiento Físico de Obra", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 2, timeRemaining: "Finalizado", dateRange: "08 Jul - 10 Jul", description: "Mediciones físicas de campo", assigned: "Tec. Juan Pérez (Campo)" },
-                { id: 103, name: "3. Elaboración de Cotización", duration: 2, daysText: "2 días", status: "Vencido", color: "bg-red-500 border border-red-300 text-white", startDay: 4, timeRemaining: "Vencido hace 2 días", dateRange: "10 Jul - 12 Jul", description: "Cotización de fibra óptica y cableado de oficinas", assigned: "Lic. Ana Gómez (Comercial)" },
-                { id: 104, name: "4. Montaje de Mástiles y Antenas", duration: 3, daysText: "3 días", status: "Pendiente", color: "bg-slate-200 border border-slate-350 text-slate-700", startDay: 6, timeRemaining: "En espera", dateRange: "12 Jul - 15 Jul", description: "Montaje exterior torre", assigned: "Tec. Pedro López (Soporte)" }
-            ]
-        },
-        {
-            id: "fiber",
-            name: "Proyecto: Fibra Óptica HFC - Zona 1",
-            type: "gantt",
-            createdDate: "2026-07-10",
-            startDate: "2026-07-08",
-            startTime: "08:00",
-            client: "Corporativo Calzapato",
-            generalObservations: "Tendido de fibra en postes públicos autorizados por el municipio.",
-            createdBy: "Capturista Backoffice",
-            tasks: [
-                { id: 201, name: "1. Planificación y Venta", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "08 Jul - 10 Jul", description: "Cierre comercial de fibra", assigned: "Lic. Ana Gómez (Comercial)" },
-                { id: 202, name: "2. Diagnóstico en Campo", duration: 3, daysText: "3 días", status: "Por vencer", color: "bg-amber-500 border border-amber-300 text-white", startDay: 2, timeRemaining: "1 día restante", dateRange: "10 Jul - 13 Jul", description: "Diagnóstico de enlace microondas punto a punto", assigned: "Tec. Juan Pérez (Campo)" },
-                { id: 203, name: "3. Tendido de Fibra", duration: 5, daysText: "5 días", status: "Pendiente", color: "bg-slate-200 border border-slate-350 text-slate-700", startDay: 5, timeRemaining: "En espera", dateRange: "13 Jul - 18 Jul", description: "Instalación física fibra", assigned: "Ing. Josué (Redes)" }
-            ]
-        },
-        {
-            id: "camera_support",
-            name: "Soporte: Fallo en Cámara Exterior",
-            type: "crm",
-            createdDate: "2026-07-05",
-            startDate: "2026-07-05",
-            startTime: "10:00",
-            client: "Residencial Jardines",
-            generalObservations: "Revisión preventiva por reincidencia analítica de cableado.",
-            createdBy: "Capturista Backoffice",
-            tasks: [
-                { id: 301, name: "1. Reporte Inicial de Falla", duration: 1, daysText: "1 día", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "05 Jul - 06 Jul", description: "Cliente reporta falla de imagen", assigned: "Capturista (Backoffice)" },
-                { id: 302, name: "2. Asignación de Técnico", duration: 1, daysText: "1 día", status: "Completado", color: "bg-brand-500 text-white", startDay: 1, timeRemaining: "Finalizado", dateRange: "06 Jul - 07 Jul", description: "Técnico programado para visita", assigned: "Capturista (Backoffice)" },
-                { id: 303, name: "3. Soporte de Cámara Exterior", duration: 2, daysText: "2 días", status: "Reincidencia Potencial", color: "bg-accent-500 text-white animate-pulse", startDay: 2, timeRemaining: "12 horas restantes", dateRange: "07 Jul - 09 Jul", description: "Fallo repetitivo en cámara de jardín central", assigned: "Tec. Pedro López (Soporte)" }
-            ]
-        },
-        {
-            id: "gps_integration",
-            name: "Proyecto: Telemetría y GPS Vehicular",
-            type: "gantt",
-            createdDate: "2026-07-02",
-            startDate: "2026-07-02",
-            startTime: "09:30",
-            client: "Logística Express",
-            generalObservations: "Calibración del módulo de telemetría y sensores de temperatura integrados.",
-            createdBy: "Capturista Backoffice",
-            tasks: [
-                { id: 401, name: "1. Planificación GPS", duration: 2, daysText: "2 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 0, timeRemaining: "Finalizado", dateRange: "02 Jul - 04 Jul", description: "Planificación de rutas", assigned: "Lic. Ana Gómez (Comercial)" },
-                { id: 402, name: "2. Configuración de Servidores", duration: 3, daysText: "3 días", status: "Completado", color: "bg-brand-500 text-white", startDay: 2, timeRemaining: "Finalizado", dateRange: "04 Jul - 07 Jul", description: "Instalación servidores central", assigned: "Ing. Sofía Reyes (Senior)" },
-                { id: 403, name: "3. Instalación de Terminales GPS", duration: 4, daysText: "4 días", status: "Por vencer", color: "bg-amber-500 border border-amber-300 text-white", startDay: 5, timeRemaining: "2 días restantes", dateRange: "07 Jul - 11 Jul", description: "Instalación hardware", assigned: "Tec. Juan Pérez (Campo)" },
-                { id: 404, name: "4. Pruebas de Ruta y Calibración", duration: 2, daysText: "2 días", status: "Pendiente", color: "bg-slate-200 border border-slate-350 text-slate-700", startDay: 9, timeRemaining: "En espera", dateRange: "11 Jul - 13 Jul", description: "Calibración en vivo", assigned: "Ing. Carlos Mendoza (Especialista)" }
-            ]
-        }
-    ];
-
-    nodeLibraryList = [
-        { name: "Reporte Inicial", assigned: "Capturista (Backoffice)", timeVal: 1, unit: "dia", status: "Creado", observaciones: "Contacto inicial y registro de la solicitud del cliente." },
-        { name: "Diagnóstico Técnico", assigned: "Tec. Juan Pérez (Campo)", timeVal: 2, unit: "hora", status: "Pendiente", observaciones: "Verificación de la falla y diagnóstico de causa raíz predictiva." },
-        { name: "Gestión Comercial", assigned: "Lic. Ana Gómez (Comercial)", timeVal: 2, unit: "dia", status: "Pendiente", observaciones: "Elaboración de presupuesto y cotización del soporte." },
-        { name: "Visita en Campo", assigned: "Tec. Juan Pérez (Campo)", timeVal: 1, unit: "dia", status: "Pendiente", observaciones: "Desplazamiento del especialista asignado al domicilio." },
-        { name: "Pruebas e Integración", assigned: "Ing. Carlos Mendoza (Especialista)", timeVal: 1, unit: "hora", status: "Pendiente", observaciones: "Pruebas de conectividad y calibración del equipo." },
-        { name: "Cierre y Firma", assigned: "Lic. Ana Gómez (Comercial)", timeVal: 30, unit: "min", status: "Pendiente", observaciones: "Obtención de firma digital de conformidad en simulador." }
-    ];
-
-    statusesList = [
-        "Pendiente",
-        "Creado",
-        "Por vencer",
-        "Vencido",
-        "Reincidencia Potencial",
-        "Completado"
-    ];
-
-    departmentsList = [
-        { name: "Comercial", manager: "Lic. Ana Gómez" },
-        { name: "Ingeniería de Redes", manager: "Ing. Josué" },
-        { name: "Soporte y Campo", manager: "Ing. Carlos Mendoza" },
-        { name: "Backoffice", manager: "Capturista (Backoffice)" }
-    ];
-
-    employeesList = [
-        { name: "Lic. Ana Gómez", role: "Comercial", department: "Comercial", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-        { name: "Tec. Juan Pérez", role: "Campo", department: "Soporte y Campo", timeIn: "08:30", lunchOut: "13:30", lunchIn: "14:30", timeOut: "17:30", workHours: 8 },
-        { name: "Ing. Josué", role: "Redes", department: "Ingeniería de Redes", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-        { name: "Tec. Pedro López", role: "Soporte", department: "Soporte y Campo", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-        { name: "Ing. Carlos Mendoza", role: "Especialista", department: "Soporte y Campo", timeIn: "08:00", lunchOut: "13:00", lunchIn: "14:00", timeOut: "17:00", workHours: 8 },
-        { name: "Ing. Sofía Reyes", role: "Senior", department: "Soporte y Campo", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 },
-        { name: "Capturista (Backoffice)", role: "Backoffice", department: "Backoffice", timeIn: "09:00", lunchOut: "14:00", lunchIn: "15:00", timeOut: "18:00", workHours: 8 }
-    ];
-
-    syncSpecialistsCatalog();
-
-    opexSavedValue = 450.00;
-    const opexKpi = document.getElementById("kpi-opex-saved");
-    if (opexKpi) {
-        opexKpi.innerText = `$${opexSavedValue.toFixed(2)} USD`;
-    }
-
-    currentMobileScreen = 'list';
-    currentMobileTech = "Tec. Juan Pérez";
-    mobileFilterActive = "Hoy";
-    mobileDetailsTab = "details";
-    selectedMobileTaskId = null;
-    selectedMobileTemplateId = null;
-    mobileIsMenuOpen = false;
-    if (mobileTimerInterval) {
-        clearInterval(mobileTimerInterval);
-        mobileTimerInterval = null;
-    }
-    mobileTimerSeconds = 0;
-    isTemplateExecutionPaused = false;
-    activeTemplateElapsedSeconds = 0;
-    activeFilter = 'all';
-    const oldOverlay = document.getElementById("mobile-buzz-overlay");
-    if (oldOverlay) oldOverlay.remove();
-    const phone = document.getElementById("mobile-phone-container");
-    if (phone) phone.classList.remove("animate-shake");
-    highlightedTaskId = null;
-    selectedTemplateId = "microwave";
-    editingCatalogNodeIndex = null;
-    editingDeptIndex = null;
-    editingEmpIndex = null;
-
-    // Restablecimiento de órdenes de ventas por defecto
-    salesOrdersData = [
-        {
-            id: "S00163",
-            date: "2026-04-10T13:51:58",
-            client: "Erik N. French",
-            salesperson: "Mitchell Admin",
-            company: "SONICBI México",
-            total: 1246.60,
-            state: "Cotización",
-            invoiceAddress: "123 Main St, San Francisco, CA",
-            deliveryAddress: "123 Main St, San Francisco, CA",
-            paymentTerms: "30 días",
-            clientRef: "REF-9982",
-            deliveryCount: 1,
-            lines: [
-                { product: "[REFPR001] SiO2 Systems Prod#1", quantity: 3, price: 60.00, tax: "21%" },
-                { product: "[REFPR002] SiO2 Systems Prod#2", quantity: 5, price: 75.00, tax: "21%" },
-                { product: "[REFPR003] Enlace de Fibra Óptica B2B", quantity: 4, price: 150.00, tax: "16%" }
-            ]
-        },
-        {
-            id: "S00162",
-            date: "2026-04-09T10:26:12",
-            client: "FEMSA",
-            salesperson: "Mitchell Admin",
-            company: "SONICBI México",
-            total: 1.00,
-            state: "Cotización",
-            invoiceAddress: "Av. Alfonso Reyes 2202, Monterrey, NL",
-            deliveryAddress: "Av. Alfonso Reyes 2202, Monterrey, NL",
-            paymentTerms: "Inmediato",
-            clientRef: "FEMSA-MNTY",
-            deliveryCount: 1,
-            lines: [
-                { product: "[REFPR001] SiO2 Systems Prod#1", quantity: 1, price: 0.83, tax: "21%" }
-            ]
-        }
-    ];
-    localStorage.setItem("sales-orders-sync", JSON.stringify(salesOrdersData));
-
-    renderPrioritariasAlerts();
-    renderAlertsTable();
-    loadTemplate(selectedTemplateId);
-    initDropdowns();
-    renderMobileScreen();
-    if (typeof renderSalesTable === "function") renderSalesTable();
-    syncStateToStorage();
+    cargarDatosDesdeBackend();
 }
 
 function clearAllDemoData() {
     endAutoSimulationTour(false);
-    
-    alertsData = [];
-    templatesData = [];
-    nodeLibraryList = [];
-    departmentsList = [];
-    employeesList = [];
-    salesOrdersData = [];
-    
-    selectedTemplateId = null;
-    selectedMobileTaskId = null;
-    selectedMobileTemplateId = null;
-    currentMobileScreen = 'list';
-    currentMobileTech = "Sin Asignar";
-    
-    if (mobileTimerInterval) {
-        clearInterval(mobileTimerInterval);
-        mobileTimerInterval = null;
-    }
-    mobileTimerSeconds = 0;
-    isTemplateExecutionPaused = false;
-    activeTemplateElapsedSeconds = 0;
-    activeFilter = 'all';
-    
-    const oldOverlay = document.getElementById("mobile-buzz-overlay");
-    if (oldOverlay) oldOverlay.remove();
-    const phone = document.getElementById("mobile-phone-container");
-    if (phone) phone.classList.remove("animate-shake");
-    
-    opexSavedValue = 0;
-    const opexKpi = document.getElementById("kpi-opex-saved");
-    if (opexKpi) {
-        opexKpi.innerText = `$0.00 USD`;
-    }
-    
-    syncSpecialistsCatalog();
-    
-    localStorage.setItem("sales-orders-sync", JSON.stringify([]));
-    syncStateToStorage();
-    
-    renderPrioritariasAlerts();
-    renderAlertsTable();
-    loadTemplate(selectedTemplateId);
-    initDropdowns();
-    renderMobileScreen();
-    renderPersonalView();
-    renderDepartmentsView();
-    renderCatalogNodesView();
-    if (typeof renderSalesTable === "function") renderSalesTable();
-    
-    alert("Todos los datos han sido limpiados. Ahora puedes iniciar tu ejercicio de pruebas desde cero.");
+    cargarDatosDesdeBackend();
 }
 
 // --- AYUDANTES DE DROPDOWNS PERSONALIZADOS ---
@@ -7342,80 +8283,7 @@ const salesProductsCatalog = [
     { id: "REFPR006", name: "[REFPR006] Soporte Metálico Reforzado", price: 45.00, tax: "16%" }
 ];
 
-let salesOrdersData = [
-    {
-        id: "S00163",
-        date: "2026-04-10T13:51:58",
-        client: "Erik N. French",
-        salesperson: "Mitchell Admin",
-        company: "SONICBI México",
-        total: 1246.60,
-        state: "Cotización",
-        invoiceAddress: "123 Main St, San Francisco, CA",
-        deliveryAddress: "123 Main St, San Francisco, CA",
-        paymentTerms: "30 días",
-        clientRef: "REF-9982",
-        deliveryCount: 1,
-        lines: [
-            { product: "[REFPR001] SiO2 Systems Prod#1", quantity: 3, price: 60.00, tax: "21%" },
-            { product: "[REFPR002] SiO2 Systems Prod#2", quantity: 5, price: 75.00, tax: "21%" },
-            { product: "[REFPR003] Enlace de Fibra Óptica B2B", quantity: 4, price: 150.00, tax: "16%" }
-        ]
-    },
-    {
-        id: "S00162",
-        date: "2026-04-09T10:26:12",
-        client: "FEMSA",
-        salesperson: "Mitchell Admin",
-        company: "SONICBI México",
-        total: 1.00,
-        state: "Cotización",
-        invoiceAddress: "Av. Alfonso Reyes 2202, Monterrey, NL",
-        deliveryAddress: "Av. Alfonso Reyes 2202, Monterrey, NL",
-        paymentTerms: "Inmediato",
-        clientRef: "FEMSA-MNTY",
-        deliveryCount: 1,
-        lines: [
-            { product: "[REFPR001] SiO2 Systems Prod#1", quantity: 1, price: 0.83, tax: "21%" }
-        ]
-    },
-    {
-        id: "S00159",
-        date: "2026-03-26T12:47:14",
-        client: "Azure Interior, Abigail Peterson",
-        salesperson: "Mitchell Admin",
-        company: "SONICBI México",
-        total: 1697.40,
-        state: "Pedido de venta",
-        invoiceAddress: "Market St 455, San Francisco, CA",
-        deliveryAddress: "Market St 455, San Francisco, CA",
-        paymentTerms: "15 días",
-        clientRef: "AZURE-442",
-        deliveryCount: 2,
-        lines: [
-            { product: "[REFPR002] SiO2 Systems Prod#2", quantity: 10, price: 75.00, tax: "21%" },
-            { product: "[REFPR004] Router Mikrotik Cloud Core", quantity: 2, price: 320.00, tax: "16%" }
-        ]
-    },
-    {
-        id: "S00158",
-        date: "2026-03-26T12:33:10",
-        client: "klajsdlkajd, ahsdjk",
-        salesperson: "Mitchell Admin",
-        company: "SONICBI México",
-        total: 33099.30,
-        state: "Pedido de venta",
-        invoiceAddress: "Calle de la Piruleta 12, Madrid, España",
-        deliveryAddress: "Calle de la Piruleta 12, Madrid, España",
-        paymentTerms: "30 días",
-        clientRef: "KLAJ-01",
-        deliveryCount: 1,
-        lines: [
-            { product: "[REFPR003] Enlace de Fibra Óptica B2B", quantity: 180, price: 150.00, tax: "16%" },
-            { product: "[REFPR004] Router Mikrotik Cloud Core", quantity: 15, price: 320.00, tax: "16%" }
-        ]
-    }
-];
+let salesOrdersData = [];
 
 let currentSalesOrder = null;
 
@@ -7423,18 +8291,30 @@ function initSalesView() {
     try {
         const savedSales = localStorage.getItem("sales-orders-sync");
         if (savedSales) {
-            salesOrdersData = JSON.parse(savedSales);
+            const parsed = JSON.parse(savedSales);
+            // Si contiene alguna cotización de prueba previa, forzar limpieza
+            const tieneDemos = parsed.some(o => ["S00163", "S00162", "S00159", "S00158"].includes(o.id));
+            if (tieneDemos) {
+                salesOrdersData = [];
+                localStorage.setItem("sales-orders-sync", JSON.stringify([]));
+            } else {
+                salesOrdersData = parsed;
+            }
         } else {
-            localStorage.setItem("sales-orders-sync", JSON.stringify(salesOrdersData));
+            localStorage.setItem("sales-orders-sync", JSON.stringify([]));
         }
     } catch (e) {
         console.warn("Error leyendo cotizaciones de localStorage", e);
     }
     
     // Rellenar selectores de cliente en el modal de ventas
-    const clientSelect = document.getElementById("sales-client-select");
-    if (clientSelect) {
-        const clients = [
+    syncSalesClientsCatalog();
+}
+
+function syncSalesClientsCatalog() {
+    let clients = clientsList.map(c => c.name);
+    if (clients.length === 0) {
+        clients = [
             "Erik N. French",
             "FEMSA",
             "Azure Interior, Abigail Peterson",
@@ -7445,7 +8325,18 @@ function initSalesView() {
             "Logística Express",
             "Corporativo Tiendas Norte"
         ];
-        clientSelect.innerHTML = clients.map(c => `<option value="${c}">${c}</option>`).join("");
+    }
+    
+    // Rellenar datalist para el cotizador
+    const salesDatalist = document.getElementById("sales-clients-datalist");
+    if (salesDatalist) {
+        salesDatalist.innerHTML = clients.map(c => `<option value="${c}"></option>`).join("");
+    }
+    
+    // Rellenar datalist para el creador de plantillas de proceso
+    const processDatalist = document.getElementById("process-clients-datalist");
+    if (processDatalist) {
+        processDatalist.innerHTML = clients.map(c => `<option value="${c}"></option>`).join("");
     }
     
     renderSalesTable();
@@ -7571,7 +8462,7 @@ function openCreateQuotationView() {
     
     const select = document.getElementById("sales-client-select");
     if (select) {
-        select.selectedIndex = 0;
+        select.value = "";
         autoFillSalesAddresses();
     }
     
@@ -7633,25 +8524,38 @@ function openSalesOrderDetail(orderId) {
 }
 
 function autoFillSalesAddresses() {
-    const client = document.getElementById("sales-client-select").value;
+    const clientName = document.getElementById("sales-client-select").value;
     const invoiceInput = document.getElementById("sales-invoice-address");
     const deliveryInput = document.getElementById("sales-delivery-address");
+    const termsSelect = document.getElementById("sales-payment-terms");
     
-    const addresses = {
-        "Erik N. French": "123 Main St, San Francisco, CA",
-        "FEMSA": "Av. Alfonso Reyes 2202, Monterrey, NL",
-        "Azure Interior, Abigail Peterson": "Market St 455, San Francisco, CA",
-        "klajsdlkajd, ahsdjk": "Calle de la Piruleta 12, Madrid, España",
-        "Inmobiliaria Norte": "Paseo de la Reforma 450, Ciudad de México, DF",
-        "Corporativo Calzapato": "Av. Corrientes 1200, Buenos Aires, Argentina",
-        "Residencial Jardines": "Circuito de las Lomas 99, Zapopan, Jalisco",
-        "Logística Express": "Blvd. Diaz Ordaz 540, Monterrey, NL",
-        "Corporativo Tiendas Norte": "Av. Vasconcelos 1000, San Pedro Garza García, NL"
-    };
+    // Buscar en la lista dinámica de clientes
+    const clientObj = clientsList.find(c => c.name === clientName);
     
-    const address = addresses[client] || "Dirección conocida del cliente registrado";
-    if (invoiceInput) invoiceInput.value = address;
-    if (deliveryInput) deliveryInput.value = address;
+    if (clientObj) {
+        const address = clientObj.address || "Dirección conocida del cliente registrado";
+        if (invoiceInput) invoiceInput.value = address;
+        if (deliveryInput) deliveryInput.value = address;
+        if (termsSelect && clientObj.payment_terms) {
+            termsSelect.value = clientObj.payment_terms;
+        }
+    } else {
+        const addresses = {
+            "Erik N. French": "123 Main St, San Francisco, CA",
+            "FEMSA": "Av. Alfonso Reyes 2202, Monterrey, NL",
+            "Azure Interior, Abigail Peterson": "Market St 455, San Francisco, CA",
+            "klajsdlkajd, ahsdjk": "Calle de la Piruleta 12, Madrid, España",
+            "Inmobiliaria Norte": "Paseo de la Reforma 450, Ciudad de México, DF",
+            "Corporativo Calzapato": "Av. Corrientes 1200, Buenos Aires, Argentina",
+            "Residencial Jardines": "Circuito de las Lomas 99, Zapopan, Jalisco",
+            "Logística Express": "Blvd. Diaz Ordaz 540, Monterrey, NL",
+            "Corporativo Tiendas Norte": "Av. Vasconcelos 1000, San Pedro Garza García, NL"
+        };
+        
+        const address = addresses[clientName] || "Dirección conocida del cliente registrado";
+        if (invoiceInput) invoiceInput.value = address;
+        if (deliveryInput) deliveryInput.value = address;
+    }
 }
 
 function appendSalesOrderLineRow(productName = "", qty = 1, price = 0, tax = "16%") {
@@ -7732,8 +8636,34 @@ function onSalesLineProductChange(selectEl) {
     
     const catalogItem = salesProductsCatalog.find(p => p.id === prodId);
     if (catalogItem) {
-        if (priceInput) priceInput.value = catalogItem.price.toFixed(2);
-        if (taxSelect) taxSelect.value = catalogItem.tax;
+        let basePrice = catalogItem.price;
+        
+        // Buscar datos de cliente para aplicar descuentos comerciales y lista de precios
+        const clientName = document.getElementById("sales-client-select").value;
+        const clientObj = clientsList.find(c => c.name === clientName);
+        
+        if (clientObj) {
+            // Tarifa VIP (10% descuento), Distribuidor (15% descuento)
+            if (clientObj.price_list === 'VIP') {
+                basePrice = basePrice * 0.90;
+            } else if (clientObj.price_list === 'Distribuidor') {
+                basePrice = basePrice * 0.85;
+            }
+            
+            // Descuento adicional por defecto
+            if (clientObj.discount_percent > 0) {
+                basePrice = basePrice * (1 - clientObj.discount_percent / 100);
+            }
+        }
+        
+        if (priceInput) priceInput.value = basePrice.toFixed(2);
+        if (taxSelect) {
+            if (clientObj) {
+                taxSelect.value = clientObj.iva_rate + "%";
+            } else {
+                taxSelect.value = catalogItem.tax;
+            }
+        }
     }
     
     calculateSalesTotals();
@@ -7831,10 +8761,16 @@ function cancelSalesOrder() {
     showSalesNotification(`La cotización ${currentSalesOrder.id} ha sido cancelada.`, "warning");
 }
 
-function saveSalesOrder() {
+async function saveSalesOrder() {
     if (!currentSalesOrder) return;
     
-    currentSalesOrder.client = document.getElementById("sales-client-select").value;
+    const clientName = document.getElementById("sales-client-select").value.trim();
+    if (!clientName) {
+        showSalesNotification("Debes especificar un cliente.", "error");
+        return;
+    }
+    
+    currentSalesOrder.client = clientName;
     currentSalesOrder.invoiceAddress = document.getElementById("sales-invoice-address").value;
     currentSalesOrder.deliveryAddress = document.getElementById("sales-delivery-address").value;
     currentSalesOrder.date = new Date(document.getElementById("sales-order-date").value).toISOString();
@@ -7874,6 +8810,46 @@ function saveSalesOrder() {
     }
     
     currentSalesOrder.lines = lines;
+    
+    // Registrar automáticamente el cliente si no existe en el catálogo
+    const clientExists = clientsList.some(c => c.name.toLowerCase().trim() === clientName.toLowerCase().trim());
+    if (!clientExists) {
+        const newClientData = {
+            name: clientName,
+            rfc: "",
+            address: currentSalesOrder.invoiceAddress || "",
+            phone: "",
+            email: "",
+            contact_name: "",
+            portal_enabled: false,
+            portal_email: "",
+            portal_password: "",
+            payment_terms: currentSalesOrder.paymentTerms || "Contado",
+            discount_percent: 0,
+            price_list: "General",
+            currency: "MXN",
+            iva_rate: 16
+        };
+        
+        const token = localStorage.getItem('sonicbi_token');
+        try {
+            const res = await fetch('/api/bpm/clients', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(newClientData)
+            });
+            if (res.ok) {
+                console.log("Cliente nuevo registrado automáticamente en el catálogo:", clientName);
+                await cargarDatosDesdeBackend();
+                renderClientsView();
+            }
+        } catch (e) {
+            console.error("Error al registrar cliente automáticamente:", e);
+        }
+    }
     
     const idx = salesOrdersData.findIndex(o => o.id === currentSalesOrder.id);
     if (idx !== -1) {
@@ -7965,6 +8941,7 @@ const commChatHistories = {
 };
 
 function initComm() {
+    renderCommChannels();
     renderCommDMs();
     openChannelChat('general');
 }
@@ -7983,7 +8960,9 @@ function renderCommDMs() {
         "Capturista (Backoffice)": { status: "Online", color: "bg-emerald-500" }
     };
     
-    list.innerHTML = employeesList.map(emp => {
+    const currentUserName = localStorage.getItem('sonicbi_usuario') ? JSON.parse(localStorage.getItem('sonicbi_usuario')).nombre : 'Mitchell Admin';
+
+    list.innerHTML = employeesList.filter(emp => emp.name !== currentUserName).map(emp => {
         const info = statusMap[emp.name] || { status: "Offline", color: "bg-slate-300" };
         return `
             <li>
@@ -8002,14 +8981,14 @@ function renderCommDMs() {
 function openChannelChat(chanName) {
     activeChatTarget = { type: 'channel', name: chanName };
     
-    const chanGen = document.getElementById("btn-chan-general");
-    const chanUrg = document.getElementById("btn-chan-urgencias-campo");
-    if (chanGen) {
-        chanGen.className = `w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all ${chanName === 'general' ? 'bg-brand-50 text-brand-600 font-bold border border-brand-100' : ''}`;
-    }
-    if (chanUrg) {
-        chanUrg.className = `w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all ${chanName === 'urgencias-campo' ? 'bg-brand-50 text-brand-600 font-bold border border-brand-100' : ''}`;
-    }
+    document.querySelectorAll("button[id^='btn-chan-']").forEach(btn => {
+        const name = btn.id.replace("btn-chan-", "");
+        if (name === chanName) {
+            btn.className = `w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-brand-600 font-bold border border-brand-100 text-xs flex items-center transition-all bg-brand-50`;
+        } else {
+            btn.className = `w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all`;
+        }
+    });
     
     employeesList.forEach(emp => {
         const btn = document.getElementById(`btn-dm-${emp.name.replace(/\s+/g, '-').replace(/\./g, '')}`);
@@ -8021,9 +9000,14 @@ function openChannelChat(chanName) {
         titleEl.innerHTML = `<i data-lucide="hash" class="w-4 h-4 mr-2 text-slate-500"></i> ${chanName}`;
     }
     
-    const historyKey = `channel-${chanName}`;
-    const messages = commChatHistories[historyKey] || [];
-    renderChatHistory(messages);
+    const token = localStorage.getItem('sonicbi_token');
+    fetch(`/api/comms/chat/history?chatType=channel&chatTarget=${chanName}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(messages => {
+        renderChatHistory(messages);
+    });
     
     lucide.createIcons();
 }
@@ -8031,10 +9015,9 @@ function openChannelChat(chanName) {
 function openDirectMessage(empName) {
     activeChatTarget = { type: 'dm', name: empName };
     
-    const chanGen = document.getElementById("btn-chan-general");
-    const chanUrg = document.getElementById("btn-chan-urgencias-campo");
-    if (chanGen) chanGen.className = "w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all";
-    if (chanUrg) chanUrg.className = "w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all";
+    document.querySelectorAll("button[id^='btn-chan-']").forEach(btn => {
+        btn.className = `w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center transition-all`;
+    });
     
     employeesList.forEach(emp => {
         const btn = document.getElementById(`btn-dm-${emp.name.replace(/\s+/g, '-').replace(/\./g, '')}`);
@@ -8052,14 +9035,15 @@ function openDirectMessage(empName) {
         titleEl.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 mr-2"></span> @${empName}`;
     }
     
-    const historyKey = `dm-${empName}`;
-    if (!commChatHistories[historyKey]) {
-        commChatHistories[historyKey] = [
-            { sender: empName, time: "Ayer", text: `Hola Mitchell, aquí puedes escribirme para coordinar detalles sobre las tareas operativas.` }
-        ];
-    }
+    const token = localStorage.getItem('sonicbi_token');
+    fetch(`/api/comms/chat/history?chatType=dm&chatTarget=${empName}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(res => res.json())
+    .then(messages => {
+        renderChatHistory(messages);
+    });
     
-    renderChatHistory(commChatHistories[historyKey]);
     lucide.createIcons();
 }
 
@@ -8068,8 +9052,20 @@ function renderChatHistory(messages) {
     if (!history) return;
     
     history.innerHTML = "";
+    if (!messages || messages.length === 0) {
+        history.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full py-12 text-slate-400 text-xs italic space-y-1">
+                <p>💬 No hay mensajes en este chat aún.</p>
+                <p class="text-[10px] text-slate-400 font-normal">Escribe un mensaje para iniciar la conversación en tiempo real.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const currentUserName = localStorage.getItem('sonicbi_usuario') ? JSON.parse(localStorage.getItem('sonicbi_usuario')).nombre : 'Mitchell Admin';
+
     messages.forEach(msg => {
-        const isMe = msg.sender === "Mitchell Admin";
+        const isMe = msg.sender === currentUserName || msg.sender === "Mitchell Admin";
         
         const bubble = document.createElement("div");
         if (isMe) {
@@ -8113,90 +9109,55 @@ function sendCommMessage(e) {
     const history = document.getElementById("comm-chat-history");
     if (!input || !input.value.trim() || !history) return;
     
-    const text = input.value;
-    const now = new Date();
-    const timeStr = now.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-    
-    const newMsg = {
-        sender: "Mitchell Admin",
-        time: timeStr,
-        text: text
-    };
-    
-    const historyKey = `${activeChatTarget.type}-${activeChatTarget.name}`;
-    if (!commChatHistories[historyKey]) {
-        commChatHistories[historyKey] = [];
-    }
-    commChatHistories[historyKey].push(newMsg);
-    
-    renderChatHistory(commChatHistories[historyKey]);
+    const text = input.value.trim();
     input.value = "";
+    const token = localStorage.getItem('sonicbi_token');
+
+    // Apéndice optimista instantáneo
+    const now = new Date();
+    const timeStr = now.toLocaleDateString('es-MX', { day: '2-digit', month: '2-digit' }) + ' ' + now.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
     
-    setTimeout(() => {
-        const typingEl = document.createElement("div");
-        typingEl.id = "comm-typing-indicator";
-        typingEl.className = "flex items-start gap-3 max-w-[80%]";
-        typingEl.innerHTML = `
-            <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs flex-shrink-0">
-                ...
+    if (history.children.length === 1 && history.children[0].innerText.includes("No hay mensajes")) {
+        history.innerHTML = "";
+    }
+
+    const bubble = document.createElement("div");
+    bubble.className = "flex items-start justify-end ml-auto max-w-[80%] gap-3";
+    bubble.innerHTML = `
+        <div class="flex flex-col items-end">
+            <div class="bg-brand-500 text-white p-3 rounded-2xl rounded-tr-none text-xs font-medium shadow-sm">
+                <p>${text}</p>
             </div>
-            <div class="bg-slate-100 p-2.5 rounded-2xl rounded-tl-none text-xs text-slate-400 font-semibold shadow-sm flex items-center gap-1">
-                <span>Escribiendo</span>
-                <span class="animate-bounce">.</span>
-                <span class="animate-bounce" style="animation-delay: 0.2s">.</span>
-                <span class="animate-bounce" style="animation-delay: 0.4s">.</span>
-            </div>
-        `;
-        history.appendChild(typingEl);
-        history.scrollTop = history.scrollHeight;
-        
-        setTimeout(() => {
-            const typing = document.getElementById("comm-typing-indicator");
-            if (typing) typing.remove();
-            
-            let replyText = "Mensaje recibido. En un momento me comunico contigo.";
-            if (activeChatTarget.type === 'dm') {
-                const replies = [
-                    `Enterado Mitchell, lo reviso de inmediato y te aviso.`,
-                    `Perfecto, estoy al tanto del requerimiento.`,
-                    `¿Necesitas que me desplace al sitio en este momento?`,
-                    `Copiado. Le daré prioridad en mi listado de tareas.`
-                ];
-                replyText = replies[Math.floor(Math.random() * replies.length)];
-            } else {
-                const names = ["Tec. Juan Pérez", "Ing. Josué", "Lic. Ana Gómez", "Ing. Carlos Mendoza"];
-                const name = names[Math.floor(Math.random() * names.length)];
-                const replies = [
-                    `Enterado, equipo.`,
-                    `Copiado, procedo con el protocolo de soporte.`,
-                    `¿Alguien más está en la zona de soporte?`,
-                    `Gracias por la actualización.`
-                ];
-                replyText = replies[Math.floor(Math.random() * replies.length)];
-                
-                const replyMsg = {
-                    sender: name,
-                    time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-                    text: replyText
-                };
-                commChatHistories[historyKey].push(replyMsg);
-                renderChatHistory(commChatHistories[historyKey]);
-                addNotification(`Mensaje en canal "${activeChatTarget.name}" de ${name}: "${replyText}"`, 'chat', { chatType: 'channel', chatName: activeChatTarget.name });
-                return;
-            }
-            
-            const replyMsg = {
-                sender: activeChatTarget.name,
-                time: new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' }),
-                text: replyText
-            };
-            commChatHistories[historyKey].push(replyMsg);
-            renderChatHistory(commChatHistories[historyKey]);
-            addNotification(`Mensaje directo de ${activeChatTarget.name}: "${replyText}"`, 'chat', { chatType: 'dm', chatName: activeChatTarget.name });
-            
-        }, 1500);
-        
-    }, 1000);
+            <span class="text-[9px] text-slate-400 mt-1 font-semibold">${timeStr}</span>
+        </div>
+        <div class="w-8 h-8 rounded-full bg-slate-200 text-slate-750 flex items-center justify-center font-bold text-xs flex-shrink-0">
+            M
+        </div>
+    `;
+    history.appendChild(bubble);
+    history.scrollTop = history.scrollHeight;
+
+    // Enviar el mensaje al servidor
+    fetch('/api/comms/chat/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+            text: text,
+            chatType: activeChatTarget.type,
+            chatTarget: activeChatTarget.name
+        })
+    })
+    .then(res => res.json())
+    .then(() => {
+        if (activeChatTarget.type === 'channel') {
+            openChannelChat(activeChatTarget.name);
+        } else {
+            openDirectMessage(activeChatTarget.name);
+        }
+    });
 }
 
 // --- HISTORIAL DE ACTIVIDADES (ODDO-STYLE CHATTER) ---
@@ -8284,7 +9245,7 @@ function renderActivityHistory() {
     // Agrupar actividades por fecha
     const groups = {};
     activities.forEach(act => {
-        const dateKey = act.date || "Fecha Desconocida";
+        const dateKey = act.date || act.timestamp || "HOY";
         if (!groups[dateKey]) groups[dateKey] = [];
         groups[dateKey].push(act);
     });
@@ -8292,17 +9253,29 @@ function renderActivityHistory() {
     let html = "";
     Object.keys(groups).forEach(date => {
         html += `
-            <div class="flex items-center gap-2 select-none py-1">
+            <div class="flex items-center gap-2 select-none py-1.5">
                 <div class="h-[1px] bg-slate-200 flex-1"></div>
-                <span class="text-[10px] font-bold text-slate-450 uppercase tracking-wider font-mono">${date}</span>
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">${date}</span>
                 <div class="h-[1px] bg-slate-200 flex-1"></div>
             </div>
         `;
         
         groups[date].forEach(act => {
+            const isSecurity = act.author === "SISTEMA DE SEGURIDAD";
             const isOdooBot = act.author === "OdooBot";
-            const avatarBg = isOdooBot ? "bg-purple-100 text-purple-700" : "bg-brand-50 text-brand-700 border-brand-100";
-            const avatarChar = isOdooBot ? "OB" : "MA";
+            
+            let avatarBg = "bg-brand-50 text-brand-700 border-brand-100";
+            let avatarChar = "MA";
+            let containerStyle = "hover:bg-slate-50/80 p-2 rounded-lg transition-colors border border-transparent";
+
+            if (isSecurity) {
+                avatarBg = "bg-red-500 text-white border-red-600";
+                avatarChar = "🛡️";
+                containerStyle = "bg-red-50/90 border border-red-200 rounded-xl p-3 shadow-xs my-1";
+            } else if (isOdooBot) {
+                avatarBg = "bg-purple-100 text-purple-700";
+                avatarChar = "OB";
+            }
             
             let detailsHtml = "";
             if (act.details) {
@@ -8314,25 +9287,27 @@ function renderActivityHistory() {
                     }
                 }
                 detailsHtml = `
-                    <ul class="list-disc pl-4 mt-1 text-[11px] text-slate-500 space-y-0.5">
+                    <ul class="list-disc pl-4 mt-1 text-[11px] ${isSecurity ? 'text-red-700 font-medium' : 'text-slate-500'} space-y-0.5">
                         <li>${styledDetails}</li>
                     </ul>
                 `;
             }
+
+            const displayTime = act.time || act.relativeTime || '';
             
             html += `
-                <div class="flex gap-3 items-start hover:bg-slate-50/80 p-2 rounded-lg transition-colors">
+                <div class="flex gap-3 items-start ${containerStyle}">
                     <!-- Avatar -->
-                    <div class="w-7 h-7 rounded-full ${avatarBg} font-bold text-[10px] flex items-center justify-center shrink-0 border border-slate-200 shadow-sm select-none">
+                    <div class="w-7 h-7 rounded-full ${avatarBg} font-bold text-[10px] flex items-center justify-center shrink-0 border shadow-sm select-none">
                         ${avatarChar}
                     </div>
                     <!-- Content -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-baseline justify-between gap-1">
-                            <span class="font-bold text-slate-800 text-[11px]">${act.author}</span>
-                            <span class="text-[9px] text-slate-400 font-medium font-mono">${act.relativeTime || 'hace unos segundos'}</span>
+                            <span class="font-bold ${isSecurity ? 'text-red-900 font-mono text-[12px]' : 'text-slate-800 text-[11px]'}">${act.author}</span>
+                            <span class="text-[9px] ${isSecurity ? 'text-red-600 font-bold' : 'text-slate-400 font-medium'} font-mono">${displayTime}</span>
                         </div>
-                        <p class="text-[11px] text-slate-650 mt-0.5">${act.description}</p>
+                        <p class="text-[11px] ${isSecurity ? 'text-red-800 font-semibold mt-1' : 'text-slate-650 mt-0.5'}">${act.description}</p>
                         ${detailsHtml}
                     </div>
                 </div>
@@ -8452,9 +9427,15 @@ function renderNotifications() {
 function clickNotification(id) {
     const n = notifications.find(notif => notif.id === id);
     if (n) {
-        n.read = true;
-        renderNotifications();
-        syncStateToStorage();
+        const token = localStorage.getItem('sonicbi_token');
+        fetch(`/api/comms/notifications/${id}/read`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+        })
+        .then(() => {
+            cargarDatosDesdeBackend();
+        });
+        
         closeNotificationsDropdown();
         
         // Redirección inteligente y despliegue según requerimientos del usuario
@@ -8496,15 +9477,216 @@ function closeNotificationsDropdown() {
 }
 
 function markAllNotificationsAsRead() {
-    notifications.forEach(n => n.read = true);
-    renderNotifications();
-    syncStateToStorage();
+    const token = localStorage.getItem('sonicbi_token');
+    fetch('/api/comms/notifications/read-all', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(() => {
+        cargarDatosDesdeBackend();
+    });
 }
 
 function clearNotifications() {
-    notifications = [];
-    renderNotifications();
-    syncStateToStorage();
+    const token = localStorage.getItem('sonicbi_token');
+    fetch('/api/comms/notifications', {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+    })
+    .then(() => {
+        cargarDatosDesdeBackend();
+    });
+}
+
+window.cerrarSesion = function() {
+    localStorage.removeItem('sonicbi_token');
+    localStorage.removeItem('sonicbi_usuario');
+    window.location.href = 'login.html';
+};
+
+// --- GESTIÓN DE CANALES DE CHAT (OMNICANAL) ---
+let activeEditingChannelName = null;
+
+function renderCommChannels() {
+    const list = document.getElementById("comm-channel-list");
+    if (!list) return;
+
+    if (channelsList.length === 0) {
+        list.innerHTML = `
+            <li class="text-[10px] text-slate-400 italic px-3 py-2">Sin canales creados</li>
+        `;
+        return;
+    }
+
+    list.innerHTML = channelsList.map(chan => {
+        const isSelected = activeChatTarget && activeChatTarget.type === 'channel' && activeChatTarget.name === chan.name;
+        const btnClass = isSelected 
+            ? "w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-brand-650 font-bold flex items-center justify-between transition-all bg-brand-50 border border-brand-100"
+            : "w-full text-left px-3 py-2 rounded-lg hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center justify-between transition-all group";
+        
+        return `
+            <li>
+                <div class="flex items-center justify-between w-full">
+                    <button onclick="openChannelChat('${chan.name}')" id="btn-chan-${chan.name}" class="${btnClass} flex-1">
+                        <span class="flex items-center gap-1 truncate">
+                            <i data-lucide="hash" class="w-3.5 h-3.5 text-slate-500"></i>
+                            <span class="truncate">${chan.name}</span>
+                        </span>
+                        <span class="flex items-center gap-1.5 ml-auto">
+                            <!-- Ícono de engranaje para configurar miembros -->
+                            <i onclick="event.stopPropagation(); openChannelModal('${chan.name}')" data-lucide="settings" class="w-3 h-3 text-slate-400 hover:text-brand-600 transition-all ml-1.5" title="Configurar miembros del canal"></i>
+                        </span>
+                    </button>
+                </div>
+            </li>
+        `;
+    }).join("");
+
+    lucide.createIcons();
+}
+
+function openChannelModal(chanName = null) {
+    activeEditingChannelName = chanName;
+    const modal = document.getElementById("modal-channel-editor");
+    const titleEl = document.getElementById("channel-modal-title");
+    const nameInput = document.getElementById("chan-modal-name");
+    const descInput = document.getElementById("chan-modal-desc");
+    const deleteBtn = document.getElementById("channel-modal-delete-btn");
+    const membersContainer = document.getElementById("chan-modal-members-container");
+
+    if (!modal || !nameInput || !descInput || !membersContainer) return;
+
+    // Rellenar lista de empleados como checkboxes para seleccionar miembros
+    // Excluimos Mitchell Admin del listado porque es administrador y está por defecto, o lo dejamos
+    membersContainer.innerHTML = employeesList.map(emp => {
+        return `
+            <label class="flex items-center gap-2 bg-white p-2 rounded border border-slate-150 cursor-pointer text-[11px] hover:bg-slate-50 transition-all">
+                <input type="checkbox" name="chan-member-checkbox" value="${emp.name}" class="rounded border-slate-300 text-brand-600 focus:ring-brand-500">
+                <div class="flex items-center justify-between w-full">
+                    <span class="font-semibold text-slate-700">${emp.name}</span>
+                    <span class="text-[9px] text-slate-400 uppercase font-bold">${emp.role}</span>
+                </div>
+            </label>
+        `;
+    }).join("");
+
+    if (chanName) {
+        // Modo Edición
+        const chan = channelsList.find(c => c.name === chanName);
+        titleEl.innerHTML = `<i data-lucide="settings" class="w-4 h-4 text-brand-500"></i> Editar Canal: #${chanName}`;
+        nameInput.value = chanName;
+        nameInput.disabled = true; // No se permite editar el nombre llave primaria
+        descInput.value = chan ? (chan.description || "") : "";
+
+        // Marcar miembros del canal
+        const membersList = chan ? (chan.members || []) : [];
+        document.querySelectorAll("input[name='chan-member-checkbox']").forEach(chk => {
+            if (membersList.includes(chk.value)) {
+                chk.checked = true;
+            }
+        });
+
+        // Solo permitir borrar canales que no sean esenciales
+        if (['general', 'mesa-de-ayuda'].includes(chanName)) {
+            deleteBtn.classList.add("hidden");
+        } else {
+            deleteBtn.classList.remove("hidden");
+        }
+    } else {
+        // Modo Creación
+        titleEl.innerHTML = `<i data-lucide="hash" class="w-4 h-4 text-brand-500"></i> Crear Canal de Chat`;
+        nameInput.value = "";
+        nameInput.disabled = false;
+        descInput.value = "";
+        deleteBtn.classList.add("hidden");
+    }
+
+    modal.classList.remove("hidden");
+    lucide.createIcons();
+}
+
+function closeChannelModal() {
+    const modal = document.getElementById("modal-channel-editor");
+    if (modal) modal.classList.add("hidden");
+    activeEditingChannelName = null;
+}
+
+async function saveChannelFromModal() {
+    const nameInput = document.getElementById("chan-modal-name");
+    const descInput = document.getElementById("chan-modal-desc");
+    
+    if (!nameInput || !descInput) return;
+    
+    const nameVal = nameInput.value.trim();
+    const descVal = descInput.value.trim();
+
+    if (!nameVal) {
+        alert("Por favor ingrese el nombre del canal.");
+        return;
+    }
+
+    // Recopilar miembros seleccionados
+    const selectedMembers = [];
+    document.querySelectorAll("input[name='chan-member-checkbox']:checked").forEach(chk => {
+        selectedMembers.push(chk.value);
+    });
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/comms/channels', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: nameVal,
+                description: descVal,
+                members: selectedMembers
+            })
+        });
+
+        if (response.ok) {
+            closeChannelModal();
+            await cargarDatosDesdeBackend();
+            alert(`Canal #${nameVal.toLowerCase().replace(/\s+/g, '-')} guardado exitosamente.`);
+        } else {
+            const err = await response.json();
+            alert("Error al guardar el canal: " + (err.error || "Error interno"));
+        }
+    } catch (e) {
+        console.error("Error al guardar canal:", e);
+        alert("Error de comunicación con el servidor.");
+    }
+}
+
+async function deleteChannelFromModal() {
+    if (!activeEditingChannelName) return;
+    
+    if (!confirm(`¿Está seguro de que desea eliminar permanentemente el canal #${activeEditingChannelName} y todos sus mensajes?`)) {
+        return;
+    }
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch(`/api/comms/channels/${activeEditingChannelName}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            closeChannelModal();
+            await cargarDatosDesdeBackend();
+            openChannelChat('general');
+            alert("Canal eliminado exitosamente.");
+        } else {
+            const err = await response.json();
+            alert("Error al eliminar canal: " + (err.error || "Error interno"));
+        }
+    } catch (e) {
+        console.error("Error al eliminar canal:", e);
+        alert("Error de comunicación con el servidor.");
+    }
 }
 
 // Registrar en el objeto global window
@@ -8521,3 +9703,678 @@ window.toggleNotificationsDropdown = toggleNotificationsDropdown;
 window.closeNotificationsDropdown = closeNotificationsDropdown;
 window.markAllNotificationsAsRead = markAllNotificationsAsRead;
 window.clearNotifications = clearNotifications;
+window.cerrarSesion = window.cerrarSesion;
+window.renderCommChannels = renderCommChannels;
+window.openChannelModal = openChannelModal;
+window.closeChannelModal = closeChannelModal;
+window.saveChannelFromModal = saveChannelFromModal;
+window.deleteChannelFromModal = deleteChannelFromModal;
+
+// ==========================================
+// MÓDULO RBAC (ROLES Y PERMISOS)
+// ==========================================
+
+let rbacPermissions = {}; // Memoria temporal para la sesión actual
+let rolePermissionsState = {
+    Administrador: [],
+    Supervisor: [],
+    Ingeniero: [],
+    Tecnico: []
+};
+
+const RBAC_OPTIONS = [
+    { id: 'btn-dashboard', label: 'Dashboard' },
+    { id: 'btn-alerts', label: 'Alertas SLA' },
+    { id: 'btn-bpmn', label: 'Flujo de Proceso' },
+    { id: 'btn-catalog-nodes', label: 'Catálogo de Nodos' },
+    { id: 'btn-departments', label: 'Departamentos' },
+    { id: 'btn-personal', label: 'Personal' },
+    { id: 'btn-sales', label: 'Ventas' },
+    { id: 'btn-clients', label: 'Clientes' },
+    { id: 'btn-comm', label: 'Comunicaciones' }
+];
+
+async function initRBAC() {
+    try {
+        const usuarioStr = localStorage.getItem('sonicbi_usuario');
+        if (!usuarioStr) return;
+
+        const usuario = JSON.parse(usuarioStr);
+        const userRole = usuario.rol || 'admin'; // Fallback admin
+        
+        // Mostrar botón de configuración solo a Administradores (o admins backend)
+        const configContainer = document.getElementById('rbac-config-container');
+        if (configContainer && (userRole === 'admin' || userRole === 'Administrador' || usuario.nombre === 'Mitchell Admin')) {
+            configContainer.classList.remove('hidden');
+        }
+
+        // Obtener permisos del backend para el rol del usuario
+        let rolToFetch = userRole === 'admin' ? 'Administrador' : (userRole.charAt(0).toUpperCase() + userRole.slice(1));
+        if (usuario.nombre === 'Mitchell Admin') rolToFetch = 'Administrador';
+        
+        // Actualizar UI del perfil de la barra lateral
+        const profileNameEl = document.getElementById('sidebar-profile-name');
+        const profileRoleEl = document.getElementById('sidebar-profile-role');
+        const profileInitialsEl = document.getElementById('sidebar-profile-initials');
+        if (profileNameEl) profileNameEl.innerText = usuario.nombre || 'Usuario';
+        if (profileRoleEl) profileRoleEl.innerText = (userRole === 'admin' ? 'Administrador' : userRole).toUpperCase();
+        if (profileInitialsEl) profileInitialsEl.innerText = (usuario.nombre || 'U').charAt(0).toUpperCase();
+
+        // Si el rol es admin, forzamos tener todo por seguridad en frontend
+        if (rolToFetch === 'Administrador') {
+            rbacPermissions = RBAC_OPTIONS.map(o => o.id);
+        } else {
+            const response = await fetch(`/api/roles/permisos/${rolToFetch}`);
+            if (response.ok) {
+                const data = await response.json();
+                rbacPermissions = data.permisos || [];
+            } else {
+                rbacPermissions = []; // No access by default if fails
+            }
+        }
+
+        applyRBACPermissions();
+
+    } catch (error) {
+        console.error('[RBAC] Error inicializando permisos:', error);
+    }
+}
+
+window.initRBAC = initRBAC;
+
+function applyRBACPermissions() {
+    // Aplicar a los botones del sidebar
+    const allSections = RBAC_OPTIONS.map(o => o.id);
+    
+    // Primero, ocultar todos
+    allSections.forEach(sectionId => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+            el.classList.add('hidden'); // Ocultar
+            el.classList.remove('flex'); // Quitar display flex
+        }
+    });
+
+    // Luego, mostrar solo los permitidos
+    rbacPermissions.forEach(sectionId => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+            el.classList.remove('hidden');
+            el.classList.add('flex');
+        }
+    });
+
+    // Redirigir al primer tab disponible (o dashboard si está permitido) para quitar pantalla de carga
+    if (rbacPermissions.length > 0) {
+        const targetTab = rbacPermissions.includes('btn-dashboard') ? 'dashboard' : rbacPermissions[0].replace('btn-', '');
+        setTimeout(() => switchTab(targetTab), 100);
+    } else {
+        // En el caso poco probable de no tener ningún permiso
+        const loader = document.getElementById('view-loading');
+        if (loader) loader.classList.add('hidden');
+    }
+}
+
+window.loadAllRolePermissions = async function() {
+    try {
+        const response = await fetch('/api/roles/permisos');
+        if (response.ok) {
+            const allData = await response.json(); 
+            rolePermissionsState = allData;
+            
+            // Asegurarnos de que el Administrador siempre exista en el estado
+            if (!rolePermissionsState['Administrador']) {
+                rolePermissionsState['Administrador'] = RBAC_OPTIONS.map(o => o.id);
+            }
+            
+            renderConfigRoles();
+        }
+    } catch(e) {
+        console.error('Error cargando los roles de config', e);
+    }
+}
+
+window.renderConfigRoles = function() {
+    const container = document.getElementById('config-roles-container');
+    if (!container) return;
+    
+    // Obtener los roles dinámicos
+    const roles = Object.keys(rolePermissionsState);
+    
+    // Asegurar que Administrador salga primero
+    roles.sort((a, b) => {
+        if (a === 'Administrador') return -1;
+        if (b === 'Administrador') return 1;
+        return a.localeCompare(b);
+    });
+    
+    let html = '';
+    
+    roles.forEach(rol => {
+        let currentPerms = rolePermissionsState[rol] || [];
+        
+        let tagsHtml = currentPerms.map(permId => {
+            let option = RBAC_OPTIONS.find(o => o.id === permId);
+            if (!option) return '';
+            
+            // Administrador options cannot be removed
+            let removeBtn = (rol === 'Administrador') ? '' : `
+                <button onclick="event.stopPropagation(); removeRbacTag('${rol}', '${permId}')" class="hover:text-red-500 focus:outline-none transition-colors ml-1" title="Quitar permiso">
+                    <i data-lucide="x" class="w-3 h-3"></i>
+                </button>
+            `;
+            
+            return `
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-200 text-slate-700 text-[11px] font-semibold border border-slate-300 shadow-sm transition-colors">
+                    ${option.label}
+                    ${removeBtn}
+                </span>
+            `;
+        }).join('');
+
+        let dropdownOptions = RBAC_OPTIONS.filter(o => !currentPerms.includes(o.id)).map(o => {
+            return `
+                <div class="px-3 py-2 hover:bg-brand-50 hover:text-brand-600 cursor-pointer text-sm text-slate-700 transition-colors" onclick="event.stopPropagation(); addRbacTag('${rol}', '${o.id}')">
+                    ${o.label}
+                </div>
+            `;
+        }).join('');
+        
+        if (!dropdownOptions) {
+            dropdownOptions = `<div class="px-3 py-2 text-sm text-slate-400 italic">No hay más secciones disponibles</div>`;
+        }
+
+        const isClickable = rol !== 'Administrador';
+        const clickEvent = isClickable ? `onclick="toggleRbacDropdown('${rol}')"` : '';
+        const chevron = isClickable ? `<div class="ml-auto mt-1 mr-1 text-slate-400"><i data-lucide="chevron-down" class="w-4 h-4"></i></div>` : '';
+        const emptyState = currentPerms.length === 0 ? '<span class="text-slate-400 text-sm italic p-1">Ninguna (Sin acceso)</span>' : '';
+
+        // Controles de edición de rol
+        let roleControls = '';
+        if (rol !== 'Administrador') {
+            roleControls = `
+                <div class="flex items-center gap-2 mt-1">
+                    <button onclick="renameRole('${rol}')" class="text-slate-400 hover:text-brand-500 transition-colors" title="Renombrar rol">
+                        <i data-lucide="pencil" class="w-3 h-3"></i>
+                    </button>
+                    <button onclick="deleteRole('${rol}')" class="text-slate-400 hover:text-red-500 transition-colors" title="Eliminar rol">
+                        <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    </button>
+                </div>
+            `;
+        }
+
+        html += `
+            <div class="flex flex-col sm:flex-row sm:items-start gap-2 sm:gap-6 pb-6 border-b border-slate-100 last:border-0 last:pb-0">
+                <div class="w-full sm:w-48 shrink-0 pt-2">
+                    <div class="flex items-center justify-between pr-4">
+                        <span class="font-bold text-slate-700 text-sm break-all">${rol}</span>
+                        ${roleControls}
+                    </div>
+                    ${rol === 'Administrador' ? '<p class="text-[10px] text-slate-400 mt-0.5">Acceso total (No editable)</p>' : ''}
+                </div>
+                <div class="flex-1 relative">
+                    <div class="min-h-[42px] border border-slate-200 rounded-lg p-1.5 flex flex-wrap gap-1.5 ${isClickable ? 'bg-white cursor-pointer hover:border-brand-300' : 'bg-slate-50 cursor-not-allowed opacity-80'} transition-colors" ${clickEvent}>
+                        ${tagsHtml}
+                        ${emptyState}
+                        ${chevron}
+                    </div>
+                    
+                    <div class="absolute left-0 top-full mt-1 w-full bg-white border border-slate-200 shadow-lg rounded-lg z-10 hidden overflow-hidden" id="dropdown-${rol}">
+                        ${dropdownOptions}
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    // Añadir botón "+ Nuevo Rol"
+    html += `
+        <div class="pt-2">
+            <button onclick="createNewRole()" class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors border border-brand-100 border-dashed">
+                <i data-lucide="plus" class="w-4 h-4"></i> Crear Nuevo Rol
+            </button>
+        </div>
+    `;
+    
+    container.innerHTML = html;
+    lucide.createIcons();
+}
+
+window.createNewRole = async function() {
+    const roleName = prompt("Ingresa el nombre del nuevo rol:");
+    if (!roleName) return;
+    
+    const cleanName = roleName.trim();
+    if (cleanName === '' || rolePermissionsState[cleanName]) {
+        if (typeof showToast !== 'undefined') showToast('El rol ya existe o el nombre es inválido.', 'error');
+        return;
+    }
+    
+    // Crear el rol con permisos vacíos
+    rolePermissionsState[cleanName] = [];
+    
+    // Guardarlo en BD inmediatamente para que se registre
+    try {
+        await fetch(`/api/roles/permisos/${cleanName}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ permisos: [] })
+        });
+        if (typeof showToast !== 'undefined') showToast(`Rol '${cleanName}' creado exitosamente.`, 'success');
+        
+        // Renderizar de nuevo
+        renderConfigRoles();
+    } catch(e) {
+        console.error(e);
+        if (typeof showToast !== 'undefined') showToast('Error al crear el rol', 'error');
+    }
+}
+
+window.renameRole = async function(oldName) {
+    if (oldName === 'Administrador') return;
+    
+    const newName = prompt(`Ingresa el nuevo nombre para el rol '${oldName}':`, oldName);
+    if (!newName) return;
+    
+    const cleanName = newName.trim();
+    if (cleanName === '' || cleanName === oldName) return;
+    if (rolePermissionsState[cleanName]) {
+        if (typeof showToast !== 'undefined') showToast('Ya existe un rol con ese nombre.', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/roles/rename', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldName, newName: cleanName })
+        });
+        
+        if (response.ok) {
+            // Actualizar estado local
+            rolePermissionsState[cleanName] = rolePermissionsState[oldName];
+            delete rolePermissionsState[oldName];
+            
+            if (typeof showToast !== 'undefined') showToast(`Rol renombrado a '${cleanName}'.`, 'success');
+            renderConfigRoles();
+        } else {
+            if (typeof showToast !== 'undefined') showToast('Error al renombrar el rol.', 'error');
+        }
+    } catch(e) {
+        console.error(e);
+        if (typeof showToast !== 'undefined') showToast('Error de conexión al renombrar el rol.', 'error');
+    }
+}
+
+window.deleteRole = async function(rol) {
+    if (rol === 'Administrador') return;
+    
+    if (!confirm(`¿Estás seguro de que deseas eliminar el rol '${rol}'? Esta acción no se puede deshacer y los empleados con este rol podrían perder el acceso correcto.`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/roles/permisos/${rol}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            delete rolePermissionsState[rol];
+            if (typeof showToast !== 'undefined') showToast(`Rol '${rol}' eliminado.`, 'success');
+            renderConfigRoles();
+        } else {
+            if (typeof showToast !== 'undefined') showToast('Error al eliminar el rol.', 'error');
+        }
+    } catch(e) {
+        console.error(e);
+        if (typeof showToast !== 'undefined') showToast('Error de conexión al eliminar el rol.', 'error');
+    }
+}
+
+window.removeRbacTag = function(rol, permId) {
+    if (rol === 'Administrador') return;
+    rolePermissionsState[rol] = rolePermissionsState[rol].filter(p => p !== permId);
+    renderConfigRoles();
+}
+
+window.addRbacTag = function(rol, permId) {
+    if (!rolePermissionsState[rol]) rolePermissionsState[rol] = [];
+    rolePermissionsState[rol].push(permId);
+    
+    // Hide dropdown after adding
+    const dd = document.getElementById(`dropdown-${rol}`);
+    if (dd) dd.classList.add('hidden');
+    renderConfigRoles();
+}
+
+window.toggleRbacDropdown = function(rol) {
+    if (rol === 'Administrador') return;
+    
+    // Cerrar otros
+    document.querySelectorAll('[id^="dropdown-"]').forEach(el => {
+        if (el.id !== `dropdown-${rol}`) el.classList.add('hidden');
+    });
+    
+    const dd = document.getElementById(`dropdown-${rol}`);
+    if (dd) dd.classList.toggle('hidden');
+}
+
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('[id^="dropdown-"]') && !e.target.closest('.min-h-\\[42px\\]')) {
+        document.querySelectorAll('[id^="dropdown-"]').forEach(el => el.classList.add('hidden'));
+    }
+});
+
+window.saveConfigRoles = async function() {
+    try {
+        const btn = document.querySelector('button[onclick="saveConfigRoles()"]');
+        if (btn) btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Guardando...';
+
+        const roles = Object.keys(rolePermissionsState);
+        for (let rol of roles) {
+            let permisos = rolePermissionsState[rol] || [];
+            if (rol === 'Administrador') {
+                permisos = RBAC_OPTIONS.map(o => o.id); // Forzar a guardar todo
+            }
+            await fetch(`/api/roles/permisos/${rol}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ permisos })
+            });
+        }
+        
+        if (typeof showToast !== 'undefined') showToast('Permisos actualizados correctamente', 'success');
+        
+        // Si el usuario actual es Admin, refrescamos su propio estado
+        await initRBAC(); 
+
+    } catch(e) {
+        console.error('[RBAC] Error guardando permisos', e);
+        if (typeof showToast !== 'undefined') showToast('Error al guardar permisos', 'error');
+    } finally {
+        const btn = document.querySelector('button[onclick="saveConfigRoles()"]');
+        if (btn) btn.innerHTML = '<i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios';
+        lucide.createIcons();
+    }
+}
+
+// --- GESTIÓN DE CLIENTES ---
+let activeEditingClientId = null;
+
+function renderClientsView() {
+    const tbody = document.getElementById("clients-table-body");
+    if (!tbody) return;
+
+    if (clientsList.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="px-6 py-10 text-center text-slate-500 font-medium text-xs">
+                    <div class="flex flex-col items-center gap-2">
+                        <i data-lucide="users" class="w-8 h-8 text-slate-300"></i>
+                        <span>No hay clientes registrados en el catálogo.</span>
+                    </div>
+                </td>
+            </tr>
+        `;
+        lucide.createIcons();
+        return;
+    }
+
+    tbody.innerHTML = clientsList.map(client => {
+        const portalText = client.portal_enabled 
+            ? `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Activo</span>`
+            : `<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800"><span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>Inactivo</span>`;
+
+        return `
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-6 py-4 font-semibold text-slate-800">
+                    <div class="flex flex-col">
+                        <span>${client.name}</span>
+                        ${client.address ? `<span class="text-[10px] text-slate-400 font-normal mt-0.5">${client.address}</span>` : ''}
+                    </div>
+                </td>
+                <td class="px-6 py-4 font-medium text-slate-600 font-mono">${client.rfc || 'N/D'}</td>
+                <td class="px-6 py-4 text-slate-600">
+                    <div class="flex flex-col">
+                        <span>${client.contact_name || 'N/D'}</span>
+                        ${client.phone ? `<span class="text-[10px] text-slate-400 font-normal mt-0.5">${client.phone}</span>` : ''}
+                    </div>
+                </td>
+                <td class="px-6 py-4 font-medium text-slate-600">${client.payment_terms || 'Contado'}</td>
+                <td class="px-6 py-4 font-medium text-slate-600">
+                    <span>${client.price_list || 'General'}</span>
+                    ${client.discount_percent > 0 ? `<span class="text-[10px] text-brand-600 font-bold block">-${client.discount_percent}%</span>` : ''}
+                </td>
+                <td class="px-6 py-4 font-medium text-slate-600">
+                    <span>${client.currency || 'MXN'}</span>
+                    <span class="text-[10px] text-slate-400 font-normal block">${client.iva_rate}% IVA</span>
+                </td>
+                <td class="px-6 py-4 text-center">${portalText}</td>
+                <td class="px-6 py-4 text-right space-x-2">
+                    <button onclick="openClientModal(${client.id})" class="text-slate-400 hover:text-brand-600 p-1.5 rounded-lg hover:bg-slate-100 transition-all inline-flex items-center" title="Editar Cliente">
+                        <i data-lucide="edit-3" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="deleteClient(${client.id}, '${client.name}')" class="text-slate-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-all inline-flex items-center" title="Eliminar Cliente">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join("");
+
+    lucide.createIcons();
+}
+
+function filterClientsTable() {
+    const q = document.getElementById("clients-search-input").value.toLowerCase();
+    const rows = document.querySelectorAll("#clients-table-body tr");
+    rows.forEach(row => {
+        if (row.cells.length < 2) return; // Saltarse fila de "sin clientes"
+        const text = row.innerText.toLowerCase();
+        if (text.includes(q)) {
+            row.classList.remove("hidden");
+        } else {
+            row.classList.add("hidden");
+        }
+    });
+}
+
+function openClientModal(clientId = null) {
+    activeEditingClientId = clientId;
+    const modal = document.getElementById("modal-client-editor");
+    const title = document.getElementById("client-modal-title");
+    const submitBtn = document.getElementById("client-modal-submit-btn");
+
+    if (!modal) return;
+
+    // Resetear formulario
+    document.getElementById("client-modal-name").value = "";
+    document.getElementById("client-modal-rfc").value = "";
+    document.getElementById("client-modal-contact").value = "";
+    document.getElementById("client-modal-phone").value = "";
+    document.getElementById("client-modal-email").value = "";
+    document.getElementById("client-modal-address").value = "";
+    document.getElementById("client-modal-payment-terms").value = "Contado";
+    document.getElementById("client-modal-discount").value = "0";
+    document.getElementById("client-modal-price-list").value = "General";
+    document.getElementById("client-modal-currency").value = "MXN";
+    document.getElementById("client-modal-iva").value = "16";
+
+    const portalChk = document.getElementById("client-modal-portal-enabled");
+    portalChk.checked = false;
+    document.getElementById("client-modal-portal-email").value = "";
+    document.getElementById("client-modal-portal-password").value = "";
+    document.getElementById("client-modal-portal-fields").classList.add("hidden");
+
+    if (clientId) {
+        title.innerHTML = `<i data-lucide="contact" class="w-4 h-4 text-brand-500"></i> Editar Cliente`;
+        submitBtn.innerText = "Guardar Cambios";
+
+        const client = clientsList.find(c => c.id === clientId);
+        if (client) {
+            document.getElementById("client-modal-name").value = client.name;
+            document.getElementById("client-modal-rfc").value = client.rfc || "";
+            document.getElementById("client-modal-contact").value = client.contact_name || "";
+            document.getElementById("client-modal-phone").value = client.phone || "";
+            document.getElementById("client-modal-email").value = client.email || "";
+            document.getElementById("client-modal-address").value = client.address || "";
+            document.getElementById("client-modal-payment-terms").value = client.payment_terms || "Contado";
+            document.getElementById("client-modal-discount").value = client.discount_percent || "0";
+            document.getElementById("client-modal-price-list").value = client.price_list || "General";
+            document.getElementById("client-modal-currency").value = client.currency || "MXN";
+            document.getElementById("client-modal-iva").value = String(client.iva_rate || "16");
+
+            if (client.portal_enabled) {
+                portalChk.checked = true;
+                document.getElementById("client-modal-portal-email").value = client.portal_email || "";
+                document.getElementById("client-modal-portal-fields").classList.remove("hidden");
+            }
+        }
+    } else {
+        title.innerHTML = `<i data-lucide="contact" class="w-4 h-4 text-brand-500"></i> Registrar Cliente`;
+        submitBtn.innerText = "Registrar Cliente";
+    }
+
+    modal.classList.remove("hidden");
+    lucide.createIcons();
+}
+
+function closeClientModal() {
+    const modal = document.getElementById("modal-client-editor");
+    if (modal) modal.classList.add("hidden");
+}
+
+function togglePortalFields() {
+    const chk = document.getElementById("client-modal-portal-enabled");
+    const container = document.getElementById("client-modal-portal-fields");
+    if (chk && container) {
+        if (chk.checked) {
+            container.classList.remove("hidden");
+            const portalEmail = document.getElementById("client-modal-portal-email");
+            const contactEmail = document.getElementById("client-modal-email").value;
+            if (portalEmail && !portalEmail.value && contactEmail) {
+                portalEmail.value = contactEmail;
+            }
+        } else {
+            container.classList.add("hidden");
+        }
+    }
+}
+
+async function saveClientFromModal() {
+    const name = document.getElementById("client-modal-name").value.trim();
+    if (!name) {
+        alert("El nombre/razón social es obligatorio.");
+        return;
+    }
+
+    const rfc = document.getElementById("client-modal-rfc").value.trim();
+    const contact_name = document.getElementById("client-modal-contact").value.trim();
+    const phone = document.getElementById("client-modal-phone").value.trim();
+    const email = document.getElementById("client-modal-email").value.trim();
+    const address = document.getElementById("client-modal-address").value.trim();
+    const payment_terms = document.getElementById("client-modal-payment-terms").value;
+    const discount_percent = document.getElementById("client-modal-discount").value;
+    const price_list = document.getElementById("client-modal-price-list").value;
+    const currency = document.getElementById("client-modal-currency").value;
+    const iva_rate = document.getElementById("client-modal-iva").value;
+
+    const portal_enabled = document.getElementById("client-modal-portal-enabled").checked;
+    const portal_email = document.getElementById("client-modal-portal-email").value.trim();
+    const portal_password = document.getElementById("client-modal-portal-password").value;
+
+    if (portal_enabled) {
+        if (!portal_email) {
+            alert("Si habilita el portal de cliente, debe ingresar un correo de usuario.");
+            return;
+        }
+        if (!activeEditingClientId && !portal_password) {
+            alert("Debe ingresar una contraseña para el portal del nuevo cliente.");
+            return;
+        }
+    }
+
+    let oldName = null;
+    if (activeEditingClientId) {
+        const client = clientsList.find(c => c.id === activeEditingClientId);
+        if (client) oldName = client.name;
+    }
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/clients', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: activeEditingClientId,
+                name,
+                rfc,
+                contact_name,
+                phone,
+                email,
+                address,
+                portal_enabled,
+                portal_email,
+                portal_password,
+                payment_terms,
+                discount_percent,
+                price_list,
+                currency,
+                iva_rate,
+                oldName
+            })
+        });
+
+        if (response.ok) {
+            closeClientModal();
+            await cargarDatosDesdeBackend();
+            renderClientsView();
+            if (typeof showToast !== 'undefined') showToast("Cliente guardado con éxito", "success");
+        } else {
+            const err = await response.json();
+            alert("Error al guardar cliente: " + (err.error || "Intente de nuevo"));
+        }
+    } catch(e) {
+        console.error("Error al guardar cliente:", e);
+        alert("Error de comunicación con el servidor.");
+    }
+}
+
+async function deleteClient(id, name) {
+    if (!confirm(`¿Está seguro de que desea eliminar permanentemente al cliente "${name}"?\n(Se deshabilitará su acceso al portal de clientes).`)) {
+        return;
+    }
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch(`/api/bpm/clients/${id}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            await cargarDatosDesdeBackend();
+            renderClientsView();
+            if (typeof showToast !== 'undefined') showToast("Cliente eliminado correctamente", "success");
+        } else {
+            const err = await response.json();
+            alert("Error al eliminar cliente: " + (err.error || "Intente de nuevo"));
+        }
+    } catch(e) {
+        console.error("Error al eliminar cliente:", e);
+        alert("Error de comunicación con el servidor.");
+    }
+}
+
+// Exportar al objeto global window para botones inline
+window.openClientModal = openClientModal;
+window.closeClientModal = closeClientModal;
+window.togglePortalFields = togglePortalFields;
+window.saveClientFromModal = saveClientFromModal;
+window.deleteClient = deleteClient;
+window.filterClientsTable = filterClientsTable;
