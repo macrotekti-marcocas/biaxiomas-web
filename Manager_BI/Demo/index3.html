@@ -2827,44 +2827,157 @@
         </div>
     </div>
 
-    <!-- MODAL: ENVIAR COTIZACIÓN POR CORREO -->
+    <!-- MODAL: ENVIAR COTIZACIÓN POR CORREO (PROFESIONAL & INTERACTIVO) -->
     <div id="modal-send-email" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center hidden">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all border border-slate-100 flex flex-col">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden transform transition-all border border-slate-100 flex flex-col">
             <!-- Header -->
             <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between shrink-0">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="mail" class="w-5 h-5 text-brand-500"></i>
-                    <h3 class="font-bold text-slate-800 text-sm">Enviar Cotización por Correo</h3>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center">
+                        <i data-lucide="mail-check" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm">Envío Profesional de Cotización</h3>
+                        <p class="text-[11px] text-slate-400">Incluye vista previa resumida, botón de firma digital y seguimiento de lectura</p>
+                    </div>
                 </div>
-                <button onclick="closeSendEmailModal()" class="p-1 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+                <button onclick="closeSendEmailModal()" class="p-1.5 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
             
             <!-- Body -->
-            <div class="p-6 space-y-4 text-xs">
-                <div>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Para (Email Cliente) *:</label>
-                    <input type="email" id="email-send-to" placeholder="cliente@ejemplo.com" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+            <div class="p-6 space-y-4 text-xs overflow-y-auto flex-1">
+                <!-- Destinatario y CC -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+                    <div class="md:col-span-10">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Para (Email Cliente) *:</label>
+                        <input type="email" id="email-send-to" placeholder="cliente@ejemplo.com" class="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs font-medium">
+                    </div>
+                    <div class="md:col-span-2 pt-4 md:pt-3">
+                        <button type="button" onclick="toggleEmailCcField()" class="w-full py-2.5 px-3 border border-slate-200 hover:bg-slate-100 text-slate-600 font-bold rounded-lg text-xs transition-all shadow-xs flex items-center justify-center gap-1">
+                            <i data-lucide="plus" class="w-3 h-3"></i> <span>CC</span>
+                        </button>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Asunto *:</label>
-                    <input type="text" id="email-send-subject" placeholder="Asunto del correo" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+
+                <!-- Campo CC (Oculto inicialmente) -->
+                <div id="email-cc-container" class="hidden">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block mb-1">Con Copia (CC):</label>
+                    <input type="text" id="email-send-cc" placeholder="copia1@empresa.com, copia2@empresa.com" class="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs">
                 </div>
+
+                <!-- Asunto y Píldoras rápidas -->
                 <div>
-                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Mensaje / Cuerpo *:</label>
-                    <textarea id="email-send-body" rows="6" placeholder="Escriba su mensaje aquí..." class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm"></textarea>
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Asunto del Correo *:</label>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[10px] text-slate-400">Plantillas:</span>
+                            <button type="button" onclick="setEmailSubjectPreset('Propuesta')" class="text-[10px] text-brand-600 hover:bg-brand-50 px-1.5 py-0.5 rounded font-bold transition-colors">Propuesta</button>
+                            <button type="button" onclick="setEmailSubjectPreset('Descuento')" class="text-[10px] text-brand-600 hover:bg-brand-50 px-1.5 py-0.5 rounded font-bold transition-colors">Descuento</button>
+                            <button type="button" onclick="setEmailSubjectPreset('Seguimiento')" class="text-[10px] text-brand-600 hover:bg-brand-50 px-1.5 py-0.5 rounded font-bold transition-colors">Seguimiento</button>
+                        </div>
+                    </div>
+                    <input type="text" id="email-send-subject" placeholder="Asunto del correo..." class="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-xs font-semibold text-slate-800">
                 </div>
+
+                <!-- Barra de Herramientas de Formato (Editor Enriquecido) -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden shadow-xs bg-white">
+                    <div class="p-2 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center gap-1.5 text-slate-600">
+                        <!-- Fuente -->
+                        <select id="email-font-family" onchange="formatEmailFontFamily(this.value)" class="text-[11px] p-1.5 border border-slate-200 rounded bg-white font-medium focus:outline-none">
+                            <option value="Inter, sans-serif">Sans-Serif (Moderna)</option>
+                            <option value="Georgia, serif">Georgia (Elegante)</option>
+                            <option value="'Courier New', monospace">Monospace (Técnica)</option>
+                        </select>
+
+                        <!-- Botones de estilo -->
+                        <div class="h-4 w-[1px] bg-slate-300 mx-1"></div>
+                        <button type="button" onclick="formatEmailCommand('bold')" class="p-1.5 hover:bg-slate-200 rounded text-slate-700 font-black transition-colors" title="Negrita">
+                            <strong>B</strong>
+                        </button>
+                        <button type="button" onclick="formatEmailCommand('italic')" class="p-1.5 hover:bg-slate-200 rounded text-slate-700 italic transition-colors" title="Cursiva">
+                            <em>I</em>
+                        </button>
+                        <button type="button" onclick="formatEmailCommand('underline')" class="p-1.5 hover:bg-slate-200 rounded text-slate-700 underline transition-colors" title="Subrayado">
+                            <u>U</u>
+                        </button>
+                        <button type="button" onclick="formatEmailCommand('insertUnorderedList')" class="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors" title="Lista con viñetas">
+                            <i data-lucide="list" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button type="button" onclick="insertEmailLink()" class="p-1.5 hover:bg-slate-200 rounded text-slate-700 transition-colors" title="Insertar Enlace">
+                            <i data-lucide="link" class="w-3.5 h-3.5"></i>
+                        </button>
+                        <button type="button" onclick="insertQuoteSnippetIntoEmail()" class="text-[10px] font-bold text-brand-600 bg-brand-50 hover:bg-brand-100 px-2 py-1 rounded transition-colors ml-auto flex items-center gap-1" title="Reinsertar resumen de cotización">
+                            <i data-lucide="refresh-cw" class="w-3 h-3"></i> Regenerar Resumen
+                        </button>
+                    </div>
+
+                    <!-- Mensaje Introductorio Editable -->
+                    <div id="email-send-body" contenteditable="true" class="p-3.5 min-h-[110px] text-xs text-slate-700 focus:outline-none leading-relaxed bg-white font-sans">
+                        <!-- Inyectado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Tarjeta de Vista Previa de la Cotización que se enviará en el correo -->
+                <div class="space-y-2">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase flex items-center gap-1.5">
+                        <i data-lucide="eye" class="w-3.5 h-3.5 text-brand-500"></i> Vista Previa de la Tarjeta Adjunta en el Correo:
+                    </label>
+                    <div id="email-preview-card" class="border border-brand-100 bg-slate-50 rounded-xl p-4 space-y-3">
+                        <!-- Inyectado dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Opciones Avanzadas: Confirmación de Lectura y Firma del Asesor -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2 border-t border-slate-100">
+                    <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition-colors">
+                        <input type="checkbox" id="email-opt-receipt" checked class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+                        <div>
+                            <span class="font-bold text-slate-700 text-xs block">Solicitud de Acuse / Lectura</span>
+                            <span class="text-[10px] text-slate-400">Solicita confirmación de apertura al destinatario</span>
+                        </div>
+                    </label>
+
+                    <label class="flex items-center gap-2 p-2.5 border border-slate-200 rounded-xl bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition-colors">
+                        <input type="checkbox" id="email-opt-signature" checked onchange="toggleEmailSignaturePreview(this.checked)" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
+                        <div>
+                            <span class="font-bold text-slate-700 text-xs block">Incluir Firma del Asesor</span>
+                            <span class="text-[10px] text-slate-400">Inserta datos de contacto de Mitchell Admin</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Firma del Asesor Preview -->
+                <div id="email-signature-container" class="p-3 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-3">
+                        <div class="w-9 h-9 rounded-full bg-brand-500 text-white font-black text-sm flex items-center justify-center shadow-xs">
+                            M
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800" id="email-sig-name">Mitchell Admin</p>
+                            <p class="text-[10px] text-slate-400">Asesor Comercial Senior &middot; SONIC BI Technologies México</p>
+                            <p class="text-[10px] text-brand-600">soporte@sonicbi.com &middot; +52 (81) 8123-4567</p>
+                        </div>
+                    </div>
+                </div>
+
             </div>
             
             <!-- Footer -->
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
-                <button onclick="closeSendEmailModal()" class="px-4 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 text-xs rounded-lg font-bold transition-all shadow-sm">
-                    Cancelar
-                </button>
-                <button onclick="sendOrderEmail()" id="email-send-submit-btn" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs rounded-lg font-bold shadow-sm transition-all flex items-center gap-1.5">
-                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Enviar Correo
-                </button>
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
+                <span class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-500"></i> Servidor SMTP Seguro Conectado
+                </span>
+                <div class="flex items-center gap-2.5">
+                    <button onclick="closeSendEmailModal()" class="px-4 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-100 text-xs rounded-lg font-bold transition-all shadow-xs">
+                        Cancelar
+                    </button>
+                    <button onclick="sendOrderEmail()" id="email-send-submit-btn" class="px-5 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs rounded-lg font-extrabold shadow-md transition-all flex items-center gap-2">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        <span>Enviar Correo Profesional</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

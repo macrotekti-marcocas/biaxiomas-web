@@ -314,7 +314,7 @@ function iniciarWebSocket() {
                 }
             }
 
-            // Eventos del Cotizador Interactivo
+            // Eventos del Cotizador Interactivo en Tiempo Real
             if (data.type === 'QUOTE_VIEWED') {
                 if (typeof showSalesNotification === 'function') {
                     showSalesNotification(`👁️ El cliente ${data.client || ''} está visualizando la cotización ${data.orderId} ahora mismo.`, "info");
@@ -326,23 +326,74 @@ function iniciarWebSocket() {
                 if (typeof showSalesNotification === 'function') {
                     showSalesNotification(`🔄 El cliente recalculó opciones en la cotización ${data.orderId}.`, "info");
                 }
-                if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
-                    currentSalesOrder.total = data.total;
-                    if (typeof calculateSalesTotals === 'function') calculateSalesTotals();
-                }
+                
+                // Actualizar cotización en memoria si está abierta en pantalla
+                const token = localStorage.getItem('sonicbi_token');
+                fetch('/api/bpm/sales-orders', { headers: { 'Authorization': `Bearer ${token}` } })
+                    .then(res => res.json())
+                    .then(orders => {
+                        salesOrdersData = orders;
+                        if (typeof renderSalesTable === 'function') renderSalesTable();
+                        
+                        if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
+                            const updated = salesOrdersData.find(o => o.id === data.orderId);
+                            if (updated) {
+                                currentSalesOrder = JSON.parse(JSON.stringify(updated));
+                                const linesBody = document.getElementById("sales-lines-body");
+                                if (linesBody) {
+                                    linesBody.innerHTML = "";
+                                    (currentSalesOrder.lines || []).forEach(line => {
+                                        appendSalesOrderLineRow(line.product, line.quantity, line.price, line.tax, !!line.opcional);
+                                    });
+                                }
+                                if (typeof calculateSalesTotals === 'function') calculateSalesTotals();
+                            }
+                        }
+                    });
             } else if (data.type === 'QUOTE_SIGNED') {
                 if (typeof showSalesNotification === 'function') {
                     showSalesNotification(`🎉 ¡Trato cerrado! El cliente ${data.client || ''} firmó la cotización ${data.orderId}. Convertido en Pedido de Venta.`, "success");
                 }
-                if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
-                    currentSalesOrder.state = "Pedido de venta";
-                    if (typeof updateSalesPipelineVisuals === 'function') updateSalesPipelineVisuals("Pedido de venta");
-                    if (typeof toggleSalesFormLock === 'function') toggleSalesFormLock(true);
-                }
+                
                 const token = localStorage.getItem('sonicbi_token');
                 fetch('/api/bpm/sales-orders', { headers: { 'Authorization': `Bearer ${token}` } })
                     .then(res => res.json())
-                    .then(orders => { salesOrdersData = orders; if (typeof renderSalesTable === 'function') renderSalesTable(); });
+                    .then(orders => {
+                        salesOrdersData = orders;
+                        if (typeof renderSalesTable === 'function') renderSalesTable();
+                        
+                        // Si el asesor tiene abierta esta cotización, actualizarla en caliente
+                        if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
+                            const updated = salesOrdersData.find(o => o.id === data.orderId);
+                            if (updated) {
+                                currentSalesOrder = JSON.parse(JSON.stringify(updated));
+                            } else {
+                                currentSalesOrder.state = "Pedido de venta";
+                                currentSalesOrder.firma_cliente = data.signature;
+                            }
+                            if (typeof updateSalesPipelineVisuals === 'function') updateSalesPipelineVisuals("Pedido de venta");
+                            if (typeof toggleSalesFormLock === 'function') toggleSalesFormLock(true);
+                            
+                            // Badge animado de firma
+                            const docCreator = document.getElementById("sales-doc-creator");
+                            if (docCreator) {
+                                docCreator.innerHTML = `${currentSalesOrder.salesperson} <span class="ml-2 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-extrabold shadow-xs"><i data-lucide="shield-check" class="w-3 h-3"></i> Firmado Digitalmente por Cliente</span>`;
+                                if (typeof lucide !== 'undefined') lucide.createIcons();
+                            }
+                        }
+                    });
+            } else if (data.type === 'QUOTE_SENT') {
+                const token = localStorage.getItem('sonicbi_token');
+                fetch('/api/bpm/sales-orders', { headers: { 'Authorization': `Bearer ${token}` } })
+                    .then(res => res.json())
+                    .then(orders => {
+                        salesOrdersData = orders;
+                        if (typeof renderSalesTable === 'function') renderSalesTable();
+                        if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
+                            currentSalesOrder.state = "Enviado";
+                            if (typeof updateSalesPipelineVisuals === 'function') updateSalesPipelineVisuals("Enviado");
+                        }
+                    });
             } else if (data.type === 'QUOTE_NEW_CHAT_MESSAGE' && data.remitente === 'Cliente') {
                 if (typeof showSalesNotification === 'function') {
                     showSalesNotification(`💬 Mensaje del cliente en cotización ${data.orderId}: "${data.mensaje}"`, "info");
@@ -9615,35 +9666,249 @@ function copyAiDescriptionToClipboard() {
 }
 window.copyAiDescriptionToClipboard = copyAiDescriptionToClipboard;
 
+// ==========================================
+// MÓDULO DE ENVÍO PROFESIONAL DE CORREO
+// ==========================================
+
+function toggleEmailCcField() {
+    const ccCont = document.getElementById("email-cc-container");
+    if (ccCont) ccCont.classList.toggle("hidden");
+}
+window.toggleEmailCcField = toggleEmailCcField;
+
+function setEmailSubjectPreset(preset) {
+    if (!currentSalesOrder) return;
+    const subjectInput = document.getElementById("email-send-subject");
+    if (!subjectInput) return;
+    
+    if (preset === 'Propuesta') {
+        subjectInput.value = `Propuesta Comercial Formal [${currentSalesOrder.id}-2026] - ${currentSalesOrder.client || 'SONIC BI'}`;
+    } else if (preset === 'Descuento') {
+        subjectInput.value = `Actualización de Cotización con Condiciones Especiales [${currentSalesOrder.id}-2026]`;
+    } else if (preset === 'Seguimiento') {
+        subjectInput.value = `Seguimiento a Propuesta Comercial Digital [${currentSalesOrder.id}-2026] - SONIC BI`;
+    }
+}
+window.setEmailSubjectPreset = setEmailSubjectPreset;
+
+function formatEmailCommand(command, value = null) {
+    document.execCommand(command, false, value);
+    const bodyEl = document.getElementById("email-send-body");
+    if (bodyEl) bodyEl.focus();
+}
+window.formatEmailCommand = formatEmailCommand;
+
+function formatEmailFontFamily(fontFamily) {
+    const bodyEl = document.getElementById("email-send-body");
+    if (bodyEl) {
+        bodyEl.style.fontFamily = fontFamily;
+    }
+}
+window.formatEmailFontFamily = formatEmailFontFamily;
+
+function insertEmailLink() {
+    const url = prompt("Ingrese el enlace web (URL):", "https://");
+    if (url) {
+        formatEmailCommand("createLink", url);
+    }
+}
+window.insertEmailLink = insertEmailLink;
+
+function toggleEmailSignaturePreview(show) {
+    const sigCont = document.getElementById("email-signature-container");
+    if (sigCont) {
+        if (show) sigCont.classList.remove("hidden");
+        else sigCont.classList.add("hidden");
+    }
+}
+window.toggleEmailSignaturePreview = toggleEmailSignaturePreview;
+
+function renderEmailQuotePreviewCard(order) {
+    const previewEl = document.getElementById("email-preview-card");
+    if (!previewEl || !order) return;
+    
+    const currency = order.currency || "USD";
+    const origin = window.location.origin;
+    const publicUrl = `${origin}/shared.html?hash=${order.public_hash || ''}`;
+    
+    let rowsHtml = "";
+    (order.lines || []).forEach(line => {
+        const lineTotal = (line.price * line.quantity) * (1 + (parseFloat(line.tax) || 0) / 100);
+        rowsHtml += `
+            <div class="flex items-center justify-between py-1.5 border-b border-slate-200 text-xs">
+                <div class="flex items-center gap-2">
+                    <span class="font-bold text-slate-700">${line.product || 'Concepto'}</span>
+                    ${line.opcional ? '<span class="text-[9px] bg-purple-50 text-purple-700 border border-purple-200 px-1 rounded font-bold">Opcional</span>' : ''}
+                    <span class="text-[10px] text-slate-400">&times; ${line.quantity}</span>
+                </div>
+                <span class="font-bold text-slate-800">$${lineTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </div>
+        `;
+    });
+    
+    previewEl.innerHTML = `
+        <div class="bg-white border border-slate-200 rounded-lg p-3.5 shadow-xs space-y-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div>
+                    <span class="text-[9px] font-extrabold tracking-wider uppercase text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">Propuesta Digital</span>
+                    <h4 class="font-bold text-slate-800 text-sm mt-1">Cotización ${order.id}-2026</h4>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] text-slate-400 block">Total Cotizado</span>
+                    <span class="text-base font-extrabold text-purple-700">$${order.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} <small class="text-xs text-slate-500">${currency}</small></span>
+                </div>
+            </div>
+            
+            <div class="space-y-1">
+                ${rowsHtml}
+            </div>
+            
+            <div class="pt-2 text-center">
+                <a href="${publicUrl}" target="_blank" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold text-xs rounded-lg shadow-sm transition-all pointer-events-none">
+                    <i data-lucide="pen-tool" class="w-3.5 h-3.5"></i>
+                    <span>✍️ Ver Cotización Interactiva y Firmar en Línea</span>
+                </a>
+                <p class="text-[10px] text-slate-400 mt-1.5">El cliente podrá seleccionar opcionales, chatear y firmar digitalmente desde su enlace seguro.</p>
+            </div>
+        </div>
+    `;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+function insertQuoteSnippetIntoEmail() {
+    if (!currentSalesOrder) return;
+    const bodyEl = document.getElementById("email-send-body");
+    if (!bodyEl) return;
+    
+    const clientName = currentSalesOrder.client || "Estimado(a) Cliente";
+    bodyEl.innerHTML = `
+        <p>Estimado(a) <strong>${clientName}</strong>,</p>
+        <p>Es un placer saludarle. Por medio del presente le compartimos la propuesta comercial digital correspondiente al folio <strong>${currentSalesOrder.id}-2026</strong>, adaptada detalladamente a sus especificaciones técnicas y requerimientos.</p>
+        <p>En el siguiente resumen encontrará el desglose de conceptos. Puede acceder directamente al portal interactivo para seleccionar conceptos opcionales o plasmar su firma digital de confirmación.</p>
+        <p>Quedamos a su completa disposición para cualquier duda o negociación.</p>
+    `;
+    renderEmailQuotePreviewCard(currentSalesOrder);
+}
+window.insertQuoteSnippetIntoEmail = insertQuoteSnippetIntoEmail;
+
+function generateQuoteEmailHtml(order, introHtml, includeSignature) {
+    if (!order) return "";
+    const origin = window.location.origin;
+    const publicUrl = `${origin}/shared.html?hash=${order.public_hash || ''}`;
+    const orderCurrency = order.currency || "USD";
+    
+    let linesRows = "";
+    (order.lines || []).forEach(line => {
+        const lineTotal = (line.price * line.quantity) * (1 + (parseFloat(line.tax) || 0) / 100);
+        linesRows += `
+            <tr style="border-bottom: 1px solid #e2e8f0; ${line.opcional ? 'background-color: #faf5ff;' : ''}">
+                <td style="padding: 10px 14px; font-size: 13px; color: #334155;">
+                    <strong>${line.product || 'Concepto'}</strong>
+                    ${line.opcional ? '<span style="display:inline-block; font-size:10px; color:#7c3aed; background-color:#f5f3ff; border:1px solid #ddd6fe; border-radius:4px; padding:1px 6px; margin-left:6px; font-weight:700;">Opcional</span>' : ''}
+                </td>
+                <td style="padding: 10px 14px; font-size: 13px; color: #475569; text-align: center;">${line.quantity}</td>
+                <td style="padding: 10px 14px; font-size: 13px; color: #475569; text-align: right;">$${line.price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                <td style="padding: 10px 14px; font-size: 13px; font-weight: bold; color: #1e293b; text-align: right;">$${lineTotal.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+            </tr>
+        `;
+    });
+
+    const signatureHtml = includeSignature ? `
+        <div style="margin-top: 32px; padding-top: 20px; border-top: 2px solid #f1f5f9; display: flex; align-items: center; gap: 14px;">
+            <div style="width: 44px; height: 44px; border-radius: 50%; background-color: #7c3aed; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px;">
+                M
+            </div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.4;">
+                <p style="margin: 0; font-weight: bold; color: #1e293b; font-size: 14px;">Mitchell Admin</p>
+                <p style="margin: 0; color: #64748b; font-size: 12px;">Asesor Comercial Senior &middot; SONIC BI Technologies México</p>
+                <p style="margin: 0; color: #7c3aed; font-size: 12px;"><a href="mailto:soporte@sonicbi.com" style="color:#7c3aed; text-decoration:none;">soporte@sonicbi.com</a> &middot; +52 (81) 8123-4567</p>
+            </div>
+        </div>
+    ` : '';
+
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; margin: 0; padding: 24px 12px; color: #334155; }
+  .container { max-width: 620px; margin: 0 auto; background-color: #ffffff; border-radius: 14px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); }
+  .header { background: linear-gradient(135deg, #7c3aed, #4f46e5); padding: 26px 24px; color: #ffffff; }
+  .body { padding: 28px 24px; }
+  .btn-cta { display: inline-block; background-color: #7c3aed; color: #ffffff !important; text-decoration: none; font-weight: 800; font-size: 14px; padding: 14px 28px; border-radius: 8px; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4); text-align: center; }
+  .quote-table { width: 100%; border-collapse: collapse; margin: 16px 0; background-color: #ffffff; }
+  .footer { background-color: #f8fafc; padding: 18px 24px; border-top: 1px solid #e2e8f0; font-size: 11px; color: #94a3b8; text-align: center; }
+</style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h2 style="margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.5px;">SONIC BI &middot; Propuesta Comercial</h2>
+      <p style="margin: 6px 0 0 0; font-size: 12px; opacity: 0.9;">Folio: ${order.id}-2026 &middot; Cliente: ${order.client || 'Estimado Cliente'}</p>
+    </div>
+    <div class="body">
+      <div style="font-size: 14px; line-height: 1.65; color: #334155; margin-bottom: 24px;">
+        ${introHtml}
+      </div>
+      
+      <!-- Resumen de Cotización -->
+      <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 24px;">
+        <table class="quote-table">
+          <thead>
+            <tr style="border-bottom: 2px solid #cbd5e1; text-align: left; font-size: 11px; text-transform: uppercase; color: #64748b;">
+              <th style="padding: 8px 14px;">Concepto</th>
+              <th style="padding: 8px 14px; text-align: center;">Cant.</th>
+              <th style="padding: 8px 14px; text-align: right;">Precio</th>
+              <th style="padding: 8px 14px; text-align: right;">Importe</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${linesRows}
+          </tbody>
+        </table>
+        
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 14px; text-align: right;">
+          <p style="margin: 0 0 4px 0; font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 700;">Total Neto Propuesto:</p>
+          <p style="margin: 0; font-size: 26px; font-weight: 900; color: #7c3aed;">
+            $${order.total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} <span style="font-size: 13px; font-weight: 700; color: #64748b;">${orderCurrency}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Botón de Firma y Vista Previa -->
+      <div style="text-align: center; margin: 32px 0 20px 0;">
+        <a href="${publicUrl}" class="btn-cta" target="_blank">
+          ✍️ Ver Cotización Interactiva y Firmar en Línea
+        </a>
+        <p style="margin: 10px 0 0 0; font-size: 11px; color: #94a3b8;">
+          Haga clic en el botón para revisar la propuesta, seleccionar opciones adicionales o plasmar su firma digital.
+        </p>
+      </div>
+
+      ${signatureHtml}
+    </div>
+    <div class="footer">
+      Este es un correo seguro emitido por la plataforma SONIC BI. Todos los derechos reservados.
+    </div>
+  </div>
+</body>
+</html>
+    `;
+}
+
 function openSendEmailModal() {
     if (!currentSalesOrder) return;
     
     const clientObj = clientsList.find(c => c.name.toLowerCase().trim() === currentSalesOrder.client.toLowerCase().trim());
     const toEmail = clientObj ? (clientObj.email || "") : "";
     
-    document.getElementById("email-send-to").value = toEmail;
-    document.getElementById("email-send-subject").value = `Cotización ${currentSalesOrder.id} - SONIC BI`;
+    const toInput = document.getElementById("email-send-to");
+    if (toInput) toInput.value = toEmail;
     
-    let linesText = "";
-    (currentSalesOrder.lines || []).forEach(line => {
-        linesText += `- ${line.product} (Cant: ${line.quantity}, Precio: $${line.price.toLocaleString('en-US', {minimumFractionDigits:2})} ${currentSalesOrder.currency})\n`;
-    });
-    
-    const bodyText = `Estimado Cliente,
-
-Adjuntamos la cotización correspondiente al folio ${currentSalesOrder.id}.
-
-Detalles de la cotización:
-${linesText}
-Total Neto: $${currentSalesOrder.total.toLocaleString('en-US', {minimumFractionDigits:2})} ${currentSalesOrder.currency}
-
-Quedamos a su entera disposición para cualquier aclaración.
-
-Atentamente,
-El Equipo de Ventas
-SONIC BI`;
-    
-    document.getElementById("email-send-body").value = bodyText;
+    setEmailSubjectPreset('Propuesta');
+    insertQuoteSnippetIntoEmail();
     
     const modal = document.getElementById("modal-send-email");
     if (modal) modal.classList.remove("hidden");
@@ -9660,14 +9925,22 @@ window.closeSendEmailModal = closeSendEmailModal;
 async function sendOrderEmail() {
     if (!currentSalesOrder) return;
     
-    const to = document.getElementById("email-send-to").value.trim();
-    const subject = document.getElementById("email-send-subject").value.trim();
-    const body = document.getElementById("email-send-body").value.trim();
+    const to = (document.getElementById("email-send-to")?.value || "").trim();
+    const cc = (document.getElementById("email-send-cc")?.value || "").trim();
+    const subject = (document.getElementById("email-send-subject")?.value || "").trim();
+    const bodyEl = document.getElementById("email-send-body");
+    const introHtml = bodyEl ? bodyEl.innerHTML : "";
+    const introText = bodyEl ? bodyEl.innerText : "";
     
-    if (!to || !subject || !body) {
-        alert("Por favor complete todos los campos obligatorios.");
+    const requestReceipt = !!(document.getElementById("email-opt-receipt")?.checked);
+    const includeSignature = !!(document.getElementById("email-opt-signature")?.checked);
+    
+    if (!to || !subject || !introText.trim()) {
+        alert("Por favor complete todos los campos obligatorios (destinatario, asunto y mensaje).");
         return;
     }
+    
+    const fullHtml = generateQuoteEmailHtml(currentSalesOrder, introHtml, includeSignature);
     
     const submitBtn = document.getElementById("email-send-submit-btn");
     const originalText = submitBtn ? submitBtn.innerHTML : "";
@@ -9688,8 +9961,11 @@ async function sendOrderEmail() {
             body: JSON.stringify({
                 orderId: currentSalesOrder.id,
                 to,
+                cc,
                 subject,
-                body
+                body: introText,
+                htmlContent: fullHtml,
+                requestReceipt
             })
         });
         
@@ -9707,7 +9983,7 @@ async function sendOrderEmail() {
             
             renderSalesTable();
             closeSendEmailModal();
-            showSalesNotification("Correo electrónico enviado con éxito y estado actualizado a Enviado.", "success");
+            showSalesNotification("Correo profesional enviado con éxito al cliente con botón de firma digital.", "success");
         } else {
             alert("Error al enviar el correo: " + (data.error || "Intente nuevamente."));
         }

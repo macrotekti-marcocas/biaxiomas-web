@@ -1,14 +1,15 @@
 # Ignorar carpetas de desarrollo pesado y bases de datos locales
 **/node_modules/
 **/.venv/
-**/db/
+**/bin/
+**/scratch/
 **/*.db
 **/*.sqlite
 **/*.log
+**/.env
 
-# Ignorar las carpetas de desarrollo local (Dev) y pruebas temporales (Demo)
+# Ignorar pruebas temporales
 /Factura_BI/Dev/
-/Manager_BI/Dev/
 /Demo/
 
 # Ignorar archivos del sistema
