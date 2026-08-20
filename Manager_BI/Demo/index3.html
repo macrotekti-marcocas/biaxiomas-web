@@ -272,6 +272,10 @@
                         <i data-lucide="contact" class="w-3.5 h-3.5"></i>
                         <span>Clientes</span>
                     </a>
+                    <a href="#" onclick="switchTab('products')" id="btn-products" class="nav-link-sub hidden items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-500 hover:bg-slate-100 hover:text-brand-500 transition-all">
+                        <i data-lucide="package" class="w-3.5 h-3.5"></i>
+                        <span>Productos</span>
+                    </a>
                 </div>
 
                 <!-- Botón de Comunicaciones (Omnicanal) -->
@@ -1352,7 +1356,7 @@
                                     <th class="px-6 py-3 font-semibold">Fecha de Creación</th>
                                     <th class="px-6 py-3 font-semibold">Cliente</th>
                                     <th class="px-6 py-3 font-semibold">Vendedor</th>
-                                    <th class="px-6 py-3 font-semibold">Empresa</th>
+                                    <th class="px-6 py-3 font-semibold">Contacto</th>
                                     <th class="px-6 py-3 font-semibold text-right">Total</th>
                                     <th class="px-6 py-3 font-semibold text-center">Estado</th>
                                     <th class="px-6 py-3 font-semibold text-right">Acciones</th>
@@ -1406,6 +1410,43 @@
                 </div>
             </section>
 
+            <!-- VIEW: PRODUCTOS (CATÁLOGO) -->
+            <section id="view-products" class="space-y-6 hidden">
+                <!-- Barra de acciones: Buscar y Registrar -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+                    <div class="flex flex-1 items-center gap-3 w-full sm:w-auto">
+                        <div class="relative flex-1 max-w-md">
+                            <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                            <input type="text" id="products-search-input" onkeyup="filterProductsTable()" placeholder="Buscar producto por código o descripción..." class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition-all">
+                        </div>
+                    </div>
+                    <button onclick="openProductModal()" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-500 hover:bg-brand-600 text-white text-xs px-4 py-2.5 rounded-lg font-semibold shadow-md transition-all shrink-0">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Registrar Producto</span>
+                    </button>
+                </div>
+
+                <!-- Tabla de productos -->
+                <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3 font-semibold">Código / Ref</th>
+                                    <th class="px-6 py-3 font-semibold">Descripción del Producto</th>
+                                    <th class="px-6 py-3 font-semibold">Precio Unitario</th>
+                                    <th class="px-6 py-3 font-semibold">Impuesto (IVA)</th>
+                                    <th class="px-6 py-3 font-semibold text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="products-table-body" class="divide-y divide-slate-100">
+                                <!-- Dinámico -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
             <!-- VIEW: DETALLE / CREACIÓN DE COTIZACIÓN -->
             <section id="view-sales-detail" class="space-y-6 hidden">
                 <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
@@ -1418,13 +1459,30 @@
                                 <i data-lucide="check" class="w-4 h-4"></i>
                                 <span>Confirmar Pedido</span>
                             </button>
-                            <button onclick="simulateSendByEmail()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                            <button onclick="copySharedQuoteLink()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5" title="Copiar enlace para el cliente">
+                                <i data-lucide="link" class="w-4 h-4 text-brand-500"></i>
+                                <span>Copiar Enlace</span>
+                            </button>
+                            <button onclick="openSharedQuoteTab()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5" title="Ver cotización tal como la ve el cliente">
+                                <i data-lucide="external-link" class="w-4 h-4 text-brand-500"></i>
+                                <span>Vista Cliente</span>
+                            </button>
+                            <button onclick="openQuoteNegotiationModal()" id="btn-vendor-chat" class="relative border border-brand-200 bg-brand-50 hover:bg-brand-100 text-brand-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                                <i data-lucide="messages-square" class="w-4 h-4 text-brand-600"></i>
+                                <span>Negociación & Chat</span>
+                                <span id="vendor-chat-dot" class="hidden w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                            </button>
+                            <button onclick="openSonicAiAdvisor()" class="border border-amber-200 bg-amber-50/80 hover:bg-amber-100 text-amber-800 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                                <i data-lucide="sparkles" class="w-4 h-4 text-amber-500"></i>
+                                <span>Asistente SONIC AI</span>
+                            </button>
+                            <button onclick="openSendEmailModal()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
                                 <i data-lucide="mail" class="w-4 h-4 text-slate-400"></i>
                                 <span>Enviar por Correo</span>
                             </button>
-                            <button onclick="simulateProformaInvoice()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
+                            <button onclick="printSalesOrder()" class="border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
                                 <i data-lucide="printer" class="w-4 h-4 text-slate-400"></i>
-                                <span>Imprimir Proforma</span>
+                                <span>Imprimir Cotización</span>
                             </button>
                             <button onclick="cancelSalesOrder()" id="sales-cancel-btn" class="border border-slate-200 bg-white hover:bg-red-50 hover:text-red-600 hover:border-red-200 text-slate-600 text-xs px-3.5 py-2 rounded-lg font-semibold shadow-sm transition-all flex items-center gap-1.5">
                                 <i data-lucide="ban" class="w-4 h-4 text-slate-400"></i>
@@ -1432,19 +1490,12 @@
                             </button>
                         </div>
 
-                        <!-- Estado y entregas -->
-                        <div class="flex items-center gap-4 justify-between lg:justify-end">
-                            <!-- Badge de Entrega -->
-                            <div class="bg-amber-50 border border-amber-200 text-amber-700 text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 shadow-sm font-semibold">
-                                <i data-lucide="truck" class="w-4 h-4 text-amber-500"></i>
-                                <span>Entrega: <strong id="sales-delivery-count">1</strong></span>
-                            </div>
-                            
-                            <!-- Pipeline -->
-                            <div class="flex items-center text-xs font-semibold text-slate-400 border border-slate-200 rounded-lg overflow-hidden bg-white shadow-sm">
-                                <span id="pipeline-step-draft" class="px-3 py-1.5 bg-slate-100 text-slate-700 border-r border-slate-200">Presupuesto</span>
-                                <span id="pipeline-step-sent" class="px-3 py-1.5 border-r border-slate-200">Enviado</span>
-                                <span id="pipeline-step-sale" class="px-3 py-1.5">Pedido de venta</span>
+                        <!-- Estado / Pipeline -->
+                        <div class="flex items-center justify-end shrink-0">
+                            <div class="inline-flex items-center text-xs font-semibold text-slate-400 border border-slate-200 rounded-lg overflow-hidden bg-white shadow-xs">
+                                <span id="pipeline-step-draft" class="px-3.5 py-1.5 whitespace-nowrap bg-slate-100 text-slate-700 border-r border-slate-200">Presupuesto</span>
+                                <span id="pipeline-step-sent" class="px-3.5 py-1.5 whitespace-nowrap border-r border-slate-200">Enviado</span>
+                                <span id="pipeline-step-sale" class="px-3.5 py-1.5 whitespace-nowrap">Pedido de venta</span>
                             </div>
                         </div>
                     </div>
@@ -1463,6 +1514,10 @@
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Cliente:</label>
                                     <input type="text" id="sales-client-select" list="sales-clients-datalist" oninput="autoFillSalesAddresses()" placeholder="Escribe o selecciona un cliente..." class="w-full p-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
                                     <datalist id="sales-clients-datalist"></datalist>
+                                </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Contacto:</label>
+                                    <input type="text" id="sales-client-contact" placeholder="Nombre de la persona de contacto" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none bg-slate-50">
                                 </div>
                                 <div class="flex flex-col gap-1.5">
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Dirección de Facturación:</label>
@@ -1493,6 +1548,17 @@
                                     <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Referencia del Cliente:</label>
                                     <input type="text" id="sales-client-ref" placeholder="Ej: PEDIDO-001, ORDEN-992" class="w-full p-2.5 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none">
                                 </div>
+                                <div class="flex flex-col gap-1.5">
+                                    <label class="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Moneda de la Cotización:</label>
+                                    <div class="flex items-center gap-3 mt-1.5">
+                                        <span class="text-xs font-bold text-slate-500">USD</span>
+                                        <label class="relative inline-flex items-center cursor-pointer select-none">
+                                            <input type="checkbox" id="sales-currency-toggle" onchange="calculateSalesTotals()" class="sr-only peer" checked>
+                                            <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-brand-500"></div>
+                                        </label>
+                                        <span class="text-xs font-bold text-slate-500 text-brand-500">MXN</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -1510,6 +1576,7 @@
                                             <th class="px-4 py-2.5 font-semibold text-center w-[120px]">Cantidad</th>
                                             <th class="px-4 py-2.5 font-semibold text-right w-[150px]">Precio Unitario</th>
                                             <th class="px-4 py-2.5 font-semibold text-center w-[120px]">Impuestos</th>
+                                            <th class="px-4 py-2.5 font-semibold text-center w-[90px]">Opcional</th>
                                             <th class="px-4 py-2.5 font-semibold text-right w-[160px]">Importe</th>
                                             <th class="px-4 py-2.5 font-semibold text-center w-[60px]">Eliminar</th>
                                         </tr>
@@ -1550,7 +1617,7 @@
                         <button onclick="cancelSalesDetailView()" class="border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 text-xs px-4 py-2 rounded-lg font-bold transition-all shadow-sm">
                             Cancelar
                         </button>
-                        <button onclick="saveSalesOrder()" class="bg-brand-500 hover:bg-brand-600 text-white text-xs px-5 py-2.5 rounded-lg font-bold transition-all shadow-md flex items-center gap-1.5">
+                        <button id="sales-save-btn" onclick="saveSalesOrder()" class="bg-brand-500 hover:bg-brand-600 text-white text-xs px-5 py-2.5 rounded-lg font-bold transition-all shadow-md flex items-center gap-1.5">
                             <i data-lucide="save" class="w-4 h-4"></i>
                             <span>Guardar Cotización</span>
                         </button>
@@ -1566,11 +1633,15 @@
                     <div class="w-full md:w-64 bg-slate-50 border-b md:border-b-0 md:border-r border-slate-200 p-4 shrink-0">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 px-2">Ajustes Generales</h3>
                         <nav class="space-y-1">
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors">
+                            <a href="#" onclick="switchConfigSubTab('roles')" id="subbtn-config-roles" class="flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors">
                                 <i data-lucide="shield" class="w-4 h-4"></i>
                                 Permisos y Roles
                             </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors opacity-50 cursor-not-allowed" title="Próximamente">
+                            <a href="#" onclick="switchConfigSubTab('email')" id="subbtn-config-email" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors">
+                                <i data-lucide="mail" class="w-4 h-4"></i>
+                                Configuración de Correo
+                            </a>
+                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-655 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors opacity-50 cursor-not-allowed" title="Próximamente">
                                 <i data-lucide="building" class="w-4 h-4"></i>
                                 Empresa
                             </a>
@@ -1579,7 +1650,8 @@
 
                     <!-- Área de Contenido -->
                     <div class="flex-1 p-6 lg:p-8 overflow-y-auto">
-                        <div class="max-w-3xl">
+                        <!-- Subview: Permisos y Roles -->
+                        <div id="config-subview-roles" class="max-w-3xl">
                             <h2 class="text-lg font-bold text-slate-800 mb-1">Permisos y Roles</h2>
                             <p class="text-sm text-slate-500 mb-8">Configura las secciones visibles para cada rol en la plataforma.</p>
 
@@ -1591,6 +1663,50 @@
                             <div class="mt-10 pt-6 border-t border-slate-200 flex justify-end">
                                 <button onclick="saveConfigRoles()" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition-colors flex items-center gap-2">
                                     <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Subview: Configuración de Correo -->
+                        <div id="config-subview-email" class="max-w-3xl hidden">
+                            <h2 class="text-lg font-bold text-slate-800 mb-1">Configuración de Correo</h2>
+                            <p class="text-sm text-slate-500 mb-6">Configura el correo electrónico institucional de donde se enviarán las cotizaciones a los clientes.</p>
+
+                            <div class="space-y-4 max-w-lg text-xs">
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Correo Remitente *:</label>
+                                    <input type="email" id="config-email-sender" placeholder="ejemplo@biaxiomas.com" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Servidor SMTP *:</label>
+                                    <input type="text" id="config-email-smtp" placeholder="smtp.gmail.com" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Puerto SMTP *:</label>
+                                        <input type="number" id="config-email-port" placeholder="465" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Seguridad:</label>
+                                        <select id="config-email-security" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                            <option value="SSL/TLS">SSL/TLS</option>
+                                            <option value="STARTTLS">STARTTLS</option>
+                                            <option value="Ninguno">Ninguno</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Contraseña del Correo / App Password *:</label>
+                                    <input type="password" id="config-email-password" placeholder="••••••••••••••••" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                </div>
+                            </div>
+
+                            <div class="mt-10 pt-6 border-t border-slate-200 flex justify-end gap-3">
+                                <button onclick="testEmailConnection()" class="px-5 py-2.5 text-sm font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-300 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i> Probar Conexión
+                                </button>
+                                <button onclick="saveConfigEmail()" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Configuración
                                 </button>
                             </div>
                         </div>
@@ -2521,7 +2637,293 @@
         </div>
     </div>
 
+    <!-- MODAL: NEGOCIACIÓN Y CHAT EN VIVO CON EL CLIENTE -->
+    <div id="modal-quote-negotiation" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden transform transition-all border border-slate-100 flex flex-col">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center">
+                        <i data-lucide="messages-square" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                            <span>Panel de Negociación y Chat en Vivo</span>
+                            <span id="negotiation-modal-folio" class="text-xs font-mono px-2 py-0.5 rounded bg-slate-200 text-slate-700">S00164</span>
+                        </h3>
+                        <p class="text-[11px] text-slate-400">Conversación directa con el cliente y acciones comerciales en tiempo real</p>
+                    </div>
+                </div>
+                <button onclick="closeQuoteNegotiationModal()" class="p-1.5 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <!-- Body: 2 Columns -->
+            <div class="flex-1 overflow-hidden grid grid-cols-1 md:grid-cols-12 divide-y md:divide-y-0 md:divide-x divide-slate-100 text-xs">
+                
+                <!-- Columna Izquierda: Chat en Vivo (8 cols) -->
+                <div class="md:col-span-7 flex flex-col h-[480px]">
+                    <div class="p-3 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between text-[11px]">
+                        <span class="font-bold text-slate-600 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Canal Abierto con el Cliente
+                        </span>
+                        <button onclick="askAiForChatReply()" class="text-brand-600 hover:text-brand-700 font-bold flex items-center gap-1 bg-brand-50 hover:bg-brand-100 px-2 py-1 rounded transition-colors" title="Generar respuesta inteligente con IA">
+                            <i data-lucide="sparkles" class="w-3 h-3 text-amber-500"></i> Sugerir Respuesta con IA
+                        </button>
+                    </div>
+
+                    <!-- Mensajes del Chat -->
+                    <div id="vendor-chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/30">
+                        <!-- Inyectado dinámicamente -->
+                    </div>
+
+                    <!-- Input del Chat -->
+                    <form onsubmit="sendVendorChatMessage(event)" class="p-3 bg-white border-t border-slate-100 flex gap-2 shrink-0">
+                        <input type="text" id="vendor-chat-input" placeholder="Escriba un mensaje para el cliente..." class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-brand-500 bg-slate-50">
+                        <button type="submit" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold shadow-xs transition-all flex items-center gap-1">
+                            <i data-lucide="send" class="w-3.5 h-3.5"></i>
+                            <span>Enviar</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Columna Derecha: Acciones Comerciales e Historial de Actividad (5 cols) -->
+                <div class="md:col-span-5 p-5 flex flex-col justify-between h-[480px] overflow-y-auto space-y-5 bg-white">
+                    <!-- Acciones Comerciales -->
+                    <div class="space-y-3">
+                        <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="tag" class="w-3.5 h-3.5 text-brand-500"></i> Acciones Comerciales en Vivo
+                        </h4>
+                        
+                        <div class="bg-brand-50/60 border border-brand-100 rounded-xl p-3.5 space-y-2.5">
+                            <p class="text-[11px] text-slate-600">Aplica un descuento negociado que se reflejará instantáneamente en la pantalla del cliente:</p>
+                            
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="setFastDiscount(5)" type="button" class="px-2.5 py-1 bg-white border border-brand-200 hover:bg-brand-100 text-brand-700 font-bold rounded text-xs transition-all shadow-xs">-5%</button>
+                                <button onclick="setFastDiscount(10)" type="button" class="px-2.5 py-1 bg-white border border-brand-200 hover:bg-brand-100 text-brand-700 font-bold rounded text-xs transition-all shadow-xs">-10%</button>
+                                <button onclick="setFastDiscount(15)" type="button" class="px-2.5 py-1 bg-white border border-brand-200 hover:bg-brand-100 text-brand-700 font-bold rounded text-xs transition-all shadow-xs">-15%</button>
+                            </div>
+
+                            <div class="flex items-center gap-2 pt-1">
+                                <div class="relative flex-1">
+                                    <input type="number" id="vendor-discount-input" min="0" max="100" placeholder="0" class="w-full pl-3 pr-6 py-1.5 border border-slate-200 rounded-lg text-xs font-bold bg-white focus:outline-none focus:ring-1 focus:ring-brand-500">
+                                    <span class="absolute right-2 top-2 text-[10px] font-bold text-slate-400">%</span>
+                                </div>
+                                <button onclick="applyVendorNegotiatedDiscount()" type="button" class="px-3 py-1.5 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-lg text-xs shadow-xs transition-all">
+                                    Aplicar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline de Interacciones -->
+                    <div class="space-y-2.5 flex-1">
+                        <h4 class="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="activity" class="w-3.5 h-3.5 text-slate-400"></i> Historial de Actividad del Cliente
+                        </h4>
+                        
+                        <div id="vendor-interactions-container" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            <!-- Inyectado dinámicamente -->
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
+                <button onclick="closeQuoteNegotiationModal()" class="px-4 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-100 text-xs rounded-lg font-bold shadow-xs">
+                    Cerrar Panel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ASISTENTE SONIC AI -->
+    <div id="modal-sonic-ai-advisor" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all border border-slate-100 flex flex-col">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-gradient-to-r from-amber-50 to-orange-50 border-b border-amber-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-xs">
+                        <i data-lucide="sparkles" class="w-4 h-4"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-extrabold text-slate-900 text-sm">Asistente Comercial SONIC AI</h3>
+                        <p class="text-[11px] text-amber-800">Optimización predictiva de precios y descripciones</p>
+                    </div>
+                </div>
+                <button onclick="closeSonicAiAdvisor()" class="p-1 hover:bg-amber-100/50 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+
+            <!-- Body -->
+            <div class="p-6 space-y-6 text-xs overflow-y-auto max-h-[75vh]">
+                
+                <!-- Sección 1: Sugerencia de Precios -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-bold text-slate-800 flex items-center gap-1.5">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-500"></i> Sugerencia Predictiva de Precios
+                        </h4>
+                        <button onclick="runAiPriceAdvisor()" class="text-[11px] font-bold text-brand-600 hover:underline">Calcular Ahora</button>
+                    </div>
+
+                    <div id="ai-pricing-result" class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Nivel de Cliente Detectado:</span>
+                            <span id="ai-client-tier" class="font-bold text-slate-800 px-2 py-0.5 bg-white border border-slate-200 rounded">General</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-slate-500">Descuento Recomendado:</span>
+                            <span id="ai-suggested-discount" class="font-bold text-brand-600 text-sm">5%</span>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-[11px] font-semibold text-slate-500 mb-1">
+                                <span>Probabilidad de Cierre Estimada:</span>
+                                <span id="ai-win-prob" class="text-emerald-600 font-bold">85%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                <div id="ai-win-prob-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <p id="ai-pricing-reason" class="text-[11px] text-slate-500 italic bg-white p-2.5 rounded-lg border border-slate-100">
+                            Haga clic en 'Calcular Ahora' para analizar el historial del cliente y obtener la recomendación óptima.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Sección 2: Generador de Descripciones Comerciales -->
+                <div class="space-y-3 border-t border-slate-100 pt-4">
+                    <h4 class="font-bold text-slate-800 flex items-center gap-1.5">
+                        <i data-lucide="file-text" class="w-4 h-4 text-brand-500"></i> Redactor de Descripciones Comerciales
+                    </h4>
+                    
+                    <div class="flex gap-2">
+                        <input type="text" id="ai-concept-name" placeholder="Ej. Instalación de Enlace de Fibra B2B" class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        <button onclick="generateAiDescription()" id="btn-ai-gen-desc" class="px-3.5 py-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg font-bold shadow-xs transition-all">
+                            Generar
+                        </button>
+                    </div>
+
+                    <div id="ai-desc-output-container" class="hidden space-y-2">
+                        <textarea id="ai-desc-output" rows="3" class="w-full p-2.5 border border-slate-200 rounded-lg text-xs bg-slate-50 font-normal leading-relaxed focus:outline-none" readonly></textarea>
+                        <button onclick="copyAiDescriptionToClipboard()" class="text-xs font-bold text-brand-600 hover:underline flex items-center gap-1">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> Copiar al Portapapeles
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex justify-end shrink-0">
+                <button onclick="closeSonicAiAdvisor()" class="px-4 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-100 text-xs rounded-lg font-bold shadow-xs">
+                    Entendido
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: ENVIAR COTIZACIÓN POR CORREO -->
+    <div id="modal-send-email" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden transform transition-all border border-slate-100 flex flex-col">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="mail" class="w-5 h-5 text-brand-500"></i>
+                    <h3 class="font-bold text-slate-800 text-sm">Enviar Cotización por Correo</h3>
+                </div>
+                <button onclick="closeSendEmailModal()" class="p-1 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <!-- Body -->
+            <div class="p-6 space-y-4 text-xs">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Para (Email Cliente) *:</label>
+                    <input type="email" id="email-send-to" placeholder="cliente@ejemplo.com" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Asunto *:</label>
+                    <input type="text" id="email-send-subject" placeholder="Asunto del correo" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Mensaje / Cuerpo *:</label>
+                    <textarea id="email-send-body" rows="6" placeholder="Escriba su mensaje aquí..." class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm"></textarea>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                <button onclick="closeSendEmailModal()" class="px-4 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 text-xs rounded-lg font-bold transition-all shadow-sm">
+                    Cancelar
+                </button>
+                <button onclick="sendOrderEmail()" id="email-send-submit-btn" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs rounded-lg font-bold shadow-sm transition-all flex items-center gap-1.5">
+                    <i data-lucide="send" class="w-3.5 h-3.5"></i> Enviar Correo
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDITOR DE PRODUCTOS -->
+    <div id="modal-product-editor" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[150] flex items-center justify-center hidden">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-slate-100 flex flex-col">
+            <!-- Header -->
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="package" class="w-5 h-5 text-brand-500"></i>
+                    <h3 class="font-bold text-slate-800 text-sm" id="product-modal-title">Registrar Producto</h3>
+                </div>
+                <button onclick="closeProductModal()" class="p-1 hover:bg-slate-200 rounded-lg text-slate-400 hover:text-slate-600 transition-colors">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            
+            <!-- Body -->
+            <div class="p-6 space-y-4 text-xs overflow-y-auto max-h-[70vh]">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Código / Referencia *:</label>
+                    <input type="text" id="product-modal-id" placeholder="ej. REFPR001" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase block">Descripción del Producto *:</label>
+                    <input type="text" id="product-modal-name" placeholder="Nombre completo del producto" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Precio Unitario *:</label>
+                        <input type="number" id="product-modal-price" placeholder="0.00" step="0.01" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Impuesto (IVA):</label>
+                        <select id="product-modal-tax" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                            <option value="21%">21%</option>
+                            <option value="16%" selected>16%</option>
+                            <option value="8%">8%</option>
+                            <option value="0%">0%</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                <button onclick="closeProductModal()" class="px-4 py-2 border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 text-xs rounded-lg font-bold transition-all shadow-sm">
+                    Cancelar
+                </button>
+                <button onclick="saveProduct()" id="product-modal-submit-btn" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-white text-xs rounded-lg font-bold shadow-sm transition-all">
+                    Registrar Producto
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Script de lógica de la demo -->
     <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="app3.js?v=3.4"></script></body>
+    <script src="app3.js?v=3.4"></script>
+</body>
 </html>

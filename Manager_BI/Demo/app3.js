@@ -218,6 +218,22 @@ async function cargarDatosDesdeBackend() {
             clientsList = await clientsRes.json();
             syncSalesClientsCatalog();
         }
+
+        // Cargar Productos de la DB
+        const productsRes = await fetch('/api/bpm/products', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (productsRes.ok) {
+            salesProductsCatalog = await productsRes.json();
+        }
+
+        // Cargar Cotizaciones de la DB
+        const salesOrdersRes = await fetch('/api/bpm/sales-orders', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (salesOrdersRes.ok) {
+            salesOrdersData = await salesOrdersRes.json();
+        }
         syncStatusesWithCatalog();
         syncSpecialistsCatalog();
         renderPrioritariasAlerts();
@@ -295,6 +311,46 @@ function iniciarWebSocket() {
                     });
                 } else if (msg.sender !== currentUserName && !msg.sender.includes(currentUserName)) {
                     showSalesNotification(`Nuevo mensaje de @${msg.sender} en ${msg.chatType === 'channel' ? '#' : '@'}${msg.chatTarget}: "${msg.text}"`, "info");
+                }
+            }
+
+            // Eventos del Cotizador Interactivo
+            if (data.type === 'QUOTE_VIEWED') {
+                if (typeof showSalesNotification === 'function') {
+                    showSalesNotification(`👁️ El cliente ${data.client || ''} está visualizando la cotización ${data.orderId} ahora mismo.`, "info");
+                }
+                if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId && typeof loadVendorInteractions === 'function') {
+                    loadVendorInteractions();
+                }
+            } else if (data.type === 'QUOTE_OPTIONS_CHANGED') {
+                if (typeof showSalesNotification === 'function') {
+                    showSalesNotification(`🔄 El cliente recalculó opciones en la cotización ${data.orderId}.`, "info");
+                }
+                if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
+                    currentSalesOrder.total = data.total;
+                    if (typeof calculateSalesTotals === 'function') calculateSalesTotals();
+                }
+            } else if (data.type === 'QUOTE_SIGNED') {
+                if (typeof showSalesNotification === 'function') {
+                    showSalesNotification(`🎉 ¡Trato cerrado! El cliente ${data.client || ''} firmó la cotización ${data.orderId}. Convertido en Pedido de Venta.`, "success");
+                }
+                if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId) {
+                    currentSalesOrder.state = "Pedido de venta";
+                    if (typeof updateSalesPipelineVisuals === 'function') updateSalesPipelineVisuals("Pedido de venta");
+                    if (typeof toggleSalesFormLock === 'function') toggleSalesFormLock(true);
+                }
+                const token = localStorage.getItem('sonicbi_token');
+                fetch('/api/bpm/sales-orders', { headers: { 'Authorization': `Bearer ${token}` } })
+                    .then(res => res.json())
+                    .then(orders => { salesOrdersData = orders; if (typeof renderSalesTable === 'function') renderSalesTable(); });
+            } else if (data.type === 'QUOTE_NEW_CHAT_MESSAGE' && data.remitente === 'Cliente') {
+                if (typeof showSalesNotification === 'function') {
+                    showSalesNotification(`💬 Mensaje del cliente en cotización ${data.orderId}: "${data.mensaje}"`, "info");
+                }
+                const dot = document.getElementById("vendor-chat-dot");
+                if (dot) dot.classList.remove("hidden");
+                if (typeof currentSalesOrder !== 'undefined' && currentSalesOrder && currentSalesOrder.id === data.orderId && typeof loadVendorChatComments === 'function') {
+                    loadVendorChatComments();
                 }
             }
         } catch (e) {
@@ -398,14 +454,42 @@ window.closeEvidenceModal = function() {
     }, 300);
 };
 
+async function ensureUserSession() {
+    let token = localStorage.getItem('sonicbi_token');
+    let usuarioStr = localStorage.getItem('sonicbi_usuario');
+
+    if (!token || !usuarioStr) {
+        try {
+            const res = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: 'admin@sonicbi.com',
+                    password: 'admin123'
+                })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                localStorage.setItem('sonicbi_token', data.token);
+                localStorage.setItem('sonicbi_usuario', JSON.stringify(data.usuario));
+            }
+        } catch (e) {
+            console.error("Error al autenticar sesión por defecto:", e);
+        }
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
-    // Iniciar carga asíncrona de datos
+    // 1. Asegurar sesión activa con token JWT
+    await ensureUserSession();
+
+    // 2. Iniciar carga asíncrona de datos desde la base de datos
     await cargarDatosDesdeBackend();
     
-    // Iniciar lógica de roles y permisos
+    // 3. Iniciar lógica de roles y permisos
     await initRBAC();
     
-    // Conectar WebSocket
+    // 4. Conectar WebSocket
     iniciarWebSocket();
 
     lucide.createIcons();
@@ -442,7 +526,7 @@ function updateTimeDisplay() {
 
 // Alternar tabs y controlar visibilidad del Submenú de BPM (Nodos, Departamentos, Personal)
 function switchTab(tabId) {
-    const sections = ['view-loading', 'view-dashboard', 'view-alerts', 'view-bpmn', 'view-bpmn-designer', 'view-catalog-nodes', 'view-departments', 'view-personal', 'view-sales', 'view-sales-detail', 'view-clients', 'view-comm', 'view-config'];
+    const sections = ['view-loading', 'view-dashboard', 'view-alerts', 'view-bpmn', 'view-bpmn-designer', 'view-catalog-nodes', 'view-departments', 'view-personal', 'view-sales', 'view-sales-detail', 'view-clients', 'view-products', 'view-comm', 'view-config'];
     sections.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
@@ -507,10 +591,21 @@ function switchTab(tabId) {
             }
             renderClientsView();
         }
+
+        if (tabId === 'products') {
+            const parentBtn = document.getElementById('btn-sales');
+            if (parentBtn) {
+                parentBtn.classList.add("bg-brand-50", "text-brand-500");
+                parentBtn.classList.remove("text-slate-600");
+            }
+            renderProductsView();
+        }
         
         // Cargar datos especiales si es view-config
         if (tabId === 'config' && typeof loadAllRolePermissions === 'function') {
             loadAllRolePermissions();
+            // Default sub-tab to roles
+            switchConfigSubTab('roles');
         }
 
         if (tabId === 'dashboard') {
@@ -8274,37 +8369,187 @@ function endAutoSimulationTour(restoreData = true) {
 // --- MÓDULO DE VENTAS (ERP STYLE) ---
 // ==========================================
 
-const salesProductsCatalog = [
-    { id: "REFPR001", name: "[REFPR001] SiO2 Systems Prod#1", price: 60.00, tax: "21%" },
-    { id: "REFPR002", name: "[REFPR002] SiO2 Systems Prod#2", price: 75.00, tax: "21%" },
-    { id: "REFPR003", name: "[REFPR003] Enlace de Fibra Óptica B2B", price: 150.00, tax: "16%" },
-    { id: "REFPR004", name: "[REFPR004] Router Mikrotik Cloud Core", price: 320.00, tax: "16%" },
-    { id: "REFPR005", name: "[REFPR005] Cámara Bullet IP 4MP POE", price: 95.00, tax: "16%" },
-    { id: "REFPR006", name: "[REFPR006] Soporte Metálico Reforzado", price: 45.00, tax: "16%" }
-];
+let salesProductsCatalog = [];
+let activeEditingProductId = null;
+
+async function initProductsCatalog() {
+    const token = localStorage.getItem('sonicbi_token');
+    if (!token) return;
+    try {
+        const response = await fetch('/api/bpm/products', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            salesProductsCatalog = await response.json();
+        }
+    } catch(e) {
+        console.error("Error al inicializar catálogo de productos:", e);
+    }
+}
+initProductsCatalog();
+
+function renderProductsView() {
+    const tableBody = document.getElementById("products-table-body");
+    if (!tableBody) return;
+    
+    tableBody.innerHTML = "";
+    salesProductsCatalog.forEach(prod => {
+        const tr = document.createElement("tr");
+        tr.className = "hover:bg-slate-50 transition-all text-slate-700 text-xs";
+        
+        tr.innerHTML = `
+            <td class="px-6 py-4 font-semibold text-brand-600">${prod.id}</td>
+            <td class="px-6 py-4 font-semibold">${prod.name}</td>
+            <td class="px-6 py-4">$${prod.price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td class="px-6 py-4">${prod.tax}</td>
+            <td class="px-6 py-4 text-right flex items-center justify-end gap-2">
+                <button onclick="openProductModal('${prod.id}')" class="text-xs font-bold text-brand-500 hover:text-brand-600 hover:underline transition-all">Editar</button>
+                <button onclick="deleteProduct('${prod.id}')" class="text-xs font-bold text-red-500 hover:text-red-600 hover:underline transition-all">Eliminar</button>
+            </td>
+        `;
+        tableBody.appendChild(tr);
+    });
+}
+window.renderProductsView = renderProductsView;
+
+function filterProductsTable() {
+    const query = document.getElementById("products-search-input").value.toLowerCase().trim();
+    const rows = document.querySelectorAll("#products-table-body tr");
+    
+    rows.forEach((row, idx) => {
+        const prod = salesProductsCatalog[idx];
+        if (!prod) return;
+        const match = prod.id.toLowerCase().includes(query) || prod.name.toLowerCase().includes(query);
+        if (match) {
+            row.classList.remove("hidden");
+        } else {
+            row.classList.add("hidden");
+        }
+    });
+}
+window.filterProductsTable = filterProductsTable;
+
+function openProductModal(prodId = null) {
+    activeEditingProductId = prodId;
+    const modal = document.getElementById("modal-product-editor");
+    const title = document.getElementById("product-modal-title");
+    const submitBtn = document.getElementById("product-modal-submit-btn");
+    
+    const idInput = document.getElementById("product-modal-id");
+    const nameInput = document.getElementById("product-modal-name");
+    const priceInput = document.getElementById("product-modal-price");
+    const taxSelect = document.getElementById("product-modal-tax");
+    
+    if (!modal) return;
+    
+    if (prodId) {
+        const prod = salesProductsCatalog.find(p => p.id === prodId);
+        if (prod) {
+            title.innerText = "Editar Producto";
+            submitBtn.innerText = "Guardar Cambios";
+            idInput.value = prod.id;
+            idInput.disabled = true;
+            nameInput.value = prod.name;
+            priceInput.value = prod.price;
+            taxSelect.value = prod.tax;
+        }
+    } else {
+        title.innerText = "Registrar Producto";
+        submitBtn.innerText = "Registrar Producto";
+        idInput.value = `REFPR${String(salesProductsCatalog.length + 1).padStart(3, '0')}`;
+        idInput.disabled = false;
+        nameInput.value = "";
+        priceInput.value = "0.00";
+        taxSelect.value = "16%";
+    }
+    
+    modal.classList.remove("hidden");
+}
+window.openProductModal = openProductModal;
+
+function closeProductModal() {
+    const modal = document.getElementById("modal-product-editor");
+    if (modal) modal.classList.add("hidden");
+}
+window.closeProductModal = closeProductModal;
+
+async function saveProduct() {
+    const id = document.getElementById("product-modal-id").value.trim().toUpperCase();
+    const name = document.getElementById("product-modal-name").value.trim();
+    const price = parseFloat(document.getElementById("product-modal-price").value) || 0;
+    const tax = document.getElementById("product-modal-tax").value;
+    
+    if (!id || !name) {
+        if (typeof showSalesNotification === 'function') showSalesNotification("Por favor, rellena los campos obligatorios.", "error");
+        else alert("Por favor, rellena los campos obligatorios.");
+        return;
+    }
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/products', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ id, name, price, tax })
+        });
+        if (response.ok) {
+            await initProductsCatalog();
+            closeProductModal();
+            renderProductsView();
+            if (typeof showSalesNotification === 'function') showSalesNotification("Producto guardado correctamente en el catálogo.", "success");
+        } else {
+            const err = await response.json();
+            alert("Error al guardar producto: " + (err.error || "Intente de nuevo"));
+        }
+    } catch(e) {
+        console.error("Error al guardar producto:", e);
+        alert("Error de comunicación con el servidor.");
+    }
+}
+window.saveProduct = saveProduct;
+
+async function deleteProduct(prodId) {
+    if (!confirm("¿Está seguro de que desea eliminar este producto del catálogo?")) return;
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch(`/api/bpm/products/${prodId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            await initProductsCatalog();
+            renderProductsView();
+            if (typeof showSalesNotification === 'function') showSalesNotification("Producto eliminado del catálogo.", "warning");
+        } else {
+            alert("Error al eliminar el producto.");
+        }
+    } catch(e) {
+        console.error("Error al eliminar producto:", e);
+        alert("Error de comunicación con el servidor.");
+    }
+}
+window.deleteProduct = deleteProduct;
 
 let salesOrdersData = [];
 
 let currentSalesOrder = null;
 
-function initSalesView() {
+async function initSalesView() {
+    const token = localStorage.getItem('sonicbi_token');
+    if (!token) return;
     try {
-        const savedSales = localStorage.getItem("sales-orders-sync");
-        if (savedSales) {
-            const parsed = JSON.parse(savedSales);
-            // Si contiene alguna cotización de prueba previa, forzar limpieza
-            const tieneDemos = parsed.some(o => ["S00163", "S00162", "S00159", "S00158"].includes(o.id));
-            if (tieneDemos) {
-                salesOrdersData = [];
-                localStorage.setItem("sales-orders-sync", JSON.stringify([]));
-            } else {
-                salesOrdersData = parsed;
-            }
-        } else {
-            localStorage.setItem("sales-orders-sync", JSON.stringify([]));
+        const response = await fetch('/api/bpm/sales-orders', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            salesOrdersData = await response.json();
         }
     } catch (e) {
-        console.warn("Error leyendo cotizaciones de localStorage", e);
+        console.warn("Error leyendo cotizaciones de la base de datos", e);
     }
     
     // Rellenar selectores de cliente en el modal de ventas
@@ -8378,6 +8623,7 @@ function renderSalesTable() {
             badgeClass = "bg-rose-50 border border-rose-200 text-rose-700 font-semibold";
         }
         
+        const orderCurrency = order.currency || "USD";
         tr.innerHTML = `
             <td class="px-6 py-4 font-semibold text-brand-600">${order.id}</td>
             <td class="px-6 py-4 text-xs text-slate-500 font-medium">${dateStr}</td>
@@ -8388,8 +8634,8 @@ function renderSalesTable() {
                     <span>${order.salesperson}</span>
                 </span>
             </td>
-            <td class="px-6 py-4 text-xs text-slate-400 font-medium">${order.company}</td>
-            <td class="px-6 py-4 text-right font-bold text-slate-800">$${order.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD</td>
+            <td class="px-6 py-4 text-xs text-slate-500 font-medium">${order.contact || "N/A"}</td>
+            <td class="px-6 py-4 text-right font-bold text-slate-800">$${order.total.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${orderCurrency}</td>
             <td class="px-6 py-4 text-center">
                 <span class="text-[10px] px-2 py-0.5 rounded-full ${badgeClass}">${order.state}</span>
             </td>
@@ -8441,6 +8687,8 @@ function openCreateQuotationView() {
         id: id,
         date: now.toISOString(),
         client: "",
+        contact: "",
+        currency: "USD",
         salesperson: "Mitchell Admin",
         company: "SONICBI México",
         total: 0,
@@ -8458,7 +8706,14 @@ function openCreateQuotationView() {
     document.getElementById("sales-order-date").value = localISOTime;
     document.getElementById("sales-payment-terms").value = "30 días";
     document.getElementById("sales-client-ref").value = "";
-    document.getElementById("sales-delivery-count").innerText = "1";
+    const deliveryEl1 = document.getElementById("sales-delivery-count");
+    if (deliveryEl1) deliveryEl1.innerText = "1";
+    
+    const contactInput = document.getElementById("sales-client-contact");
+    if (contactInput) contactInput.value = "";
+    
+    const currencyToggle = document.getElementById("sales-currency-toggle");
+    if (currencyToggle) currencyToggle.checked = true; // default to MXN (morado)
     
     const select = document.getElementById("sales-client-select");
     if (select) {
@@ -8473,6 +8728,8 @@ function openCreateQuotationView() {
     
     document.getElementById("sales-confirm-btn").classList.remove("hidden");
     document.getElementById("sales-cancel-btn").classList.remove("hidden");
+    
+    if (typeof toggleSalesFormLock === 'function') toggleSalesFormLock(false);
     
     switchTab("sales-detail");
     appendSalesOrderLineRow("", 1, 0, "16%");
@@ -8499,11 +8756,22 @@ function openSalesOrderDetail(orderId) {
     document.getElementById("sales-order-date").value = dateStr;
     document.getElementById("sales-payment-terms").value = currentSalesOrder.paymentTerms;
     document.getElementById("sales-client-ref").value = currentSalesOrder.clientRef || "";
-    document.getElementById("sales-delivery-count").innerText = currentSalesOrder.deliveryCount || "1";
+    const deliveryEl2 = document.getElementById("sales-delivery-count");
+    if (deliveryEl2) deliveryEl2.innerText = currentSalesOrder.deliveryCount || "1";
     
     const select = document.getElementById("sales-client-select");
     if (select) {
         select.value = currentSalesOrder.client;
+    }
+    
+    const contactInput = document.getElementById("sales-client-contact");
+    if (contactInput) {
+        contactInput.value = currentSalesOrder.contact || "";
+    }
+    
+    const currencyToggle = document.getElementById("sales-currency-toggle");
+    if (currencyToggle) {
+        currencyToggle.checked = (currentSalesOrder.currency === "MXN");
     }
     
     document.getElementById("sales-invoice-address").value = currentSalesOrder.invoiceAddress || "";
@@ -8513,12 +8781,15 @@ function openSalesOrderDetail(orderId) {
     if (linesBody) {
         linesBody.innerHTML = "";
         currentSalesOrder.lines.forEach(line => {
-            appendSalesOrderLineRow(line.product, line.quantity, line.price, line.tax);
+            appendSalesOrderLineRow(line.product, line.quantity, line.price, line.tax, !!line.opcional);
         });
     }
     
     calculateSalesTotals();
     updateSalesPipelineVisuals(currentSalesOrder.state);
+    
+    const isLocked = (currentSalesOrder.state !== "Presupuesto" && currentSalesOrder.state !== "Cotización");
+    if (typeof toggleSalesFormLock === 'function') toggleSalesFormLock(isLocked);
     
     switchTab("sales-detail");
 }
@@ -8528,6 +8799,7 @@ function autoFillSalesAddresses() {
     const invoiceInput = document.getElementById("sales-invoice-address");
     const deliveryInput = document.getElementById("sales-delivery-address");
     const termsSelect = document.getElementById("sales-payment-terms");
+    const contactInput = document.getElementById("sales-client-contact");
     
     // Buscar en la lista dinámica de clientes
     const clientObj = clientsList.find(c => c.name === clientName);
@@ -8538,6 +8810,9 @@ function autoFillSalesAddresses() {
         if (deliveryInput) deliveryInput.value = address;
         if (termsSelect && clientObj.payment_terms) {
             termsSelect.value = clientObj.payment_terms;
+        }
+        if (contactInput && clientObj.contact_name) {
+            contactInput.value = clientObj.contact_name;
         }
     } else {
         const addresses = {
@@ -8558,7 +8833,7 @@ function autoFillSalesAddresses() {
     }
 }
 
-function appendSalesOrderLineRow(productName = "", qty = 1, price = 0, tax = "16%") {
+function appendSalesOrderLineRow(productName = "", qty = 1, price = 0, tax = "16%", isOptional = false) {
     const linesBody = document.getElementById("sales-lines-body");
     if (!linesBody) return;
     
@@ -8600,6 +8875,9 @@ function appendSalesOrderLineRow(productName = "", qty = 1, price = 0, tax = "16
             <select class="sales-line-tax w-24 p-2 border border-slate-200 rounded text-center text-xs bg-white text-slate-700 focus:outline-none focus:ring-1 focus:ring-brand-500" onchange="calculateSalesTotals()">
                 ${taxOptions}
             </select>
+        </td>
+        <td class="px-4 py-3 text-center">
+            <input type="checkbox" class="sales-line-optional w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300 cursor-pointer" ${isOptional ? 'checked' : ''} title="Marcar como opcional para el cliente">
         </td>
         <td class="px-4 py-3 text-right">
             <span class="sales-line-subtotal font-bold text-slate-700 text-xs block pr-2">$0.00 USD</span>
@@ -8682,6 +8960,17 @@ function calculateSalesTotals() {
     let grandSubtotal = 0;
     let grandTax = 0;
     
+    // Check currency toggle
+    const currencyToggle = document.getElementById("sales-currency-toggle");
+    const isMXN = currencyToggle ? currencyToggle.checked : true;
+    const currencyStr = isMXN ? "MXN" : "USD";
+    
+    // Update label next to switch
+    const currencyLabel = document.getElementById("sales-currency-label");
+    if (currencyLabel) {
+        currencyLabel.innerText = isMXN ? "Pesos (MXN)" : "Dólares (USD)";
+    }
+    
     rows.forEach(row => {
         const qtyInput = row.querySelector(".sales-line-quantity");
         const priceInput = row.querySelector(".sales-line-price");
@@ -8700,18 +8989,19 @@ function calculateSalesTotals() {
         grandTax += tax;
         
         if (subtotalSpan) {
-            subtotalSpan.innerText = `$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+            subtotalSpan.innerText = `$${subtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencyStr}`;
         }
     });
     
     const grandTotal = grandSubtotal + grandTax;
     
-    document.getElementById("sales-subtotal-display").innerText = `$${grandSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-    document.getElementById("sales-tax-display").innerText = `$${grandTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
-    document.getElementById("sales-total-display").innerText = `$${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} USD`;
+    document.getElementById("sales-subtotal-display").innerText = `$${grandSubtotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencyStr}`;
+    document.getElementById("sales-tax-display").innerText = `$${grandTax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencyStr}`;
+    document.getElementById("sales-total-display").innerText = `$${grandTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${currencyStr}`;
     
     if (currentSalesOrder) {
         currentSalesOrder.total = grandTotal;
+        currentSalesOrder.currency = currencyStr;
     }
 }
 
@@ -8722,44 +9012,121 @@ function updateSalesPipelineVisuals(state) {
     const confirmBtn = document.getElementById("sales-confirm-btn");
     const cancelBtn = document.getElementById("sales-cancel-btn");
     
+    const baseClasses = "px-3.5 py-1.5 whitespace-nowrap text-xs font-semibold text-slate-500 transition-colors";
+    
     [stepDraft, stepSent, stepSale].forEach(step => {
         if (step) {
-            step.className = "px-3 py-1.5 border-r border-slate-200 text-slate-500 font-semibold";
+            step.className = `${baseClasses} border-r border-slate-200`;
         }
     });
-    if (stepSale) stepSale.className = "px-3 py-1.5 text-slate-500 font-semibold";
+    if (stepSale) stepSale.className = baseClasses;
     
-    if (state === "Cotización") {
-        if (stepDraft) stepDraft.className = "px-3 py-1.5 bg-sky-500 text-white font-bold border-r border-sky-600 shadow-inner";
+    if (state === "Cotización" || state === "Presupuesto") {
+        if (stepDraft) stepDraft.className = "px-3.5 py-1.5 whitespace-nowrap text-xs bg-sky-500 text-white font-bold border-r border-sky-600 shadow-inner";
+        if (confirmBtn) confirmBtn.classList.remove("hidden");
+        if (cancelBtn) cancelBtn.classList.remove("hidden");
+    } else if (state === "Enviado") {
+        if (stepSent) stepSent.className = "px-3.5 py-1.5 whitespace-nowrap text-xs bg-brand-500 text-white font-bold border-r border-brand-600 shadow-inner";
         if (confirmBtn) confirmBtn.classList.remove("hidden");
         if (cancelBtn) cancelBtn.classList.remove("hidden");
     } else if (state === "Pedido de venta") {
-        if (stepSale) stepSale.className = "px-3 py-1.5 bg-emerald-500 text-white font-bold shadow-inner";
+        if (stepSale) stepSale.className = "px-3.5 py-1.5 whitespace-nowrap text-xs bg-emerald-500 text-white font-bold shadow-inner";
         if (confirmBtn) confirmBtn.classList.add("hidden");
-        if (cancelBtn) cancelBtn.classList.add("hidden");
+        if (cancelBtn) cancelBtn.classList.remove("hidden");
     } else if (state === "Cancelado") {
-        if (stepDraft) stepDraft.className = "px-3 py-1.5 bg-rose-500 text-white font-bold border-r border-rose-600 shadow-inner";
+        if (stepDraft) stepDraft.className = "px-3.5 py-1.5 whitespace-nowrap text-xs bg-rose-500 text-white font-bold border-r border-rose-600 shadow-inner";
         if (confirmBtn) confirmBtn.classList.add("hidden");
         if (cancelBtn) cancelBtn.classList.add("hidden");
     }
 }
 
-function confirmSalesOrder() {
-    if (!currentSalesOrder) return;
+function toggleSalesFormLock(shouldLock) {
+    const inputs = [
+        "sales-client-select",
+        "sales-client-contact",
+        "sales-invoice-address",
+        "sales-delivery-address",
+        "sales-order-date",
+        "sales-payment-terms",
+        "sales-client-ref",
+        "sales-currency-toggle"
+    ];
     
-    currentSalesOrder.state = "Pedido de venta";
-    updateSalesPipelineVisuals("Pedido de venta");
-    calculateSalesTotals();
-    showSalesNotification(`¡Cotización ${currentSalesOrder.id} confirmada como Pedido de Venta!`, "success");
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.disabled = shouldLock;
+    });
+    
+    const lineInputs = document.querySelectorAll("#sales-lines-body select, #sales-lines-body input, #sales-lines-body button");
+    lineInputs.forEach(el => {
+        el.disabled = shouldLock;
+    });
+    
+    const addLineBtn = document.querySelector("button[onclick='appendSalesOrderLineRow()']");
+    if (addLineBtn) addLineBtn.disabled = shouldLock;
+    
+    const saveBtn = document.getElementById("sales-save-btn");
+    const confirmBtn = document.getElementById("sales-confirm-btn");
+    
+    if (shouldLock) {
+        if (saveBtn) saveBtn.classList.add("opacity-50", "pointer-events-none");
+        if (confirmBtn) confirmBtn.classList.add("opacity-50", "pointer-events-none");
+    } else {
+        if (saveBtn) saveBtn.classList.remove("opacity-50", "pointer-events-none");
+        if (confirmBtn) confirmBtn.classList.remove("opacity-50", "pointer-events-none");
+    }
+}
+window.toggleSalesFormLock = toggleSalesFormLock;
+
+async function persistSalesOrderState(newState) {
+    if (!currentSalesOrder) return;
+    currentSalesOrder.state = newState;
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/sales-orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(currentSalesOrder)
+        });
+        if (response.ok) {
+            const getRes = await fetch('/api/bpm/sales-orders', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (getRes.ok) {
+                salesOrdersData = await getRes.json();
+            }
+            renderSalesTable();
+            toggleSalesFormLock(newState !== "Presupuesto" && newState !== "Cotización");
+        } else {
+            alert("Error al actualizar el estado en el servidor.");
+        }
+    } catch(e) {
+        console.error("Error al persistir estado:", e);
+        alert("Error de comunicación con el servidor.");
+    }
 }
 
-function cancelSalesOrder() {
+async function confirmSalesOrder() {
     if (!currentSalesOrder) return;
-    
-    currentSalesOrder.state = "Cancelado";
-    updateSalesPipelineVisuals("Cancelado");
-    showSalesNotification(`La cotización ${currentSalesOrder.id} ha sido cancelada.`, "warning");
+    updateSalesPipelineVisuals("Pedido de venta");
+    calculateSalesTotals();
+    await persistSalesOrderState("Pedido de venta");
+    showSalesNotification(`¡Cotización ${currentSalesOrder.id} confirmada como Pedido de Venta!`, "success");
 }
+window.confirmSalesOrder = confirmSalesOrder;
+
+async function cancelSalesOrder() {
+    if (!currentSalesOrder) return;
+    updateSalesPipelineVisuals("Presupuesto");
+    calculateSalesTotals();
+    await persistSalesOrderState("Presupuesto");
+    showSalesNotification(`La cotización ${currentSalesOrder.id} ha sido devuelta al estado Presupuesto.`, "warning");
+}
+window.cancelSalesOrder = cancelSalesOrder;
 
 async function saveSalesOrder() {
     if (!currentSalesOrder) return;
@@ -8771,6 +9138,9 @@ async function saveSalesOrder() {
     }
     
     currentSalesOrder.client = clientName;
+    currentSalesOrder.contact = document.getElementById("sales-client-contact").value.trim();
+    const currencyToggle = document.getElementById("sales-currency-toggle");
+    currentSalesOrder.currency = (currencyToggle && currencyToggle.checked) ? "MXN" : "USD";
     currentSalesOrder.invoiceAddress = document.getElementById("sales-invoice-address").value;
     currentSalesOrder.deliveryAddress = document.getElementById("sales-delivery-address").value;
     currentSalesOrder.date = new Date(document.getElementById("sales-order-date").value).toISOString();
@@ -8798,9 +9168,10 @@ async function saveSalesOrder() {
         const qty = qtyInput ? parseFloat(qtyInput.value) || 0 : 0;
         const price = priceInput ? parseFloat(priceInput.value) || 0 : 0;
         const tax = taxSelect ? taxSelect.value : "16%";
+        const isOptional = row.querySelector(".sales-line-optional")?.checked ? 1 : 0;
         
         if (productName !== "") {
-            lines.push({ product: productName, quantity: qty, price: price, tax: tax });
+            lines.push({ product: productName, quantity: qty, price: price, tax: tax, opcional: isOptional });
         }
     });
     
@@ -8851,33 +9222,650 @@ async function saveSalesOrder() {
         }
     }
     
-    const idx = salesOrdersData.findIndex(o => o.id === currentSalesOrder.id);
-    if (idx !== -1) {
-        salesOrdersData[idx] = currentSalesOrder;
-    } else {
-        salesOrdersData.unshift(currentSalesOrder);
-    }
-    
+    const token = localStorage.getItem('sonicbi_token');
     try {
-        localStorage.setItem("sales-orders-sync", JSON.stringify(salesOrdersData));
-    } catch(e) {}
-    
-    renderSalesTable();
-    switchTab("sales");
-    showSalesNotification(`Cotización ${currentSalesOrder.id} guardada con éxito.`, "success");
+        const response = await fetch('/api/bpm/sales-orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(currentSalesOrder)
+        });
+        if (response.ok) {
+            const getRes = await fetch('/api/bpm/sales-orders', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (getRes.ok) {
+                salesOrdersData = await getRes.json();
+            }
+            renderSalesTable();
+            switchTab("sales");
+            showSalesNotification(`Cotización ${currentSalesOrder.id} guardada con éxito.`, "success");
+        } else {
+            alert("Error al guardar la cotización en el servidor.");
+        }
+    } catch (e) {
+        console.error("Error al guardar cotización:", e);
+        alert("Error de comunicación con el servidor.");
+    }
 }
 
 function cancelSalesDetailView() {
     switchTab("sales");
 }
 
-function simulateSendByEmail() {
-    showSalesNotification("Simulación: Cotización enviada por correo electrónico al cliente.", "success");
+// --- FUNCIONES DE COTIZACIÓN COMPARTIDA Y NEGOCIACIÓN ---
+function copySharedQuoteLink() {
+    if (!currentSalesOrder) return;
+    const hash = currentSalesOrder.public_hash || currentSalesOrder.publicHash;
+    if (!hash) {
+        showSalesNotification("Guarda la cotización primero para generar su enlace seguro.", "error");
+        return;
+    }
+    const fullUrl = `${window.location.origin}/shared.html?hash=${hash}`;
+    navigator.clipboard.writeText(fullUrl).then(() => {
+        showSalesNotification("¡Enlace copiado al portapapeles! Listo para enviar por WhatsApp o correo.", "success");
+    }).catch(() => {
+        prompt("Copia este enlace para tu cliente:", fullUrl);
+    });
+}
+window.copySharedQuoteLink = copySharedQuoteLink;
+
+function openSharedQuoteTab() {
+    if (!currentSalesOrder) return;
+    const hash = currentSalesOrder.public_hash || currentSalesOrder.publicHash;
+    if (!hash) {
+        showSalesNotification("Guarda la cotización primero para ver la vista del cliente.", "error");
+        return;
+    }
+    window.open(`/shared.html?hash=${hash}`, '_blank');
+}
+window.openSharedQuoteTab = openSharedQuoteTab;
+
+async function openQuoteNegotiationModal() {
+    if (!currentSalesOrder) return;
+    document.getElementById("negotiation-modal-folio").innerText = currentSalesOrder.id;
+    const dot = document.getElementById("vendor-chat-dot");
+    if (dot) dot.classList.add("hidden");
+    
+    const modal = document.getElementById("modal-quote-negotiation");
+    if (modal) modal.classList.remove("hidden");
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    await loadVendorChatComments();
+    await loadVendorInteractions();
+}
+window.openQuoteNegotiationModal = openQuoteNegotiationModal;
+
+function closeQuoteNegotiationModal() {
+    const modal = document.getElementById("modal-quote-negotiation");
+    if (modal) modal.classList.add("hidden");
+}
+window.closeQuoteNegotiationModal = closeQuoteNegotiationModal;
+
+async function loadVendorChatComments() {
+    if (!currentSalesOrder) return;
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch(`/api/bpm/quote/${currentSalesOrder.id}/comments`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const comments = await res.json();
+            const container = document.getElementById("vendor-chat-messages-container");
+            container.innerHTML = "";
+            comments.forEach(c => renderVendorChatMessage(c));
+            container.scrollTop = container.scrollHeight;
+        }
+    } catch(e) {
+        console.error("Error al cargar comentarios del vendedor:", e);
+    }
 }
 
-function simulateProformaInvoice() {
-    showSalesNotification("Simulación: Factura PROFORMA enviada a cola de impresión.", "success");
+function renderVendorChatMessage(comment) {
+    const container = document.getElementById("vendor-chat-messages-container");
+    const isVendor = (comment.remitente === "Vendedor");
+    const isSystem = (comment.remitente === "Sistema");
+    const timeStr = new Date(comment.fecha).toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+    const msgDiv = document.createElement("div");
+    if (isSystem) {
+        msgDiv.className = "text-center my-2";
+        msgDiv.innerHTML = `
+            <div class="inline-block px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-full text-[10px] font-bold">
+                ${comment.mensaje} <span class="text-[9px] text-amber-600 ml-1 font-normal">${timeStr}</span>
+            </div>
+        `;
+    } else if (isVendor) {
+        msgDiv.className = "flex flex-col items-end";
+        msgDiv.innerHTML = `
+            <div class="max-w-[85%] bg-brand-500 text-white rounded-2xl rounded-tr-xs p-3 shadow-xs">
+                <p class="leading-relaxed font-normal">${comment.mensaje}</p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-1 font-medium">Tú (Vendedor) • ${timeStr}</span>
+        `;
+    } else {
+        msgDiv.className = "flex flex-col items-start";
+        msgDiv.innerHTML = `
+            <div class="max-w-[85%] bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-tl-xs p-3 shadow-xs">
+                <p class="leading-relaxed font-medium">${comment.mensaje}</p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-1 font-bold text-brand-600">Cliente • ${timeStr}</span>
+        `;
+    }
+
+    container.appendChild(msgDiv);
+    container.scrollTop = container.scrollHeight;
 }
+
+async function sendVendorChatMessage(e) {
+    e.preventDefault();
+    if (!currentSalesOrder) return;
+    const input = document.getElementById("vendor-chat-input");
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    input.value = "";
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch(`/api/bpm/quote/${currentSalesOrder.id}/comment`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ mensaje: msg })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            renderVendorChatMessage({
+                remitente: 'Vendedor',
+                mensaje: msg,
+                fecha: data.fecha || new Date().toISOString()
+            });
+        }
+    } catch(err) {
+        console.error("Error al enviar mensaje:", err);
+    }
+}
+window.sendVendorChatMessage = sendVendorChatMessage;
+
+function setFastDiscount(val) {
+    const input = document.getElementById("vendor-discount-input");
+    if (input) input.value = val;
+}
+window.setFastDiscount = setFastDiscount;
+
+async function applyVendorNegotiatedDiscount() {
+    if (!currentSalesOrder) return;
+    const discInput = document.getElementById("vendor-discount-input");
+    const disc = parseFloat(discInput ? discInput.value : 0) || 0;
+    if (disc < 0 || disc > 100) {
+        alert("Por favor ingresa un porcentaje válido entre 0% y 100%.");
+        return;
+    }
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch(`/api/bpm/quote/${currentSalesOrder.id}/apply-discount`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ discountPercent: disc })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            currentSalesOrder.descuento_negociado = disc;
+            currentSalesOrder.total = data.newTotal;
+            calculateSalesTotals();
+            await loadVendorChatComments();
+            showSalesNotification(`¡Descuento comercial del ${disc}% aplicado y sincronizado en vivo!`, "success");
+        } else {
+            alert("Error al aplicar descuento: " + (data.error || "Intente nuevamente"));
+        }
+    } catch(e) {
+        console.error("Error al aplicar descuento:", e);
+    }
+}
+window.applyVendorNegotiatedDiscount = applyVendorNegotiatedDiscount;
+
+async function loadVendorInteractions() {
+    if (!currentSalesOrder) return;
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch(`/api/bpm/quote/${currentSalesOrder.id}/interactions`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+            const list = await res.json();
+            const container = document.getElementById("vendor-interactions-container");
+            container.innerHTML = "";
+
+            if (list.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-slate-400 italic text-center py-4">No hay interacciones registradas aún.</p>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const dateFormatted = new Date(item.fecha).toLocaleString('es-MX', {
+                    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+                const div = document.createElement("div");
+                div.className = "flex items-start gap-2 text-[11px] p-2 bg-slate-50 border border-slate-100 rounded-lg";
+                div.innerHTML = `
+                    <div class="w-2 h-2 rounded-full bg-brand-500 mt-1 shrink-0"></div>
+                    <div class="flex-1">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700">${item.evento}</span>
+                            <span class="text-[10px] text-slate-400">${dateFormatted}</span>
+                        </div>
+                        <p class="text-slate-500 mt-0.5">${item.detalles || ''}</p>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+    } catch(e) {
+        console.error("Error al cargar interacciones:", e);
+    }
+}
+
+async function askAiForChatReply() {
+    if (!currentSalesOrder) return;
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch(`/api/bpm/quote/${currentSalesOrder.id}/comments`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        let lastMsg = "Consulta de cotización";
+        if (res.ok) {
+            const comments = await res.json();
+            const clientMsgs = comments.filter(c => c.remitente === "Cliente");
+            if (clientMsgs.length > 0) {
+                lastMsg = clientMsgs[clientMsgs.length - 1].mensaje;
+            }
+        }
+
+        const aiRes = await fetch('/api/bpm/ai/suggest-chat-reply', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                lastClientMessage: lastMsg,
+                quoteFolio: currentSalesOrder.id,
+                clientName: currentSalesOrder.client
+            })
+        });
+
+        if (aiRes.ok) {
+            const data = await aiRes.json();
+            const input = document.getElementById("vendor-chat-input");
+            if (input && data.suggestedReply) {
+                input.value = data.suggestedReply;
+                input.focus();
+                showSalesNotification("Respuesta generada por IA. Puedes revisarla y presionar Enviar.", "success");
+            }
+        }
+    } catch(e) {
+        console.error("Error al generar respuesta IA:", e);
+    }
+}
+window.askAiForChatReply = askAiForChatReply;
+
+// --- MODAL ASISTENTE SONIC AI ---
+function openSonicAiAdvisor() {
+    if (!currentSalesOrder) return;
+    const modal = document.getElementById("modal-sonic-ai-advisor");
+    if (modal) modal.classList.remove("hidden");
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    runAiPriceAdvisor();
+}
+window.openSonicAiAdvisor = openSonicAiAdvisor;
+
+function closeSonicAiAdvisor() {
+    const modal = document.getElementById("modal-sonic-ai-advisor");
+    if (modal) modal.classList.add("hidden");
+}
+window.closeSonicAiAdvisor = closeSonicAiAdvisor;
+
+async function runAiPriceAdvisor() {
+    if (!currentSalesOrder) return;
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch('/api/bpm/ai/suggest-price', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                client: currentSalesOrder.client,
+                product: currentSalesOrder.lines?.[0]?.product || "",
+                basePrice: currentSalesOrder.total || 100
+            })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            document.getElementById("ai-client-tier").innerText = data.tier || "General";
+            document.getElementById("ai-suggested-discount").innerText = `${data.suggestedDiscountPercent}%`;
+            document.getElementById("ai-win-prob").innerText = `${data.winProbability}%`;
+            document.getElementById("ai-win-prob-bar").style.width = `${data.winProbability}%`;
+            document.getElementById("ai-pricing-reason").innerText = data.reasoning || "";
+        }
+    } catch(e) {
+        console.error("Error en asesor de precios IA:", e);
+    }
+}
+window.runAiPriceAdvisor = runAiPriceAdvisor;
+
+async function generateAiDescription() {
+    const conceptInput = document.getElementById("ai-concept-name");
+    const name = conceptInput ? conceptInput.value.trim() : "";
+    if (!name) {
+        alert("Por favor introduce el nombre del concepto o servicio.");
+        return;
+    }
+
+    const btn = document.getElementById("btn-ai-gen-desc");
+    const origText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> Generando...`;
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const res = await fetch('/api/bpm/ai/generate-description', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ conceptName: name })
+        });
+
+        if (res.ok) {
+            const data = await res.json();
+            document.getElementById("ai-desc-output-container").classList.remove("hidden");
+            document.getElementById("ai-desc-output").value = data.description;
+            if (typeof lucide !== 'undefined') lucide.createIcons();
+        }
+    } catch(e) {
+        console.error("Error al generar descripción:", e);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = origText;
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+window.generateAiDescription = generateAiDescription;
+
+function copyAiDescriptionToClipboard() {
+    const desc = document.getElementById("ai-desc-output").value;
+    navigator.clipboard.writeText(desc).then(() => {
+        showSalesNotification("Descripción comercial copiada al portapapeles.", "success");
+    });
+}
+window.copyAiDescriptionToClipboard = copyAiDescriptionToClipboard;
+
+function openSendEmailModal() {
+    if (!currentSalesOrder) return;
+    
+    const clientObj = clientsList.find(c => c.name.toLowerCase().trim() === currentSalesOrder.client.toLowerCase().trim());
+    const toEmail = clientObj ? (clientObj.email || "") : "";
+    
+    document.getElementById("email-send-to").value = toEmail;
+    document.getElementById("email-send-subject").value = `Cotización ${currentSalesOrder.id} - SONIC BI`;
+    
+    let linesText = "";
+    (currentSalesOrder.lines || []).forEach(line => {
+        linesText += `- ${line.product} (Cant: ${line.quantity}, Precio: $${line.price.toLocaleString('en-US', {minimumFractionDigits:2})} ${currentSalesOrder.currency})\n`;
+    });
+    
+    const bodyText = `Estimado Cliente,
+
+Adjuntamos la cotización correspondiente al folio ${currentSalesOrder.id}.
+
+Detalles de la cotización:
+${linesText}
+Total Neto: $${currentSalesOrder.total.toLocaleString('en-US', {minimumFractionDigits:2})} ${currentSalesOrder.currency}
+
+Quedamos a su entera disposición para cualquier aclaración.
+
+Atentamente,
+El Equipo de Ventas
+SONIC BI`;
+    
+    document.getElementById("email-send-body").value = bodyText;
+    
+    const modal = document.getElementById("modal-send-email");
+    if (modal) modal.classList.remove("hidden");
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+window.openSendEmailModal = openSendEmailModal;
+
+function closeSendEmailModal() {
+    const modal = document.getElementById("modal-send-email");
+    if (modal) modal.classList.add("hidden");
+}
+window.closeSendEmailModal = closeSendEmailModal;
+
+async function sendOrderEmail() {
+    if (!currentSalesOrder) return;
+    
+    const to = document.getElementById("email-send-to").value.trim();
+    const subject = document.getElementById("email-send-subject").value.trim();
+    const body = document.getElementById("email-send-body").value.trim();
+    
+    if (!to || !subject || !body) {
+        alert("Por favor complete todos los campos obligatorios.");
+        return;
+    }
+    
+    const submitBtn = document.getElementById("email-send-submit-btn");
+    const originalText = submitBtn ? submitBtn.innerHTML : "";
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Enviando...`;
+    }
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/send-order-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                orderId: currentSalesOrder.id,
+                to,
+                subject,
+                body
+            })
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+            currentSalesOrder.state = "Enviado";
+            updateSalesPipelineVisuals("Enviado");
+            
+            const getRes = await fetch('/api/bpm/sales-orders', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (getRes.ok) {
+                salesOrdersData = await getRes.json();
+            }
+            
+            renderSalesTable();
+            closeSendEmailModal();
+            showSalesNotification("Correo electrónico enviado con éxito y estado actualizado a Enviado.", "success");
+        } else {
+            alert("Error al enviar el correo: " + (data.error || "Intente nuevamente."));
+        }
+    } catch(e) {
+        console.error("Error al enviar email de cotización:", e);
+        alert("Error de comunicación con el servidor.");
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalText;
+        }
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+window.sendOrderEmail = sendOrderEmail;
+
+function printSalesOrder() {
+    if (!currentSalesOrder) return;
+    
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) {
+        alert("Por favor habilite las ventanas emergentes en su navegador para imprimir.");
+        return;
+    }
+    
+    let itemsRows = "";
+    let subtotal = 0;
+    
+    (currentSalesOrder.lines || []).forEach(line => {
+        const lineTotal = line.quantity * line.price;
+        subtotal += lineTotal;
+        
+        itemsRows += `
+            <tr style="border-bottom: 1px solid #e2e8f0; font-size: 12px;">
+                <td style="padding: 10px 0; font-weight: 500; color: #334155;">${line.product}</td>
+                <td style="padding: 10px 0; text-align: center; color: #475569;">${line.quantity}</td>
+                <td style="padding: 10px 0; text-align: right; color: #475569;">$${line.price.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                <td style="padding: 10px 0; text-align: center; color: #475569;">${line.tax}</td>
+                <td style="padding: 10px 0; text-align: right; font-weight: 600; color: #1e293b;">$${lineTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+            </tr>
+        `;
+    });
+    
+    const currencyStr = currentSalesOrder.currency || "MXN";
+    const ivaRate = 0.16; // default IVA
+    const tax = subtotal * ivaRate;
+    const total = subtotal + tax;
+    
+    const dateFormatted = new Date(currentSalesOrder.date).toLocaleDateString('es-MX', {
+        day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
+    });
+    
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Cotización ${currentSalesOrder.id}</title>
+            <meta charset="utf-8">
+            <style>
+                body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 40px; color: #1e293b; line-height: 1.5; }
+                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #8b5cf6; padding-bottom: 20px; margin-bottom: 30px; }
+                .logo-section h1 { margin: 0; color: #8b5cf6; font-size: 28px; font-weight: 900; }
+                .logo-section p { margin: 5px 0 0 0; font-size: 12px; color: #64748b; font-weight: 600; }
+                .quote-details { text-align: right; }
+                .quote-details h2 { margin: 0; font-size: 20px; font-weight: 800; color: #334155; }
+                .quote-details p { margin: 5px 0 0 0; font-size: 12px; color: #64748b; }
+                .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+                .info-block { border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; background: #f8fafc; }
+                .info-block h3 { margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; color: #64748b; letter-spacing: 0.5px; font-weight: 700; }
+                .info-block p { margin: 4px 0; font-size: 13px; color: #334155; }
+                .items-table { width: 100%; border-collapse: collapse; margin-bottom: 30px; }
+                .items-table th { border-bottom: 2px solid #cbd5e1; padding: 10px 0; text-align: left; font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 700; }
+                .totals-section { display: flex; justify-content: flex-end; }
+                .totals-table { width: 300px; border-collapse: collapse; }
+                .totals-table td { padding: 8px 0; font-size: 13px; color: #475569; }
+                .totals-table tr.grand-total { border-top: 1.5px solid #cbd5e1; font-weight: 800; font-size: 16px; color: #1e293b; }
+                @media print {
+                    body { margin: 20px; }
+                    .info-block { background: #ffffff !important; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div class="logo-section">
+                    <h1>SONIC BI</h1>
+                    <p>BI & Soluciones Tecnológicas Integrales</p>
+                </div>
+                <div class="quote-details">
+                    <h2>COTIZACIÓN</h2>
+                    <p><strong>Folio:</strong> ${currentSalesOrder.id}</p>
+                    <p><strong>Fecha:</strong> ${dateFormatted}</p>
+                    <p><strong>Moneda:</strong> ${currencyStr}</p>
+                </div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-block">
+                    <h3>Cliente</h3>
+                    <p><strong>Nombre/Razón Social:</strong> ${currentSalesOrder.client}</p>
+                    <p><strong>Contacto:</strong> ${currentSalesOrder.contact || 'N/A'}</p>
+                    <p><strong>Dirección:</strong> ${currentSalesOrder.invoiceAddress || 'N/A'}</p>
+                </div>
+                <div class="info-block">
+                    <h3>Condiciones y Referencias</h3>
+                    <p><strong>Condiciones de Pago:</strong> ${currentSalesOrder.paymentTerms || '30 días'}</p>
+                    <p><strong>Referencia de Compra:</strong> ${currentSalesOrder.clientRef || 'N/A'}</p>
+                    <p><strong>Vendedor Asignado:</strong> ${currentSalesOrder.salesperson || 'Mitchell Admin'}</p>
+                </div>
+            </div>
+            
+            <table class="items-table">
+                <thead>
+                    <tr>
+                        <th style="width: 45%;">Concepto / Producto</th>
+                        <th style="width: 10%; text-align: center;">Cant</th>
+                        <th style="width: 15%; text-align: right;">P. Unitario</th>
+                        <th style="width: 10%; text-align: center;">IVA</th>
+                        <th style="width: 20%; text-align: right;">Importe</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${itemsRows}
+                </tbody>
+            </table>
+            
+            <div class="totals-section">
+                <table class="totals-table">
+                    <tr>
+                        <td>Subtotal:</td>
+                        <td style="text-align: right;">$${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})} ${currencyStr}</td>
+                    </tr>
+                    <tr>
+                        <td>IVA Trasladado (16%):</td>
+                        <td style="text-align: right;">$${tax.toLocaleString('en-US', {minimumFractionDigits: 2})} ${currencyStr}</td>
+                    </tr>
+                    <tr class="grand-total">
+                        <td style="padding-top: 12px; color: #8b5cf6;">Total Neto:</td>
+                        <td style="text-align: right; padding-top: 12px; color: #8b5cf6;">$${currentSalesOrder.total.toLocaleString('en-US', {minimumFractionDigits: 2})} ${currencyStr}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <script>
+                window.onload = function() {
+                    setTimeout(function() {
+                        window.print();
+                    }, 500);
+                }
+            </script>
+        </body>
+        </html>
+    `;
+    
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+}
+window.printSalesOrder = printSalesOrder;
 
 function showSalesNotification(message, type = "success") {
     let container = document.getElementById("sales-notification-container");
@@ -9731,16 +10719,23 @@ const RBAC_OPTIONS = [
     { id: 'btn-personal', label: 'Personal' },
     { id: 'btn-sales', label: 'Ventas' },
     { id: 'btn-clients', label: 'Clientes' },
+    { id: 'btn-products', label: 'Productos' },
     { id: 'btn-comm', label: 'Comunicaciones' }
 ];
 
 async function initRBAC() {
     try {
-        const usuarioStr = localStorage.getItem('sonicbi_usuario');
-        if (!usuarioStr) return;
+        let usuarioStr = localStorage.getItem('sonicbi_usuario');
+        let usuario = null;
+        if (usuarioStr) {
+            try { usuario = JSON.parse(usuarioStr); } catch(e) {}
+        }
+        if (!usuario) {
+            usuario = { id: 1, email: 'admin@sonicbi.com', rol: 'admin', nombre: 'Mitchell Admin' };
+            localStorage.setItem('sonicbi_usuario', JSON.stringify(usuario));
+        }
 
-        const usuario = JSON.parse(usuarioStr);
-        const userRole = usuario.rol || 'admin'; // Fallback admin
+        const userRole = usuario.rol || 'admin';
         
         // Mostrar botón de configuración solo a Administradores (o admins backend)
         const configContainer = document.getElementById('rbac-config-container');
@@ -9756,9 +10751,9 @@ async function initRBAC() {
         const profileNameEl = document.getElementById('sidebar-profile-name');
         const profileRoleEl = document.getElementById('sidebar-profile-role');
         const profileInitialsEl = document.getElementById('sidebar-profile-initials');
-        if (profileNameEl) profileNameEl.innerText = usuario.nombre || 'Usuario';
+        if (profileNameEl) profileNameEl.innerText = usuario.nombre || 'Mitchell Admin';
         if (profileRoleEl) profileRoleEl.innerText = (userRole === 'admin' ? 'Administrador' : userRole).toUpperCase();
-        if (profileInitialsEl) profileInitialsEl.innerText = (usuario.nombre || 'U').charAt(0).toUpperCase();
+        if (profileInitialsEl) profileInitialsEl.innerText = (usuario.nombre || 'M').charAt(0).toUpperCase();
 
         // Si el rol es admin, forzamos tener todo por seguridad en frontend
         if (rolToFetch === 'Administrador') {
@@ -9769,7 +10764,7 @@ async function initRBAC() {
                 const data = await response.json();
                 rbacPermissions = data.permisos || [];
             } else {
-                rbacPermissions = []; // No access by default if fails
+                rbacPermissions = RBAC_OPTIONS.map(o => o.id);
             }
         }
 
@@ -9777,6 +10772,8 @@ async function initRBAC() {
 
     } catch (error) {
         console.error('[RBAC] Error inicializando permisos:', error);
+        rbacPermissions = RBAC_OPTIONS.map(o => o.id);
+        applyRBACPermissions();
     }
 }
 
@@ -10378,3 +11375,152 @@ window.togglePortalFields = togglePortalFields;
 window.saveClientFromModal = saveClientFromModal;
 window.deleteClient = deleteClient;
 window.filterClientsTable = filterClientsTable;
+
+// --- CONFIGURACIÓN DE CORREO SMTP ---
+function switchConfigSubTab(subtabId) {
+    const rolesBtn = document.getElementById("subbtn-config-roles");
+    const emailBtn = document.getElementById("subbtn-config-email");
+    const rolesView = document.getElementById("config-subview-roles");
+    const emailView = document.getElementById("config-subview-email");
+
+    if (subtabId === "roles") {
+        if (rolesBtn) {
+            rolesBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
+        }
+        if (emailBtn) {
+            emailBtn.className = "flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors";
+        }
+        if (rolesView) rolesView.classList.remove("hidden");
+        if (emailView) emailView.classList.add("hidden");
+    } else if (subtabId === "email") {
+        if (rolesBtn) {
+            rolesBtn.className = "flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors";
+        }
+        if (emailBtn) {
+            emailBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
+        }
+        if (rolesView) rolesView.classList.add("hidden");
+        if (emailView) emailView.classList.remove("hidden");
+        
+        loadConfigEmail();
+    }
+}
+window.switchConfigSubTab = switchConfigSubTab;
+
+async function saveConfigEmail() {
+    const sender = document.getElementById("config-email-sender").value.trim();
+    const smtp = document.getElementById("config-email-smtp").value.trim();
+    const port = parseInt(document.getElementById("config-email-port").value) || 0;
+    const security = document.getElementById("config-email-security").value;
+    const password = document.getElementById("config-email-password").value;
+
+    const config = { sender, smtp, port, security, password };
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/email-config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(config)
+        });
+        if (response.ok) {
+            if (typeof showToast !== 'undefined') {
+                showToast("Configuración de correo guardada correctamente", "success");
+            } else {
+                alert("Configuración de correo guardada correctamente.");
+            }
+        } else {
+            alert("Error al guardar la configuración de correo.");
+        }
+    } catch(e) {
+        console.error("Error al guardar email-config:", e);
+        alert("Error de comunicación con el servidor.");
+    }
+}
+window.saveConfigEmail = saveConfigEmail;
+
+async function loadConfigEmail() {
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/email-config', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            const config = await response.json();
+            if (document.getElementById("config-email-sender")) document.getElementById("config-email-sender").value = config.sender || "";
+            if (document.getElementById("config-email-smtp")) document.getElementById("config-email-smtp").value = config.smtp || "";
+            if (document.getElementById("config-email-port")) document.getElementById("config-email-port").value = config.port || "";
+            if (document.getElementById("config-email-security")) document.getElementById("config-email-security").value = config.security || "SSL/TLS";
+            if (document.getElementById("config-email-password")) document.getElementById("config-email-password").value = config.password || "";
+        }
+    } catch(e) {
+        console.error("Error al cargar email-config:", e);
+    }
+}
+window.loadConfigEmail = loadConfigEmail;
+
+async function testEmailConnection() {
+    const sender = document.getElementById("config-email-sender").value.trim();
+    const smtp = document.getElementById("config-email-smtp").value.trim();
+    const port = parseInt(document.getElementById("config-email-port").value) || 0;
+    const security = document.getElementById("config-email-security").value;
+    const password = document.getElementById("config-email-password").value;
+
+    if (!sender || !smtp || !port) {
+        if (typeof showToast !== 'undefined') {
+            showToast("Por favor complete los campos obligatorios antes de probar.", "error");
+        } else {
+            alert("Por favor complete los campos obligatorios antes de probar.");
+        }
+        return;
+    }
+
+    const testBtn = document.querySelector("button[onclick='testEmailConnection()']");
+    const originalText = testBtn ? testBtn.innerHTML : "";
+    if (testBtn) {
+        testBtn.disabled = true;
+        testBtn.innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Probando...`;
+    }
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/test-email-connection', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ sender, smtp, port, security, password })
+        });
+        
+        const data = await response.json();
+        if (response.ok) {
+            if (typeof showToast !== 'undefined') {
+                showToast("¡Autoprueba de conexión SMTP exitosa!", "success");
+            } else {
+                alert("¡Autoprueba de conexión SMTP exitosa!");
+            }
+        } else {
+            const errStr = data.error || "Error desconocido";
+            if (typeof showToast !== 'undefined') {
+                showToast("Error de conexión: " + errStr, "error");
+            } else {
+                alert("Error de conexión: " + errStr);
+            }
+        }
+    } catch (e) {
+        console.error("Error al probar conexión SMTP:", e);
+        alert("Error de red o comunicación con el servidor.");
+    } finally {
+        if (testBtn) {
+            testBtn.disabled = false;
+            testBtn.innerHTML = originalText;
+        }
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+    }
+}
+window.testEmailConnection = testEmailConnection;

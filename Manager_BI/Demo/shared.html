@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización Interactiva - SONIC BI</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+        <div class="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg shadow-sm">
+                    S
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-slate-900 text-base leading-tight">SONIC BI</h1>
+                    <p class="text-[11px] text-slate-400 font-medium">Propuesta Comercial Interactiva</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="toggleChatDrawer()" class="relative flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg border border-brand-200 text-brand-700 bg-brand-50 hover:bg-brand-100 transition-all shadow-xs">
+                    <i data-lucide="message-square" class="w-4 h-4 text-brand-600"></i>
+                    <span>Negociar / Chat</span>
+                    <span id="chat-unread-dot" class="hidden w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                </button>
+                <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 bg-white hover:bg-slate-100 transition-all">
+                    <i data-lucide="printer" class="w-4 h-4 text-slate-400"></i>
+                    <span class="hidden sm:inline">Imprimir / PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl w-full mx-auto px-4 py-8 flex-1">
+        <div id="loading-state" class="flex flex-col items-center justify-center py-24 space-y-4">
+            <i data-lucide="loader" class="w-8 h-8 text-brand-500 animate-spin"></i>
+            <p class="text-sm font-semibold text-slate-500">Cargando su cotización interactiva...</p>
+        </div>
+
+        <div id="error-state" class="hidden bg-white border border-rose-200 rounded-2xl p-8 text-center max-w-md mx-auto shadow-sm my-12">
+            <div class="w-12 h-12 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+            </div>
+            <h2 class="text-base font-bold text-slate-800 mb-2">Enlace no encontrado</h2>
+            <p class="text-xs text-slate-500 mb-6">Esta cotización no existe, ha expirado o el enlace es incorrecto.</p>
+        </div>
+
+        <div id="quote-content" class="hidden space-y-8">
+
+            <!-- Banner / Header de la Cotización -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 md:p-8 flex flex-col md:flex-row justify-between gap-6">
+                <div class="space-y-3">
+                    <div class="flex items-center gap-3">
+                        <span id="badge-state" class="px-3 py-1 text-xs font-extrabold rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+                            Presupuesto
+                        </span>
+                        <span class="text-xs text-slate-400 font-semibold" id="quote-date">19/08/2026</span>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-900 tracking-tight" id="quote-title">Cotización S00164-2026</h2>
+                    <p class="text-xs text-slate-500 leading-relaxed max-w-xl">
+                        A continuación se detallan los productos, servicios y condiciones acordadas. Puede seleccionar o deseleccionar los elementos opcionales antes de aprobar la propuesta.
+                    </p>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-100 min-w-[240px] flex flex-col justify-between">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Monto Total de la Propuesta</p>
+                        <h3 class="text-2xl font-black text-brand-600" id="quote-total-banner">$0.00 MXN</h3>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-200/60 text-[11px] text-slate-500 space-y-1">
+                        <p><span class="font-bold text-slate-700">Asesor Comercial:</span> <span id="quote-salesperson">Mitchell Admin</span></p>
+                        <p><span class="font-bold text-slate-700">Condiciones:</span> <span id="quote-payment-terms">30 días</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información del Cliente y Proveedor -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+                    <div class="flex items-center gap-2 mb-3 text-slate-400">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Preparado Para</h3>
+                    </div>
+                    <p class="text-base font-black text-slate-800" id="client-name">Cliente</p>
+                    <p class="text-xs text-slate-500 mt-0.5"><span class="font-semibold text-slate-600">Contacto:</span> <span id="client-contact">Lic. Contacto</span></p>
+                    <p class="text-xs text-slate-500 mt-1"><span class="font-semibold text-slate-600">Dirección:</span> <span id="client-address">Av. Principal</span></p>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-xs">
+                    <div class="flex items-center gap-2 mb-3 text-slate-400">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i>
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-500">Emitido Por</h3>
+                    </div>
+                    <p class="text-base font-black text-slate-800">SONIC BI Technologies México</p>
+                    <p class="text-xs text-slate-500 mt-0.5"><span class="font-semibold text-slate-600">Referencia:</span> <span id="client-ref">N/A</span></p>
+                    <p class="text-xs text-slate-500 mt-1"><span class="font-semibold text-slate-600">Moneda:</span> <span id="quote-currency-info">Pesos Mexicanos (MXN)</span></p>
+                </div>
+            </div>
+
+            <!-- Tabla de Precios Interactiva -->
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div class="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div>
+                        <h3 class="text-sm font-extrabold text-slate-900">Conceptos y Servicios Cotizados</h3>
+                        <p class="text-xs text-slate-400 mt-0.5">Personalice los servicios opcionales marcando o desmarcando la casilla correspondiente.</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-200 bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3 px-4 w-12 text-center">Incluir</th>
+                                <th class="py-3 px-4">Descripción / Concepto</th>
+                                <th class="py-3 px-4 text-center w-28">Cantidad</th>
+                                <th class="py-3 px-4 text-right w-28">Precio Unit.</th>
+                                <th class="py-3 px-4 text-center w-20">IVA</th>
+                                <th class="py-3 px-4 text-right w-32">Importe</th>
+                            </tr>
+                        </thead>
+                        <tbody id="interactive-lines-body" class="divide-y divide-slate-100">
+                            <!-- Inyectado dinámicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Totales y Resumen -->
+                <div class="p-6 bg-slate-50/70 border-t border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                    <div class="text-xs text-slate-500 space-y-1">
+                        <p class="flex items-center gap-1.5"><i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i> Precios en la moneda indicada con IVA desglosado.</p>
+                        <p class="flex items-center gap-1.5"><i data-lucide="lock" class="w-4 h-4 text-slate-400"></i> Transacción segura y protegida por SONIC BI.</p>
+                    </div>
+
+                    <div class="w-full md:w-80 space-y-2">
+                        <div class="flex justify-between text-xs text-slate-600">
+                            <span>Subtotal:</span>
+                            <span id="subtotal-val" class="font-bold">$0.00</span>
+                        </div>
+                        <div id="row-discount" class="hidden flex justify-between text-xs text-emerald-600 font-bold">
+                            <span>Descuento Negociado:</span>
+                            <span id="discount-val">-$0.00 (0%)</span>
+                        </div>
+                        <div class="flex justify-between text-xs text-slate-600">
+                            <span>IVA (16%):</span>
+                            <span id="tax-val" class="font-bold">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-base font-black text-slate-900 border-t border-slate-200 pt-2">
+                            <span>Total Final:</span>
+                            <span id="total-val" class="text-brand-600">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel de Firma Digital e Interactive Signing Pad -->
+            <div id="signing-section" class="bg-white rounded-2xl border border-slate-200/80 p-6 md:p-8 shadow-xs space-y-6">
+                <div class="border-b border-slate-100 pb-4 flex items-center justify-between">
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                            <i data-lucide="pen-tool" class="w-5 h-5 text-brand-500"></i>
+                            <span>Aprobación y Firma Electrónica</span>
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-1">Dibuje su firma con el dedo o ratón dentro del recuadro para validar y autorizar formalmente esta cotización.</p>
+                    </div>
+                </div>
+
+                <div id="sign-pad-container" class="space-y-4">
+                    <div class="border-2 border-dashed border-slate-300 rounded-xl bg-slate-50/50 relative overflow-hidden flex flex-col items-center justify-center p-2">
+                        <canvas id="signature-canvas" width="600" height="180" class="w-full h-44 bg-white rounded-lg cursor-crosshair shadow-inner touch-none"></canvas>
+                        <span class="text-[10px] text-slate-400 absolute bottom-2 select-none pointer-events-none">Área de Firma Digital</span>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                        <button onclick="clearSignatureCanvas()" type="button" class="px-4 py-2 border border-slate-200 text-slate-600 bg-white hover:bg-slate-50 text-xs rounded-lg font-bold transition-all flex items-center gap-1.5 shadow-xs">
+                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                            <span>Limpiar Firma</span>
+                        </button>
+
+                        <button onclick="submitClientSignature()" id="btn-submit-sign" type="button" class="px-6 py-2.5 bg-brand-500 hover:bg-brand-600 text-white text-xs rounded-lg font-extrabold shadow-md transition-all flex items-center gap-2">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            <span>Aprobar y Confirmar Pedido</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Estado de Firma Aprobada (Oculto inicialmente) -->
+                <div id="signed-certificate" class="hidden bg-emerald-50/80 border border-emerald-200 rounded-xl p-6 text-center space-y-3">
+                    <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
+                        <i data-lucide="shield-check" class="w-6 h-6"></i>
+                    </div>
+                    <h4 class="text-sm font-black text-emerald-800">Propuesta Autorizada y Firmada Digitalmente</h4>
+                    <p class="text-xs text-emerald-700 max-w-md mx-auto">Esta cotización ha sido confirmada con éxito como Pedido de Venta. Se ha notificado al equipo de operaciones para iniciar la entrega.</p>
+                    <div class="mt-4 pt-4 border-t border-emerald-200/60 max-w-xs mx-auto">
+                        <img id="signed-signature-img" src="" alt="Firma del Cliente" class="max-h-20 mx-auto rounded border border-emerald-200 bg-white p-1">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Drawer Lateral de Chat y Negociación en Vivo -->
+    <aside id="chat-drawer" class="fixed inset-y-0 right-0 z-50 w-full max-w-sm bg-white shadow-2xl border-l border-slate-200 flex flex-col transform translate-x-full transition-transform duration-300">
+        <!-- Chat Header -->
+        <div class="px-5 py-4 bg-brand-500 text-white flex items-center justify-between shrink-0 shadow-xs">
+            <div class="flex items-center gap-2.5">
+                <i data-lucide="messages-square" class="w-5 h-5 text-brand-100"></i>
+                <div>
+                    <h3 class="font-extrabold text-sm">Negociación en Vivo</h3>
+                    <p class="text-[10px] text-brand-100 flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> Conectado con tu Asesor</p>
+                </div>
+            </div>
+            <button onclick="toggleChatDrawer()" class="p-1 hover:bg-brand-600 rounded-lg transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Mensajes del Chat -->
+        <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/50 text-xs">
+            <!-- Mensajes inyectados dinámicamente -->
+        </div>
+
+        <!-- Chat Input -->
+        <form onsubmit="sendClientChatMessage(event)" class="p-3 border-t border-slate-200 bg-white flex items-center gap-2 shrink-0">
+            <input type="text" id="chat-input" placeholder="Escriba su duda o propuesta..." class="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-xs bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500">
+            <button type="submit" class="p-2 bg-brand-500 hover:bg-brand-600 text-white rounded-lg transition-all shadow-xs">
+                <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+        </form>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400">
+        <p>© 2026 SONIC BI Technologies México. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- Lógica del Cotizador Público -->
+    <script src="shared.js"></script>
+</body>
+</html>
