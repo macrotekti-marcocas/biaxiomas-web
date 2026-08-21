@@ -1641,7 +1641,7 @@
                                 <i data-lucide="mail" class="w-4 h-4"></i>
                                 Configuración de Correo
                             </a>
-                            <a href="#" class="flex items-center gap-3 px-3 py-2 text-slate-655 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors opacity-50 cursor-not-allowed" title="Próximamente">
+                            <a href="#" onclick="switchConfigSubTab('company')" id="subbtn-config-company" class="flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors">
                                 <i data-lucide="building" class="w-4 h-4"></i>
                                 Empresa
                             </a>
@@ -1707,6 +1707,111 @@
                                 </button>
                                 <button onclick="saveConfigEmail()" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition-colors flex items-center gap-2">
                                     <i data-lucide="save" class="w-4 h-4"></i> Guardar Configuración
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Subview: Empresa -->
+                        <div id="config-subview-company" class="max-w-3xl hidden">
+                            <h2 class="text-lg font-bold text-slate-800 mb-1">Personalización de Marca y Empresa</h2>
+                            <p class="text-sm text-slate-500 mb-6">Configura el logotipo, nombre y colores de la empresa. Estos datos aparecerán en los documentos impresos y el portal del cliente.</p>
+
+                            <!-- Live Preview Card -->
+                            <div class="mb-8">
+                                <label class="text-[10px] font-bold text-slate-500 uppercase block mb-3">Vista Previa en Vivo (Barra Superior y Portal del Cliente)</label>
+                                <div class="h-20 flex items-center px-6 border border-slate-200 rounded-xl bg-white gap-3 shadow-xs max-w-sm">
+                                    <div id="company-preview-logo-container" class="bg-gradient-to-tr from-brand-500 to-brand-700 text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl shadow-md overflow-hidden shrink-0">
+                                        <span id="company-preview-logo-text">ai</span>
+                                        <img id="company-preview-logo-img" src="" alt="Logo" class="w-full h-full object-cover hidden">
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-xs uppercase tracking-wider text-slate-400 font-semibold">Manager Project</span>
+                                        <span id="company-preview-name" class="text-md font-bold leading-none" style="color: #7c3aed;">al instante</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-xs">
+                                <!-- Columna 1: Marca -->
+                                <div class="space-y-5">
+                                    <h3 class="font-bold text-slate-700 uppercase tracking-wider text-[11px] border-b border-slate-100 pb-2">Identidad de Marca</h3>
+                                    
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Nombre de la Empresa *:</label>
+                                        <input type="text" id="config-company-name" value="al instante" oninput="updateCompanyLivePreview()" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm font-semibold">
+                                    </div>
+
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Color Principal (Nombre) *:</label>
+                                        <div class="flex items-center gap-3 mt-1">
+                                            <input type="color" id="config-company-color" value="#7c3aed" oninput="updateCompanyLivePreview()" class="w-10 h-10 border border-slate-200 rounded-lg cursor-pointer shrink-0">
+                                            <input type="text" id="config-company-color-text" value="#7c3aed" oninput="document.getElementById('config-company-color').value = this.value; updateCompanyLivePreview()" class="w-full p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block mb-2">Tipo de Logotipo:</label>
+                                        <div class="flex items-center gap-4 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
+                                            <label class="flex-1 text-center cursor-pointer">
+                                                <input type="radio" name="config-logo-type" value="texto" checked onchange="toggleCompanyLogoType()" class="hidden peer">
+                                                <div class="py-1.5 text-xs font-semibold rounded-md peer-checked:bg-white peer-checked:shadow-sm peer-checked:text-brand-600 text-slate-500">Ícono Texto</div>
+                                            </label>
+                                            <label class="flex-1 text-center cursor-pointer">
+                                                <input type="radio" name="config-logo-type" value="imagen" onchange="toggleCompanyLogoType()" class="hidden peer">
+                                                <div class="py-1.5 text-xs font-semibold rounded-md peer-checked:bg-white peer-checked:shadow-sm peer-checked:text-brand-600 text-slate-500">Subir Imagen</div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div id="company-logo-text-group">
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Texto del Ícono (Max 3 Letras):</label>
+                                        <input type="text" id="config-company-logo-text" maxlength="3" value="ai" oninput="updateCompanyLivePreview()" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                    </div>
+
+                                    <div id="company-logo-image-group" class="hidden">
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Subir Imagen (PNG/JPG):</label>
+                                        <input type="file" id="config-company-logo-file" accept="image/png, image/jpeg, image/webp" onchange="handleCompanyLogoUpload(event)" class="w-full mt-1 text-xs file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-brand-50 file:text-brand-700 hover:file:bg-brand-100">
+                                        <input type="hidden" id="config-company-logo-url" value="">
+                                        <button type="button" onclick="clearCompanyLogo()" class="mt-2 text-[10px] text-rose-500 hover:underline font-bold hidden" id="btn-clear-company-logo">Eliminar Imagen Subida</button>
+                                    </div>
+                                </div>
+
+                                <!-- Columna 2: Datos Generales -->
+                                <div class="space-y-4">
+                                    <h3 class="font-bold text-slate-700 uppercase tracking-wider text-[11px] border-b border-slate-100 pb-2 mb-3">Datos Generales</h3>
+                                    
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Dirección Fiscal / Comercial:</label>
+                                        <textarea id="config-company-address" rows="2" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm resize-none"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">RFC / Tax ID:</label>
+                                        <input type="text" id="config-company-rfc" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase block">Teléfono:</label>
+                                            <input type="text" id="config-company-phone" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                        </div>
+                                        <div>
+                                            <label class="text-[10px] font-bold text-slate-500 uppercase block">Moneda Predet.:</label>
+                                            <select id="config-company-currency" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                                <option value="MXN">MXN - Pesos</option>
+                                                <option value="USD">USD - Dólares</option>
+                                                <option value="EUR">EUR - Euros</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="text-[10px] font-bold text-slate-500 uppercase block">Email de Contacto:</label>
+                                        <input type="email" id="config-company-email" class="w-full mt-1 p-2.5 border border-slate-200 rounded-lg bg-slate-50 focus:outline-none focus:ring-1 focus:ring-brand-500 text-sm">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-10 pt-6 border-t border-slate-200 flex justify-end gap-3">
+                                <button onclick="saveCompanyConfig()" id="btn-save-company-config" class="px-5 py-2.5 text-sm font-bold text-white bg-brand-500 hover:bg-brand-600 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                                    <i data-lucide="save" class="w-4 h-4"></i> Guardar Cambios de Empresa
                                 </button>
                             </div>
                         </div>

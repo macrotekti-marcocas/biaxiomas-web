@@ -5,8 +5,41 @@ let quoteHash = "";
 let isDrawing = false;
 let canvas, ctx;
 let ws = null;
+let companyConfig = null;
+
+async function loadCompanyBranding() {
+    try {
+        const res = await fetch('/api/bpm/public/company-config');
+        if (res.ok) {
+            companyConfig = await res.json();
+            const brandName = document.getElementById('shared-brand-company-name');
+            const logoText = document.getElementById('shared-brand-logo-text');
+            const logoImg = document.getElementById('shared-brand-logo-img');
+            
+            if (brandName) {
+                brandName.textContent = companyConfig.nombre_empresa;
+                brandName.style.color = companyConfig.color_nombre;
+            }
+            if (logoText && logoImg) {
+                if (companyConfig.logo_tipo === 'imagen' && companyConfig.logo_url) {
+                    logoText.classList.add('hidden');
+                    logoImg.classList.remove('hidden');
+                    logoImg.src = companyConfig.logo_url;
+                } else {
+                    logoText.classList.remove('hidden');
+                    logoImg.classList.add('hidden');
+                    logoText.textContent = companyConfig.logo_texto || 'ai';
+                }
+            }
+        }
+    } catch (e) {
+        console.error('Error loading branding:', e);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
+    loadCompanyBranding();
+    
     // 1. Obtener el hash de la URL
     const urlParams = new URLSearchParams(window.location.search);
     quoteHash = urlParams.get('hash') || window.location.pathname.split('/').pop();

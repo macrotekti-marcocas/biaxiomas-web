@@ -270,6 +270,7 @@ function iniciarWebSocket() {
             console.log("WebSocket evento recibido:", data);
             
             await cargarDatosDesdeBackend();
+    await loadCompanyConfig();
 
             // Auto-desplegar la campanita de notificaciones al recibir un nuevo ticket/alerta
             if (data.event === 'notification_added') {
@@ -10044,9 +10045,10 @@ function printSalesOrder() {
             <meta charset="utf-8">
             <style>
                 body { font-family: 'Segoe UI', system-ui, sans-serif; margin: 40px; color: #1e293b; line-height: 1.5; }
-                .header { display: flex; justify-content: space-between; border-bottom: 2px solid #8b5cf6; padding-bottom: 20px; margin-bottom: 30px; }
-                .logo-section h1 { margin: 0; color: #8b5cf6; font-size: 28px; font-weight: 900; }
-                .logo-section p { margin: 5px 0 0 0; font-size: 12px; color: #64748b; font-weight: 600; }
+                .header { display: flex; justify-content: space-between; border-bottom: 2px solid ${companyConfig ? companyConfig.color_nombre : '#8b5cf6'}; padding-bottom: 20px; margin-bottom: 30px; }
+                .logo-section { display: flex; align-items: center; gap: 15px; }
+                .logo-section h1 { margin: 0; color: ${companyConfig ? companyConfig.color_nombre : '#8b5cf6'}; font-size: 26px; font-weight: 900; line-height: 1.1; }
+                .logo-section p { margin: 2px 0 0 0; font-size: 11px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
                 .quote-details { text-align: right; }
                 .quote-details h2 { margin: 0; font-size: 20px; font-weight: 800; color: #334155; }
                 .quote-details p { margin: 5px 0 0 0; font-size: 12px; color: #64748b; }
@@ -10069,8 +10071,14 @@ function printSalesOrder() {
         <body>
             <div class="header">
                 <div class="logo-section">
-                    <h1>SONIC BI</h1>
-                    <p>BI & Soluciones Tecnológicas Integrales</p>
+                    ${companyConfig && companyConfig.logo_tipo === 'imagen' && companyConfig.logo_url 
+                        ? `<img src="${companyConfig.logo_url}" alt="Logo" style="height: 50px; object-fit: contain;">`
+                        : `<div style="background: ${companyConfig ? companyConfig.color_nombre : '#8b5cf6'}; color: white; width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;">${companyConfig ? companyConfig.logo_texto : 'ai'}</div>`
+                    }
+                    <div>
+                        <p>Manager Project</p>
+                        <h1>${companyConfig ? companyConfig.nombre_empresa : 'al instante'}</h1>
+                    </div>
                 </div>
                 <div class="quote-details">
                     <h2>COTIZACIÓN</h2>
@@ -10173,8 +10181,14 @@ function showSalesNotification(message, type = "success") {
     container.appendChild(toast);
     lucide.createIcons();
     
+    requestAnimationFrame(() => {
+        toast.classList.remove("translate-y-10", "opacity-0");
+        toast.classList.add("translate-y-0", "opacity-100");
+    });
+    
     setTimeout(() => {
-        toast.classList.add("opacity-0", "scale-95");
+        toast.classList.remove("translate-y-0", "opacity-100");
+        toast.classList.add("translate-y-10", "opacity-0");
         setTimeout(() => {
             toast.remove();
             if (container.children.length === 0) {
@@ -11656,29 +11670,33 @@ window.filterClientsTable = filterClientsTable;
 function switchConfigSubTab(subtabId) {
     const rolesBtn = document.getElementById("subbtn-config-roles");
     const emailBtn = document.getElementById("subbtn-config-email");
+    const companyBtn = document.getElementById("subbtn-config-company");
+    
     const rolesView = document.getElementById("config-subview-roles");
     const emailView = document.getElementById("config-subview-email");
+    const companyView = document.getElementById("config-subview-company");
+
+    // Reset styles
+    [rolesBtn, emailBtn, companyBtn].forEach(btn => {
+        if (btn) btn.className = "flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors";
+    });
+    
+    // Hide all views
+    [rolesView, emailView, companyView].forEach(view => {
+        if (view) view.classList.add("hidden");
+    });
 
     if (subtabId === "roles") {
-        if (rolesBtn) {
-            rolesBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
-        }
-        if (emailBtn) {
-            emailBtn.className = "flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors";
-        }
+        if (rolesBtn) rolesBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
         if (rolesView) rolesView.classList.remove("hidden");
-        if (emailView) emailView.classList.add("hidden");
     } else if (subtabId === "email") {
-        if (rolesBtn) {
-            rolesBtn.className = "flex items-center gap-3 px-3 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-medium transition-colors";
-        }
-        if (emailBtn) {
-            emailBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
-        }
-        if (rolesView) rolesView.classList.add("hidden");
+        if (emailBtn) emailBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
         if (emailView) emailView.classList.remove("hidden");
-        
         loadConfigEmail();
+    } else if (subtabId === "company") {
+        if (companyBtn) companyBtn.className = "flex items-center gap-3 px-3 py-2 bg-brand-50 text-brand-600 rounded-lg text-sm font-medium transition-colors";
+        if (companyView) companyView.classList.remove("hidden");
+        loadCompanyConfigForm();
     }
 }
 window.switchConfigSubTab = switchConfigSubTab;
@@ -11800,3 +11818,215 @@ async function testEmailConnection() {
     }
 }
 window.testEmailConnection = testEmailConnection;
+
+// --- CONFIGURACIÓN DE EMPRESA Y MARCA ---
+let companyConfig = {
+    nombre_empresa: 'al instante',
+    color_nombre: '#7c3aed',
+    logo_tipo: 'texto',
+    logo_texto: 'ai',
+    logo_url: '',
+    direccion: '',
+    rfc: '',
+    telefono: '',
+    email: '',
+    moneda_predeterminada: 'MXN'
+};
+
+async function loadCompanyConfig() {
+    const token = localStorage.getItem('sonicbi_token');
+    if (!token) return;
+    try {
+        const response = await fetch('/api/bpm/company-config', {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
+        if (response.ok) {
+            const data = await response.json();
+            if (data && data.nombre_empresa) {
+                companyConfig = data;
+                applyCompanyBranding();
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar config de empresa:', error);
+    }
+}
+window.loadCompanyConfig = loadCompanyConfig;
+
+function applyCompanyBranding() {
+    const brandName = document.getElementById('brand-company-name');
+    const brandLogoText = document.getElementById('brand-logo-text');
+    const brandLogoImg = document.getElementById('brand-logo-img');
+    
+    if (brandName) {
+        brandName.textContent = companyConfig.nombre_empresa;
+        brandName.style.color = companyConfig.color_nombre;
+    }
+    
+    if (brandLogoText && brandLogoImg) {
+        if (companyConfig.logo_tipo === 'imagen' && companyConfig.logo_url) {
+            brandLogoText.classList.add('hidden');
+            brandLogoImg.classList.remove('hidden');
+            brandLogoImg.src = companyConfig.logo_url;
+        } else {
+            brandLogoText.classList.remove('hidden');
+            brandLogoImg.classList.add('hidden');
+            brandLogoText.textContent = companyConfig.logo_texto || 'ai';
+        }
+    }
+}
+window.applyCompanyBranding = applyCompanyBranding;
+
+function loadCompanyConfigForm() {
+    document.getElementById('config-company-name').value = companyConfig.nombre_empresa || 'al instante';
+    document.getElementById('config-company-color').value = companyConfig.color_nombre || '#7c3aed';
+    document.getElementById('config-company-color-text').value = companyConfig.color_nombre || '#7c3aed';
+    document.getElementById('config-company-logo-text').value = companyConfig.logo_texto || 'ai';
+    document.getElementById('config-company-logo-url').value = companyConfig.logo_url || '';
+    
+    if (companyConfig.logo_tipo === 'imagen') {
+        const rad = document.querySelector('input[name="config-logo-type"][value="imagen"]');
+        if (rad) rad.checked = true;
+    } else {
+        const rad = document.querySelector('input[name="config-logo-type"][value="texto"]');
+        if (rad) rad.checked = true;
+    }
+    
+    document.getElementById('config-company-address').value = companyConfig.direccion || '';
+    document.getElementById('config-company-rfc').value = companyConfig.rfc || '';
+    document.getElementById('config-company-phone').value = companyConfig.telefono || '';
+    document.getElementById('config-company-email').value = companyConfig.email || '';
+    document.getElementById('config-company-currency').value = companyConfig.moneda_predeterminada || 'MXN';
+    
+    toggleCompanyLogoType();
+    updateCompanyLivePreview();
+}
+window.loadCompanyConfigForm = loadCompanyConfigForm;
+
+function toggleCompanyLogoType() {
+    const radio = document.querySelector('input[name="config-logo-type"]:checked');
+    const type = radio ? radio.value : 'texto';
+    const textGroup = document.getElementById('company-logo-text-group');
+    const imageGroup = document.getElementById('company-logo-image-group');
+    const clearBtn = document.getElementById('btn-clear-company-logo');
+    const logoUrl = document.getElementById('config-company-logo-url').value;
+    
+    if (type === 'texto') {
+        if(textGroup) textGroup.classList.remove('hidden');
+        if(imageGroup) imageGroup.classList.add('hidden');
+    } else {
+        if(textGroup) textGroup.classList.add('hidden');
+        if(imageGroup) imageGroup.classList.remove('hidden');
+        if (logoUrl && clearBtn) clearBtn.classList.remove('hidden');
+        else if (clearBtn) clearBtn.classList.add('hidden');
+    }
+    updateCompanyLivePreview();
+}
+window.toggleCompanyLogoType = toggleCompanyLogoType;
+
+function handleCompanyLogoUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        document.getElementById('config-company-logo-url').value = e.target.result;
+        const btn = document.getElementById('btn-clear-company-logo');
+        if(btn) btn.classList.remove('hidden');
+        updateCompanyLivePreview();
+    };
+    reader.readAsDataURL(file);
+}
+window.handleCompanyLogoUpload = handleCompanyLogoUpload;
+
+function clearCompanyLogo() {
+    const fileInput = document.getElementById('config-company-logo-file');
+    if(fileInput) fileInput.value = '';
+    const urlInput = document.getElementById('config-company-logo-url');
+    if(urlInput) urlInput.value = '';
+    const btn = document.getElementById('btn-clear-company-logo');
+    if(btn) btn.classList.add('hidden');
+    updateCompanyLivePreview();
+}
+window.clearCompanyLogo = clearCompanyLogo;
+
+function updateCompanyLivePreview() {
+    const name = document.getElementById('config-company-name').value || 'Empresa';
+    const color = document.getElementById('config-company-color').value || '#7c3aed';
+    const radio = document.querySelector('input[name="config-logo-type"]:checked');
+    const type = radio ? radio.value : 'texto';
+    const logoText = document.getElementById('config-company-logo-text').value || 'ai';
+    const logoUrl = document.getElementById('config-company-logo-url').value;
+    
+    const previewName = document.getElementById('company-preview-name');
+    const previewText = document.getElementById('company-preview-logo-text');
+    const previewImg = document.getElementById('company-preview-logo-img');
+    
+    if(previewName) {
+        previewName.textContent = name;
+        previewName.style.color = color;
+    }
+    
+    if(previewText && previewImg) {
+        if (type === 'imagen' && logoUrl) {
+            previewText.classList.add('hidden');
+            previewImg.classList.remove('hidden');
+            previewImg.src = logoUrl;
+        } else {
+            previewText.classList.remove('hidden');
+            previewImg.classList.add('hidden');
+            previewText.textContent = logoText.substring(0, 3);
+        }
+    }
+}
+window.updateCompanyLivePreview = updateCompanyLivePreview;
+
+async function saveCompanyConfig() {
+    const btn = document.getElementById('btn-save-company-config');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i data-lucide="loader" class="w-4 h-4 animate-spin"></i> Guardando...';
+    btn.disabled = true;
+    lucide.createIcons();
+    
+    const radio = document.querySelector('input[name="config-logo-type"]:checked');
+    const payload = {
+        nombre_empresa: document.getElementById('config-company-name').value,
+        color_nombre: document.getElementById('config-company-color').value,
+        logo_tipo: radio ? radio.value : 'texto',
+        logo_texto: document.getElementById('config-company-logo-text').value,
+        logo_url: document.getElementById('config-company-logo-url').value,
+        direccion: document.getElementById('config-company-address').value,
+        rfc: document.getElementById('config-company-rfc').value,
+        telefono: document.getElementById('config-company-phone').value,
+        email: document.getElementById('config-company-email').value,
+        moneda_predeterminada: document.getElementById('config-company-currency').value
+    };
+    
+    const token = localStorage.getItem('sonicbi_token');
+    try {
+        const response = await fetch('/api/bpm/company-config', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        if (response.ok) {
+            showSalesNotification('Configuración de empresa guardada y aplicada con éxito.', 'success');
+            companyConfig = payload;
+            applyCompanyBranding();
+        } else {
+            showSalesNotification('Error al guardar la configuración.', 'error');
+        }
+    } catch (error) {
+        console.error('Error saving company config:', error);
+        showSalesNotification('Error de red al guardar.', 'error');
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        lucide.createIcons();
+    }
+}
+window.saveCompanyConfig = saveCompanyConfig;

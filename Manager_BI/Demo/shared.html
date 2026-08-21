@@ -32,24 +32,28 @@
     <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
         <div class="max-w-5xl mx-auto px-4 py-3.5 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white font-black text-lg shadow-sm">
-                    S
+                <div id="shared-brand-logo-container" class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-brand-700 flex items-center justify-center text-white font-black text-lg shadow-sm overflow-hidden shrink-0">
+                    <span id="shared-brand-logo-text">ai</span>
+                    <img id="shared-brand-logo-img" src="" alt="Logo" class="w-full h-full object-cover hidden">
                 </div>
                 <div>
-                    <h1 class="font-extrabold text-slate-900 text-base leading-tight">SONIC BI</h1>
-                    <p class="text-[11px] text-slate-400 font-medium">Propuesta Comercial Interactiva</p>
+                    <h1 class="font-extrabold text-slate-400 text-[10px] uppercase tracking-wider leading-tight">Manager Project</h1>
+                    <p id="shared-brand-company-name" class="text-sm text-brand-600 font-bold leading-none">al instante</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 md:gap-3">
+                <a href="/login.html" class="hidden sm:flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-700 bg-white hover:bg-slate-50 transition-all shadow-xs" title="Ir al Portal de Clientes">
+                    <i data-lucide="user" class="w-4 h-4 text-slate-500"></i>
+                    <span>Portal Cliente</span>
+                </a>
                 <button onclick="toggleChatDrawer()" class="relative flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold rounded-lg border border-brand-200 text-brand-700 bg-brand-50 hover:bg-brand-100 transition-all shadow-xs">
                     <i data-lucide="message-square" class="w-4 h-4 text-brand-600"></i>
-                    <span>Negociar / Chat</span>
+                    <span class="hidden sm:inline">Negociar</span>
                     <span id="chat-unread-dot" class="hidden w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                 </button>
-                <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 bg-white hover:bg-slate-100 transition-all">
+                <button onclick="window.print()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg border border-slate-200 text-slate-600 bg-white hover:bg-slate-100 transition-all shadow-xs" title="Imprimir PDF">
                     <i data-lucide="printer" class="w-4 h-4 text-slate-400"></i>
-                    <span class="hidden sm:inline">Imprimir / PDF</span>
                 </button>
             </div>
         </div>
