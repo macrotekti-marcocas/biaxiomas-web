@@ -11903,6 +11903,21 @@ function loadCompanyConfigForm() {
 }
 window.loadCompanyConfigForm = loadCompanyConfigForm;
 
+document.addEventListener("DOMContentLoaded", () => {
+    const colorPicker = document.getElementById('config-company-color');
+    const colorText = document.getElementById('config-company-color-text');
+    if (colorPicker && colorText) {
+        colorPicker.addEventListener('input', (e) => {
+            colorText.value = e.target.value;
+            updateCompanyLivePreview();
+        });
+        colorText.addEventListener('input', (e) => {
+            colorPicker.value = e.target.value;
+            updateCompanyLivePreview();
+        });
+    }
+});
+
 function toggleCompanyLogoType() {
     const radio = document.querySelector('input[name="config-logo-type"]:checked');
     const type = radio ? radio.value : 'texto';
