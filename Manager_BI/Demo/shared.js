@@ -31,6 +31,32 @@ async function loadCompanyBranding() {
                     logoText.textContent = companyConfig.logo_texto || 'ai';
                 }
             }
+            
+            const hex = companyConfig.color_nombre;
+            if (hex) {
+                let r = 0, g = 0, b = 0;
+                if (hex.length === 4) {
+                    r = parseInt(hex[1] + hex[1], 16);
+                    g = parseInt(hex[2] + hex[2], 16);
+                    b = parseInt(hex[3] + hex[3], 16);
+                } else if (hex.length === 7) {
+                    r = parseInt(hex.substring(1, 3), 16);
+                    g = parseInt(hex.substring(3, 5), 16);
+                    b = parseInt(hex.substring(5, 7), 16);
+                }
+                
+                const mix = (c1, c2, weight) => Math.round(c1 * weight + c2 * (1 - weight));
+                const root = document.documentElement;
+                
+                root.style.setProperty('--brand-500', hex);
+                root.style.setProperty('--accent-500', hex);
+                
+                root.style.setProperty('--brand-600', `rgb(${mix(r, 0, 0.8)}, ${mix(g, 0, 0.8)}, ${mix(b, 0, 0.8)})`);
+                root.style.setProperty('--accent-600', `rgb(${mix(r, 0, 0.8)}, ${mix(g, 0, 0.8)}, ${mix(b, 0, 0.8)})`);
+                root.style.setProperty('--brand-700', `rgb(${mix(r, 0, 0.6)}, ${mix(g, 0, 0.6)}, ${mix(b, 0, 0.6)})`);
+                root.style.setProperty('--brand-100', `rgb(${mix(r, 255, 0.15)}, ${mix(g, 255, 0.15)}, ${mix(b, 255, 0.15)})`);
+                root.style.setProperty('--brand-50', `rgb(${mix(r, 255, 0.05)}, ${mix(g, 255, 0.05)}, ${mix(b, 255, 0.05)})`);
+            }
         }
     } catch (e) {
         console.error('Error loading branding:', e);
