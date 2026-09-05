@@ -1,0 +1,50 @@
+# ==============================================================================
+# BIAXIOMAS & FACTURA BI - CONFIGURACIÓN CADDY SERVER CON ON-DEMAND TLS
+# ==============================================================================
+# Caddy gestiona automáticamente certificados SSL (HTTPS) gratuitos vía Let's Encrypt / ZeroSSL
+# para cualquier dominio personalizado apuntado al servidor, validándolo con el backend.
+
+{
+    # Seguridad On-Demand TLS: Caddy consulta a tu API antes de emitir un certificado SSL
+    # Si el dominio está en tu base de datos de empresas/tenants responde 200 OK.
+    on_demand_tls {
+        ask http://127.0.0.1:8000/api/security/check-domain
+        interval 2m
+        burst 5
+    }
+}
+
+# 1. Dominio Central y SuperAdmin (biaxiomas.com y www.biaxiomas.com)
+biaxiomas.com, www.biaxiomas.com {
+    # Servir Admin_tenant
+    handle /Admin_tenant* {
+        reverse_proxy 127.0.0.1:8001
+    }
+    # Servir Factura_BI central
+    handle /Factura_BI* {
+        reverse_proxy 127.0.0.1:8000
+    }
+    # Servir Landing Central
+    handle {
+        root * /var/www/biaxiomas_web
+        file_server
+    }
+}
+
+# 2. Entorno de Pruebas / Staging (factest.biaxiomas.com)
+factest.biaxiomas.com {
+    reverse_proxy 127.0.0.1:8000
+}
+
+# 3. Dominios Propios de Clientes (ej. pollerialosgueros.com, www.pollerialosgueros.com, etc.)
+:443 {
+    tls {
+        on_demand
+    }
+    reverse_proxy 127.0.0.1:8000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote_host}
+        header_up X-Forwarded-For {remote_host}
+        header_up X-Forwarded-Proto {scheme}
+    }
+}

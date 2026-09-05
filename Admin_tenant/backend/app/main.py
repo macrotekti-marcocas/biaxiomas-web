@@ -89,6 +89,28 @@ def listar_tenants(db: Session = Depends(get_db)):
         ))
     return res
 
+@app.get("/api/supervision/timbrados")
+def obtener_supervision_timbrados():
+    """Proxy hacia Factura BI para obtener telemetría y supervisión de timbrados en tiempo real."""
+    try:
+        resp = requests.get("http://127.0.0.1:8000/api/admin/supervision/timbrados", timeout=3)
+        if resp.ok:
+            return resp.json()
+    except Exception as e:
+        print(f"Error al conectar con Factura_BI para supervisión: {e}")
+
+    return {
+        "kpis": {
+            "total_empresas": 0,
+            "total_timbres_asignados": 0,
+            "total_timbres_usados": 0,
+            "total_timbres_restantes": 0,
+            "total_alertas": 0
+        },
+        "alertas": [],
+        "empresas": []
+    }
+
 @app.post("/api/tenants", response_model=TenantResponse, status_code=status.HTTP_201_CREATED)
 def crear_tenant(tenant: TenantCreate, db: Session = Depends(get_db)):
     db_tenant = db.query(Tenant).filter(Tenant.id == tenant.id.lower()).first()

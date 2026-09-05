@@ -310,6 +310,97 @@
 
         </div>
 
+        <!-- SUPERVISIÓN GLOBAL DE TIMBRADOS & DOMINIOS PROPIOS (FACTURA BI CORE) -->
+        <div class="mt-8 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                <div>
+                    <div class="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-bold border border-emerald-200 mb-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Telemetría Fiscal en Vivo
+                    </div>
+                    <h2 class="text-xl font-outfit font-bold text-indigo-950">Supervisión de Timbrados & Dominios de Clientes</h2>
+                    <p class="text-xs text-slate-500">Monitorea el consumo de timbres por negocio, vigencia de certificados CSD y dominios propios activos.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="cargarSupervisionTimbrados()" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs px-3.5 py-2 rounded-xl transition-all border border-indigo-200 flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Actualizar Telemetría
+                    </button>
+                </div>
+            </div>
+
+            <!-- ALERTAS FISCALES ACTIVAS -->
+            <div id="panelAlertasSupervision" class="mb-6 space-y-2 hidden">
+                <!-- Se inyectan dinámicamente alertas de saldo bajo o CSD -->
+            </div>
+
+            <!-- TABLA DE EMPRESAS Y DOMINIOS -->
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-100 text-xs text-slate-400 font-semibold uppercase">
+                            <th class="py-3">Empresa / RFC</th>
+                            <th class="py-3">Tenedor</th>
+                            <th class="py-3">Dominio Personalizado</th>
+                            <th class="py-3">Consumo de Timbres</th>
+                            <th class="py-3">Estado CSD</th>
+                            <th class="py-3">Servicios</th>
+                            <th class="py-3 text-right">Gestión</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm divide-y divide-slate-100" id="tablaSupervisionEmpresas">
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-slate-400 text-xs">Cargando telemetría de Factura BI...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL GESTION DOMINIO Y TIMBRES DE EMPRESA -->
+    <div id="modalGestionEmpresa" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-md shadow-2xl mx-4">
+            <h3 class="text-xl font-outfit font-bold text-slate-900" id="modalEmpresaNombre">Configurar Empresa</h3>
+            <p class="text-xs text-slate-500 mt-1 mb-4">Administra el dominio personalizado y la bolsa de timbres.</p>
+            
+            <input type="hidden" id="gestionEmpresaId">
+
+            <div class="space-y-4 mb-6">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Dominio Propio (White-Label)</label>
+                    <input type="text" id="gestionCustomDomain" placeholder="ej. pollerialosgueros.com" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
+                    <p class="text-[10px] text-slate-400 mt-1">Apuntado por DNS con registro A a la IP del servidor.</p>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 mb-1">Subdominio de Respaldo</label>
+                    <input type="text" id="gestionSubdomain" placeholder="ej. losgueros.biaxiomas.com" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Timbres Asignados</label>
+                        <input type="number" id="gestionTimbresAsignados" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 font-bold">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1">Alerta Mínima</label>
+                        <input type="number" id="gestionAlertaMinima" value="20" class="w-full border border-slate-200 rounded-xl px-3.5 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 pt-2">
+                    <input type="checkbox" id="gestionAutofactura" class="w-4 h-4 text-indigo-600 rounded border-slate-300">
+                    <label for="gestionAutofactura" class="text-xs font-semibold text-slate-700">Habilitar Portal de Autofacturación para Consumidores</label>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <button onclick="cerrarModalGestionEmpresa()" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold py-2.5 rounded-xl text-sm transition-all">
+                    Cancelar
+                </button>
+                <button onclick="guardarGestionEmpresa()" class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm transition-all shadow-sm">
+                    Guardar
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAL GESTION LICENCIA -->
@@ -527,6 +618,161 @@
             const adjusted = (baseCommission * (tasa / 1.5)).toFixed(2);
             document.getElementById('comisionTotal').textContent = `$${parseFloat(adjusted).toLocaleString('es-MX')}`;
         }
+
+        // --- SUPERVISIÓN TELEMETRÍA EN VIVO ---
+        let empresasCache = [];
+
+        async function cargarSupervisionTimbrados() {
+            const tbody = document.getElementById('tablaSupervisionEmpresas');
+            const alertPanel = document.getElementById('panelAlertasSupervision');
+
+            try {
+                const res = await fetch('/api/supervision/timbrados');
+                if (!res.ok) throw new Error('No se pudo consultar telemetría');
+                const data = await res.json();
+                empresasCache = data.empresas || [];
+
+                // Render Alertas
+                if (data.alertas && data.alertas.length > 0) {
+                    alertPanel.innerHTML = '';
+                    data.alertas.forEach(al => {
+                        const bgClass = al.nivel === 'danger' ? 'bg-red-50 border-red-200 text-red-800' : 'bg-amber-50 border-amber-200 text-amber-800';
+                        const icon = al.nivel === 'danger' ? '⚠️' : '🔔';
+                        alertPanel.innerHTML += `
+                            <div class="border rounded-2xl p-3 text-xs flex items-center justify-between ${bgClass}">
+                                <div class="flex items-center gap-2">
+                                    <span>${icon}</span>
+                                    <span class="font-medium">${al.mensaje}</span>
+                                </div>
+                                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/60">${al.tipo}</span>
+                            </div>
+                        `;
+                    });
+                    alertPanel.classList.remove('hidden');
+                } else {
+                    alertPanel.classList.add('hidden');
+                }
+
+                // Render Filas
+                tbody.innerHTML = '';
+                if (empresasCache.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400 text-xs">No hay empresas registradas actualmente.</td></tr>`;
+                    return;
+                }
+
+                empresasCache.forEach(emp => {
+                    const pct = emp.timbres_asignados > 0 ? Math.min(100, Math.round((emp.timbres_usados / emp.timbres_asignados) * 100)) : 0;
+                    const barColor = pct > 85 ? 'bg-red-500' : (pct > 60 ? 'bg-amber-500' : 'bg-emerald-500');
+
+                    let csdBadge = 'bg-slate-100 text-slate-600 border-slate-200';
+                    if (emp.csd_status === 'Vigente') csdBadge = 'bg-emerald-50 text-emerald-700 border-emerald-200';
+                    if (emp.csd_status === 'Vencido') csdBadge = 'bg-red-50 text-red-700 border-red-200';
+                    if (emp.csd_status === 'Sin cargar') csdBadge = 'bg-amber-50 text-amber-700 border-amber-200';
+
+                    const domainDisplay = emp.custom_domain && emp.custom_domain !== '-' 
+                        ? `<span class="font-mono text-xs text-indigo-600 font-bold bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100 flex items-center gap-1 w-fit">🌐 ${emp.custom_domain}</span>`
+                        : `<span class="text-xs text-slate-400 italic">Sin dominio propio (${emp.subdomain})</span>`;
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50/50 transition-colors';
+                    tr.innerHTML = `
+                        <td class="py-4">
+                            <div class="font-semibold text-slate-900">${emp.nombre}</div>
+                            <div class="text-xs text-slate-400 font-mono">RFC: ${emp.rfc}</div>
+                        </td>
+                        <td class="py-4 text-xs font-semibold text-slate-600">${emp.tenant_id}</td>
+                        <td class="py-4">${domainDisplay}</td>
+                        <td class="py-4 min-w-[180px]">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="font-bold text-slate-800">${emp.timbres_usados} / ${emp.timbres_asignados}</span>
+                                <span class="text-[11px] font-semibold text-slate-500">${emp.timbres_restantes} rest.</span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="${barColor} h-full rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                            </div>
+                        </td>
+                        <td class="py-4">
+                            <span class="badge text-[11px] px-2.5 py-1 rounded-full font-bold border ${csdBadge}">${emp.csd_status}</span>
+                        </td>
+                        <td class="py-4">
+                            <div class="flex items-center gap-1 text-[11px]">
+                                ${emp.pos_enabled ? '<span class="bg-cyan-50 text-cyan-700 px-2 py-0.5 rounded font-semibold border border-cyan-100">POS</span>' : ''}
+                                ${emp.autofactura_enabled ? '<span class="bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded font-semibold border border-emerald-100">Autofactura</span>' : ''}
+                            </div>
+                        </td>
+                        <td class="py-4 text-right">
+                            <button onclick="abrirModalGestionEmpresa(${emp.id})" class="text-indigo-600 hover:text-indigo-900 font-bold text-xs px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors border border-indigo-100">
+                                Configurar
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                showToast('Telemetría de timbrados actualizada.');
+            } catch (err) {
+                console.error("Error al cargar supervisión:", err);
+                tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-red-500 text-xs font-semibold">Error al conectar con Factura BI en el puerto 8000.</td></tr>`;
+            }
+        }
+
+        function abrirModalGestionEmpresa(empresaId) {
+            const emp = empresasCache.find(e => e.id === empresaId);
+            if (!emp) return;
+
+            document.getElementById('gestionEmpresaId').value = emp.id;
+            document.getElementById('modalEmpresaNombre').textContent = `Configurar - ${emp.nombre}`;
+            document.getElementById('gestionCustomDomain').value = (emp.custom_domain && emp.custom_domain !== '-') ? emp.custom_domain : '';
+            document.getElementById('gestionSubdomain').value = (emp.subdomain && emp.subdomain !== '-') ? emp.subdomain : '';
+            document.getElementById('gestionTimbresAsignados').value = emp.timbres_asignados;
+            document.getElementById('gestionAutofactura').checked = emp.autofactura_enabled;
+
+            document.getElementById('modalGestionEmpresa').classList.remove('hidden');
+        }
+
+        function cerrarModalGestionEmpresa() {
+            document.getElementById('modalGestionEmpresa').classList.add('hidden');
+        }
+
+        async function guardarGestionEmpresa() {
+            const empId = document.getElementById('gestionEmpresaId').value;
+            const custom_domain = document.getElementById('gestionCustomDomain').value.trim();
+            const subdomain = document.getElementById('gestionSubdomain').value.trim();
+            const timbres_asignados = parseInt(document.getElementById('gestionTimbresAsignados').value) || 0;
+            const timbres_alerta_minimo = parseInt(document.getElementById('gestionAlertaMinima').value) || 20;
+            const autofactura_enabled = document.getElementById('gestionAutofactura').checked;
+
+            try {
+                // 1. Actualizar dominio y configuración
+                const resDom = await fetch(`http://127.0.0.1:8000/api/empresas/${empId}/dominio`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ custom_domain, subdomain, timbres_alerta_minimo, autofactura_enabled })
+                });
+
+                // 2. Actualizar timbres asignados
+                const resTim = await fetch(`http://127.0.0.1:8000/api/empresas/${empId}/timbres`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ timbres_asignados })
+                });
+
+                if (resDom.ok || resTim.ok) {
+                    showToast('Configuración y bolsa de timbres actualizada.');
+                    cerrarModalGestionEmpresa();
+                    cargarSupervisionTimbrados();
+                } else {
+                    alert('Error al guardar cambios.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Error al conectar con la API de Factura BI.');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarSupervisionTimbrados();
+        });
     </script>
 </body>
 </html>
